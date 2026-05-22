@@ -116,7 +116,7 @@ all-cpp = \
 
 compile_riscvdv_tests: $(riscvdv-test-bins)
 $(riscvdv-test-bins): $(TESTS-DIR)/%/test.bin: \
-  $(TESTS-DIR)/%/test.S scripts/compile_test.py
+  $(TESTS-DIR)/%/test.S $(METADATA-DIR)/%.pickle scripts/compile_test.py
 	@echo Compiling riscvdv test assembly to create binary at $@
 	$(verb)env PYTHONPATH=$(PYTHONPATH) \
 	scripts/compile_test.py \

@@ -37,6 +37,7 @@ ISS                 := spike
 # Test name (default: full regression)
 TEST                := all
 RISCV-DV-TESTLIST   := riscv_dv_extension/testlist.yaml
+RISCV_DV_TESTLIST   := $(RISCV-DV-TESTLIST)
 DIRECTED-TESTLIST   := directed_tests/directed_testlist.yaml
 # Verbose logging
 VERBOSE             := 0
@@ -76,7 +77,8 @@ run:
 	  SEED=$(SEED) WAVES=$(WAVES) COV=$(COV) SIMULATOR=$(SIMULATOR) \
 	  ISS=$(ISS) TEST=$(TEST) VERBOSE=$(VERBOSE) ITERATIONS=$(ITERATIONS) \
 	  SIGNATURE_ADDR=$(SIGNATURE_ADDR) IBEX_CONFIG=$(IBEX_CONFIG) \
-	  DUT_COV_RTL_PATH=$(DUT_COV_RTL_PATH)"
+	  DUT_COV_RTL_PATH=$(DUT_COV_RTL_PATH) \
+	  RISCV_DV_TESTLIST=$(RISCV_DV_TESTLIST)"
 	@$(MAKE) --file wrapper.mk --environment-overrides --no-print-directory $(GOAL)
 
 ###############################################################################

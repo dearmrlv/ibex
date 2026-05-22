@@ -21,6 +21,21 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def _using_xcelium_2009() -> bool:
+    cadence_xrun = os.environ.get('CADENCE_XRUN', '')
+    if 'XCELIUM2009' in cadence_xrun:
+        return True
+
+    if cadence_xrun:
+        try:
+            with pathlib.Path(cadence_xrun).open(errors='ignore') as xrun_wrapper:
+                return 'XCELIUM2009' in xrun_wrapper.read()
+        except OSError:
+            return False
+
+    return False
+
+
 def _get_iss_pkgconfig_flags(specifiers: List[str], iss_pc: List[str], simulator: str) -> str:
     all_tokens = []
 
@@ -110,6 +125,10 @@ def _main() -> int:
 
         # Populate the entire set of variables to substitute in the templated
         # compilation command, including the compiler flags for the ISS.
+        xlm_cov_cfg_file = f"{md.ot_xcelium_cov_scripts}/cover.ccf"
+        if md.simulator == 'xlm' and _using_xcelium_2009():
+            xlm_cov_cfg_file = f"{md.ibex_dv_root}/xcelium_2009_cover.ccf"
+
         subst_vars_dict = {
             'core_ibex': md.ibex_dv_root,
             'tb_dir': md.dir_tb,
@@ -134,7 +153,7 @@ def _main() -> int:
                 r" +define+DEBUG_MODE_HALT_ADDR=8000_0000 " + \
                 r" +define+DEBUG_MODE_EXCEPTION_ADDR=8000_0008 ",
             'dir_shared_cov': (md.dir_shared_cov if md.cov else ''),
-            'xlm_cov_cfg_file': f"{md.ot_xcelium_cov_scripts}/cover.ccf",
+            'xlm_cov_cfg_file': xlm_cov_cfg_file,
             'dut_cov_rtl_path': md.dut_cov_rtl_path
         }
         subst_vars_dict.update(iss_cc_subst_vars_dict)

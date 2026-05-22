@@ -64,11 +64,17 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
       `uvm_fatal(`gfn, "Cannot get dut_probe_if")
     end
 
-    init_cosim();
+    if (!cfg.relax_cosim_check) begin
+      init_cosim();
+    end
   endfunction : build_phase
 
   protected function void init_cosim();
     cleanup_cosim();
+
+    if (cfg.relax_cosim_check) begin
+      return;
+    end
 
     `DV_CHECK_FATAL(cfg.dm_start_addr > 0, "Debug module start address configured to zero.")
     `DV_CHECK_FATAL(cfg.dm_end_addr > 0, "Debug module end address configured to zero.")
@@ -91,6 +97,10 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endfunction
 
   virtual task run_phase(uvm_phase phase);
+    if (cfg.relax_cosim_check) begin
+      return;
+    end
+
     forever begin
       @(negedge instr_vif.reset)
       fork : isolation_fork
@@ -343,8 +353,10 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   function void final_phase(uvm_phase phase);
     super.final_phase(phase);
 
-    `uvm_info(`gfn, $sformatf("Co-simulation matched %d instructions",
-                                riscv_cosim_get_insn_cnt(cosim_handle)), UVM_LOW)
+    if (!cfg.relax_cosim_check) begin
+      `uvm_info(`gfn, $sformatf("Co-simulation matched %d instructions",
+                                  riscv_cosim_get_insn_cnt(cosim_handle)), UVM_LOW)
+    end
 
     cleanup_cosim();
   endfunction : final_phase
@@ -356,6 +368,8 @@ class ibex_cosim_scoreboard extends uvm_scoreboard;
   endfunction
 
   task handle_reset();
-    init_cosim();
+    if (!cfg.relax_cosim_check) begin
+      init_cosim();
+    end
   endtask
 endclass : ibex_cosim_scoreboard

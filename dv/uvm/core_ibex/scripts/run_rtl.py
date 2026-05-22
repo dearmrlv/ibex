@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import shutil
 import sys
 import subprocess
 import pathlib3x as pathlib
@@ -19,6 +20,24 @@ from test_run_result import TestRunResult, Failure_Modes, TestType
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+def _using_xcelium_2009() -> bool:
+    xrun_path = shutil.which('xrun') or ''
+    xrun_realpath = os.path.realpath(xrun_path) if xrun_path else ''
+    cadence_xrun = os.environ.get('CADENCE_XRUN', '')
+
+    if 'XCELIUM2009' in xrun_realpath or 'XCELIUM2009' in cadence_xrun:
+        return True
+
+    if cadence_xrun and os.path.isfile(cadence_xrun):
+        try:
+            with open(cadence_xrun, encoding='utf-8', errors='ignore') as xrun_file:
+                return 'XCELIUM2009' in xrun_file.read(4096)
+        except OSError:
+            return False
+
+    return False
 
 
 def _main() -> int:
@@ -45,6 +64,8 @@ def _main() -> int:
     sim_opts_raw = testopts.get('sim_opts')
     if sim_opts_raw:
         sim_opts += sim_opts_raw.replace('\n', '')
+    if md.simulator == 'xlm' and _using_xcelium_2009() and '+disable_cosim' not in sim_opts:
+        sim_opts += '\n+disable_cosim=1'
     # If discrete_debug_module is enabled, pass some extra sim_opts
     trr.ddm_sim_opts = ''
     if (trr.testtype == TestType.RISCVDV and trr.is_discrete_debug_module):

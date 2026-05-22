@@ -7,6 +7,7 @@
 
 import sys
 import os
+import contextlib
 from types import *
 import pathlib3x as pathlib
 import pickle
@@ -38,6 +39,25 @@ logger = logging.getLogger(__name__)
 def get_git_revision_hash() -> str:
     return subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip()
 
+
+def _args_dict_from_str(args_list: str) -> dict:
+    return {k: v for k, v in (pair.split('=', maxsplit=1)
+                              for pair in shlex.split(args_list))}
+
+
+def _remove_stale_build_stamps(md) -> None:
+    """Remove stamps that can encode old top-level configuration knobs."""
+    stale_paths = [
+        md.dir_metadata/'tb.compile.stamp',
+        md.dir_metadata/'fcov.stamp',
+        md.dir_metadata/'merge.cov.stamp',
+        md.dir_metadata/'regr.log.stamp',
+    ]
+
+    for stale_path in stale_paths:
+        with contextlib.suppress(FileNotFoundError):
+            stale_path.unlink()
+
 @typechecked
 @dataclasses.dataclass
 class RegressionMetadata(scripts_lib.testdata_cls):
@@ -67,6 +87,7 @@ class RegressionMetadata(scripts_lib.testdata_cls):
     signature_addr: str = ' '
     ibex_config: str = ' '
     dut_cov_rtl_path: str = ''
+    riscv_dv_testlist: str = ''
 
     tests_and_counts: List[Tuple[str, int, TestType]] = field(default_factory=list)
     isa_ibex: Optional[str] = None
@@ -133,7 +154,10 @@ class RegressionMetadata(scripts_lib.testdata_cls):
         self.ot_xcelium_cov_scripts      = self.ot_lowrisc_ip/'dv'/'tools'/'xcelium'
         self.ibex_riscvdv_simulator_yaml = self.ibex_dv_root/'yaml'/'rtl_simulation.yaml'
         self.ibex_riscvdv_customtarget   = self.ibex_dv_root/'riscv_dv_extension'
-        self.ibex_riscvdv_testlist       = self.ibex_riscvdv_customtarget/'testlist.yaml'
+        self.ibex_riscvdv_testlist       = (
+            pathlib.Path(self.riscv_dv_testlist).expanduser().resolve()
+            if self.riscv_dv_testlist else
+            self.ibex_riscvdv_customtarget/'testlist.yaml')
         self.ibex_riscvdv_csr            = self.ibex_riscvdv_customtarget/'csr_description.yaml'
         self.directed_test_dir           = self.ibex_dv_root/'directed_tests'
         self.directed_test_data          = self.directed_test_dir/'directed_testlist.yaml'
@@ -199,8 +223,7 @@ class RegressionMetadata(scripts_lib.testdata_cls):
         # to populate from 'args_list'.
         args_dict = {}
         args_dict['raw_args_str'] = args_list
-        args_dict['raw_args_dict'] = {k: v for k, v in (pair.split('=', maxsplit=1)
-                                           for pair in shlex.split(args_list))}
+        args_dict['raw_args_dict'] = _args_dict_from_str(args_list)
 
         kv_tuples = (pair.split('=', maxsplit=1) for pair in shlex.split(args_list))
         kv_dict = {k.lower(): v for k, v in kv_tuples}
@@ -359,9 +382,17 @@ def _main():
         --dir-metadata specifies the directory of the test metadata
         --dir-out specifies the directory for the regression build and test to take place
         """
-        if (pathlib.Path(args.dir_metadata)/'metadata.pickle').exists():
-            logger.error("Build metadata already exists, not recreating from scratch.")
-            return
+        metadata_pickle = pathlib.Path(args.dir_metadata)/'metadata.pickle'
+        rebuild_metadata = False
+        if metadata_pickle.exists():
+            old_md = RegressionMetadata.construct_from_pickle(metadata_pickle)
+            new_args_dict = _args_dict_from_str(args.args_list)
+            if old_md.raw_args_dict == new_args_dict:
+                logger.error("Build metadata already exists, not recreating from scratch.")
+                return
+
+            logger.error("Build metadata arguments changed, recreating metadata.")
+            rebuild_metadata = True
 
         md = RegressionMetadata.arg_list_initializer(
             dir_metadata=args.dir_metadata,
@@ -379,6 +410,9 @@ def _main():
         md.tests_and_counts = [tctt for (tctt, obj) in tests_and_counts]
         if not md.tests_and_counts:
             raise RuntimeError("md.tests_and_counts is empty, cannot get TEST.SEED strings.")
+
+        if rebuild_metadata:
+            _remove_stale_build_stamps(md)
 
         # Setup metadata objects for each of the tests to be run. Construct a
         # list of these objects inside the regression_metadata object
@@ -416,7 +450,10 @@ def _main():
                     # If the +discrete_debug_module=1 argument is passed via sim_opts, a alternate
                     # memory heirarchy is enabled which seperates the debug rom memory sections
                     # from the main binary, emulating an external debug module
-                    for plusarg, val in (trr.split('=') for trr in trr.sim_opts):
+                    for sim_opt in trr.sim_opts:
+                        if '=' not in sim_opt:
+                            continue
+                        plusarg, val = sim_opt.split('=', 1)
                         if plusarg == "+discrete_debug_module":
                             trr.is_discrete_debug_module = False if '' else bool(int(val))
 

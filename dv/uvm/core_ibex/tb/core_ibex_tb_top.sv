@@ -252,6 +252,46 @@ module core_ibex_tb_top;
   assign rvfi_if.ext_mhpmcountersh    = dut.rvfi_ext_mhpmcountersh;
   assign rvfi_if.ext_ic_scr_key_valid = dut.rvfi_ext_ic_scr_key_valid;
   assign rvfi_if.ext_irq_valid        = dut.rvfi_ext_irq_valid;
+
+  int unsigned     bsd_cov_sample_step;
+  longint unsigned bsd_cov_sample_limit;
+  longint unsigned bsd_cov_instruction_count;
+  longint unsigned bsd_cov_next_sample;
+  bit              bsd_cov_sampling_enable;
+
+  initial begin
+    bsd_cov_sample_step      = 0;
+    bsd_cov_sample_limit     = 0;
+    bsd_cov_instruction_count = 0;
+    bsd_cov_next_sample      = 0;
+    bsd_cov_sampling_enable  = 0;
+
+    if ($value$plusargs("bsd_cov_sample_step=%d", bsd_cov_sample_step) &&
+        bsd_cov_sample_step != 0) begin
+      void'($value$plusargs("bsd_cov_sample_limit=%d", bsd_cov_sample_limit));
+      bsd_cov_next_sample     = bsd_cov_sample_step;
+      bsd_cov_sampling_enable = 1;
+      $display("%0t: BSD-COV sampling enabled: step=%0d limit=%0d",
+               $time, bsd_cov_sample_step, bsd_cov_sample_limit);
+    end
+  end
+
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      bsd_cov_instruction_count = 0;
+      bsd_cov_next_sample       = bsd_cov_sample_step;
+    end else if (bsd_cov_sampling_enable && instr_mem_vif.rvalid) begin
+      bsd_cov_instruction_count = bsd_cov_instruction_count + 1;
+      if ((bsd_cov_instruction_count == bsd_cov_next_sample) &&
+          ((bsd_cov_sample_limit == 0) || (bsd_cov_instruction_count <= bsd_cov_sample_limit))) begin
+        $display("%0t: BSD-COV sample stop at instruction count %0d",
+                 $time, bsd_cov_instruction_count);
+        bsd_cov_next_sample = bsd_cov_next_sample + bsd_cov_sample_step;
+        $stop;
+      end
+    end
+  end
+
   // Irq interface connections
   assign irq_vif.reset = ~rst_n;
   // Dut_if interface connections

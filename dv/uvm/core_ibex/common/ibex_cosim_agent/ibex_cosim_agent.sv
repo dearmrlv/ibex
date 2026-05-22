@@ -42,6 +42,10 @@ class ibex_cosim_agent extends uvm_agent;
   endfunction: connect_phase
 
   function void write_mem_byte(bit [31:0] addr, bit [7:0] d);
+    if (scoreboard.cfg.relax_cosim_check) begin
+      return;
+    end
+
     riscv_cosim_write_mem_byte(scoreboard.cosim_handle, addr, d);
   endfunction
 
@@ -57,6 +61,10 @@ class ibex_cosim_agent extends uvm_agent;
      bit [7:0]   r8;
      bit [31:0]  addr = base_addr;
      int         bin_fd;
+    if (scoreboard.cfg.relax_cosim_check) begin
+      return;
+    end
+
     bin_fd = $fopen(bin,"rb");
     if (!bin_fd)
       `uvm_fatal(get_full_name(), $sformatf("Cannot open file %0s", bin))

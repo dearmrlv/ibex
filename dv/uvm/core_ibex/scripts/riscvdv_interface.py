@@ -18,7 +18,7 @@ the riscdv way.
 import re
 import shlex
 import pathlib3x as pathlib
-from typing import Union, List, Dict
+from typing import Optional, Union, List, Dict
 from typeguard import typechecked
 
 from metadata import RegressionMetadata
@@ -38,11 +38,13 @@ parameter_regex = r'(<[\w]+>)'  # Find matches to the above format
 
 
 @typechecked
-def get_run_cmd(verbose: bool) -> List[Union[str, pathlib.Path]]:
+def get_run_cmd(verbose: bool,
+                testlist: Optional[Union[str, pathlib.Path]] = None) -> List[Union[str, pathlib.Path]]:
     """Return the command parts of a call to riscv-dv's run.py."""
     riscvdv_run_py = _RISCV_DV/'run.py'
     csr_desc = _CORE_IBEX_RISCV_DV_EXTENSION/'csr_description.yaml'
-    testlist = _CORE_IBEX_RISCV_DV_EXTENSION/'testlist.yaml'
+    if testlist is None:
+        testlist = _CORE_IBEX_RISCV_DV_EXTENSION/'testlist.yaml'
 
     cmd = ['python3',
            riscvdv_run_py,

@@ -370,6 +370,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     assign icache_ecc_error_o    = 'b0;
 
 `ifndef SYNTHESIS
+`ifdef VERILATOR
     // If we don't instantiate an icache and this is a simulation then we have a problem because the
     // simulator might discard the icache module entirely, including some DPI exports that it
     // implies. This then causes problems for linking against C++ testbench code that expected them.
@@ -383,6 +384,7 @@ module ibex_if_stage import ibex_pkg::*; #(
     function automatic int simutil_get_scramble_nonce(output bit [319:0] nonce);
       return 0;
     endfunction
+`endif
 `endif
   end
 

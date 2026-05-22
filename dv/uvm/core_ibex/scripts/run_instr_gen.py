@@ -183,7 +183,7 @@ def _main() -> int:
         orig_list = pathlib.Path(td)/'cmds.list'
         placeholder = pathlib.Path(td)/'@@PLACEHOLDER@@'
 
-        cmd = (riscvdv_interface.get_run_cmd(md.verbose) +
+        cmd = (riscvdv_interface.get_run_cmd(md.verbose, md.ibex_riscvdv_testlist) +
                ['--so', '--steps=gen',
                 '--output', str(placeholder),
                 '--simulator', md.simulator,

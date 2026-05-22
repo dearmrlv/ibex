@@ -35,7 +35,7 @@ def get_riscvdv_compile_cmds(md: RegressionMetadata, trr: TestRunResult) -> List
         placeholder = td/'@@PLACEHOLDER@@'
         orig_list = td/'orig-cmds.list'
 
-        cmd = (riscvdv_interface.get_run_cmd(bool(md.verbose)) +
+        cmd = (riscvdv_interface.get_run_cmd(bool(md.verbose), md.ibex_riscvdv_testlist) +
                ['--verbose',
                 '--output', placeholder,
                 '--steps=gcc_compile',

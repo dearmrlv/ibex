@@ -225,6 +225,7 @@ def create_cov_summary_dict(metadata: RegressionMetadata) -> Dict[str, int]:
         for metric_name in IBEX_COVERAGE_METRICS:
             add_cov_to_summary(metric_name, cov_report_dict['ibex_top'],
                     cov_summary_dict)
+            cov_summary_dict.setdefault(metric_name, None)
 
     cov_summary_dict['covergroup'] = calc_cg_average(cg_report_dict)
 

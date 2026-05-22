@@ -75,10 +75,9 @@ $(METADATA-DIR)/instr.gen.build.stamp: \
 #         …
 
 $(riscvdv-test-asms): $(TESTS-DIR)/%/$(asm-stem): \
-  $(INSTR-GEN-BUILD-STAMP) $(TESTLIST) scripts/run_instr_gen.py
+  $(INSTR-GEN-BUILD-STAMP) $(TESTLIST) $(METADATA-DIR)/%.pickle scripts/run_instr_gen.py
 	@echo Running randomized test generator to create assembly file $@
 	$(verb)env PYTHONPATH=$(PYTHONPATH) \
 	scripts/run_instr_gen.py \
 	  --dir-metadata $(METADATA-DIR) \
 	  --test-dot-seed $*
-

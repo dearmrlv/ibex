@@ -247,6 +247,7 @@
         xrun
         -64bit
         -q
+        -clean
         -f <core_ibex>/ibex_dv_defines.f
         -f <core_ibex>/ibex_dv.f
         -sv
@@ -297,6 +298,7 @@
       -covworkdir <test_dir>
       -covscope coverage
       -covtest <test_name>.<seed>
+      -covoverwrite
       +enable_ibex_fcov=1
     wave_opts: >
       -input @"database -open <test_dir>/waves -shm -default"

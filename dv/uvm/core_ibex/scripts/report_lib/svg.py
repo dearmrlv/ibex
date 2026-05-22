@@ -126,22 +126,23 @@ def output_results_svg(test_summary_dict: Dict[str, Dict[str, int]],
 
 
     if cov_summary_dict:
-        code_coverage = sum([cov_summary_dict['block'],
-                cov_summary_dict['branch'],
-                cov_summary_dict['statement'],
-                cov_summary_dict['expression'],
-                cov_summary_dict['fsm']]) / 5
+        code_coverage_values = [
+                cov_summary_dict[metric_name]
+                for metric_name in ['block', 'branch', 'statement', 'expression', 'fsm']
+                if cov_summary_dict.get(metric_name) is not None]
 
+        if cov_summary_dict.get('covergroup') is not None:
+            dashboard_elements.append(
+                    DashboardElement("Functional Coverage",
+                        f"{cov_summary_dict['covergroup'] * 100:.1f}%", 150,
+                        value_colour = css_red_green_gradient(
+                            cov_summary_dict['covergroup'])))
 
-        dashboard_elements.append(
-                DashboardElement("Functional Coverage",
-                    f"{cov_summary_dict['covergroup'] * 100:.1f}%", 150,
-                    value_colour = css_red_green_gradient(
-                        cov_summary_dict['covergroup'])))
-
-        dashboard_elements.append(
-                DashboardElement("Code Coverage", f"{code_coverage * 100:.1f}%",
-                    120, value_colour = css_red_green_gradient(code_coverage)))
+        if code_coverage_values:
+            code_coverage = sum(code_coverage_values) / len(code_coverage_values)
+            dashboard_elements.append(
+                    DashboardElement("Code Coverage", f"{code_coverage * 100:.1f}%",
+                        120, value_colour = css_red_green_gradient(code_coverage)))
 
 
     regression_dashboard = Dashboard(dashboard_elements, SVG_DASHBOARD_GAP)

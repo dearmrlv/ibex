@@ -1,0 +1,4 @@
+// Xcelium 20.09 rejects the vendored OpenTitan select_coverage commands used
+// by cover.ccf. Keep the common scoring controls and rely on the xrun command's
+// -coverage all -covdut ibex_top options for DUT selection.
+include_ccf ${dv_root}/tools/xcelium/common.ccf

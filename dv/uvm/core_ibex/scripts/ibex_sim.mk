@@ -49,7 +49,7 @@ $(METADATA-DIR)/tb.compile.stamp: \
 # Run ibex RTL simulation with random or directed test and uvm stimulus
 
 $(rtl-sim-logs): $(TESTS-DIR)/%/$(rtl-sim-logfile): \
-  $(TB-COMPILE-STAMP) $(TESTS-DIR)/%/test.bin scripts/run_rtl.py
+  $(TB-COMPILE-STAMP) $(TESTS-DIR)/%/test.bin scripts/run_rtl.py yaml/rtl_simulation.yaml
 	@echo Running RTL simulation at $(@D)
 	$(verb)env PYTHONPATH=$(PYTHONPATH) \
 	scripts/run_rtl.py \

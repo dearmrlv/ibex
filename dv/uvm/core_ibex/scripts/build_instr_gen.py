@@ -36,7 +36,7 @@ def _main() -> int:
         md.dir_instruction_generator.mkdir(exist_ok=True, parents=True)
         md.riscvdv_build_stdout = md.dir_instruction_generator/'build_stdout.log'
         md.riscvdv_build_cmds = [format_to_cmd(
-            riscvdv_interface.get_run_cmd(md.verbose) +
+            riscvdv_interface.get_run_cmd(md.verbose, md.ibex_riscvdv_testlist) +
             ['--co', '--steps=gen',
              '--simulator', md.simulator,
              '--output', md.dir_instruction_generator,
@@ -50,4 +50,3 @@ def _main() -> int:
 
 if __name__ == '__main__':
     sys.exit(_main())
-
