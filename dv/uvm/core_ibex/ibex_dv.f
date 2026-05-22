@@ -132,5 +132,7 @@ ${PRJ_DIR}/dv/uvm/core_ibex/env/core_ibex_env_pkg.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/tests/core_ibex_test_pkg.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/fcov/core_ibex_fcov_if.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/fcov/core_ibex_fcov_bind.sv
+${PRJ_DIR}/dv/uvm/core_ibex/fcov/bsd_cov_hazard_stall_trace_if.sv
+${PRJ_DIR}/dv/uvm/core_ibex/fcov/bsd_cov_hazard_stall_bind.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/fcov/core_ibex_pmp_fcov_if.sv
 ${PRJ_DIR}/dv/uvm/core_ibex/tb/core_ibex_tb_top.sv
