@@ -6782,3 +6782,14 @@
   iterations: 1
   test_srcs: ../../../../vendor/riscv-isa-sim/tests/mseccfg/gengen_src/outputs/test_pmp_ok_share_1_r1_x1_cfgl1_typex1_umode1.c
   config: epmp-tests
+
+# BSD-COV GENERATED BEGIN
+- test: bsd_cov_guided_hazard_stall
+  desc: >
+    BSD-Cov generated hazard/stall directed test from regions.json.
+  iterations: 1
+  test_srcs: bsd_cov_generated/bsd_cov_guided_hazard_stall.S
+  config: riscv-tests
+  sim_opts: >
+    +bsd_cov_hazard_stall_trace
+# BSD-COV GENERATED END

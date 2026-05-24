@@ -51,6 +51,7 @@ class DConfig(pydantic.BaseModel):  # noqa
     # RTL Simulation Options
     rtl_test: str
     rtl_params: dict
+    sim_opts: str = ""
     timeout_s: pydantic.conint(gt=0)
 
     # Directed Test Build Options
