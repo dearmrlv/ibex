@@ -6784,12 +6784,12 @@
   config: epmp-tests
 
 # BSD-COV GENERATED BEGIN
-- test: bsd_cov_guided_hazard_stall
+- test: bsd_cov_guided_hazard_stall_1k
   desc: >
     BSD-Cov generated hazard/stall directed test from regions.json.
   iterations: 1
-  test_srcs: bsd_cov_generated/bsd_cov_guided_hazard_stall.S
+  test_srcs: bsd_cov_generated/bsd_cov_guided_hazard_stall_1k.S
   config: riscv-tests
   sim_opts: >
-    +bsd_cov_hazard_stall_trace
+    +bsd_cov_hazard_stall_trace +bsd_cov_sample_step=1000 +bsd_cov_sample_limit=1000 -input /home/lvzhengyang/workspace/BSD-Cov/exp/ibex_riscvdv/bsdcov_guided_hazard_stall_1k/generated/bsdcov_guided_hazard_stall_1k/coverage_sampling.tcl
 # BSD-COV GENERATED END
