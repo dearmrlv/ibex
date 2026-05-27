@@ -17,6 +17,7 @@ bsd_cov_ibex_top_input_assumptions
     .RV32E(RV32E),
     .RV32M(RV32M),
     .RV32B(RV32B),
+    .RV32ZC(RV32ZC),
     .RegFile(RegFile),
 
     .BranchTargetALU(BranchTargetALU),
@@ -45,19 +46,22 @@ bsd_cov_ibex_top_input_assumptions
     .DATA_RVALID_MAX_LATENCY(5),
 
     .ASSUME_NORMAL_ENVIRONMENT(1'b1),
+    .ASSUME_RESET_BOOT(1'b1),
+    .RESET_BOOT_CYCLES(2),
+
     .ASSUME_BOOT_ADDR_ZERO(1'b1),
     .ASSUME_FETCH_ENABLE_ON(1'b1),
     .ASSUME_TEST_EN_ON(1'b1),
 
     .ASSUME_IMEM_ADDR_RANGE(1'b1),
     .ASSUME_IMEM_WORD_ALIGNED(1'b1),
-    .ASSUME_LEGAL_INSTR_SUBSET(1'b1),
+    .ASSUME_LEGAL_ID_STAGE_INSTR(1'b1),
 
     .ASSUME_DMEM_ADDR_RANGE(1'b1),
     .ASSUME_DMEM_WORD_ALIGNED(1'b1),
 
-    .ASSUME_SINGLE_OUTSTANDING_INSTR(1'b1),
-    .ASSUME_SINGLE_OUTSTANDING_DATA(1'b1)
+    .ASSUME_SINGLE_OUTSTANDING_INSTR(1'b0),
+    .ASSUME_SINGLE_OUTSTANDING_DATA(1'b0)
 )
 bsd_cov_ibex_top_input_assumptions_inst
 (
@@ -65,6 +69,9 @@ bsd_cov_ibex_top_input_assumptions_inst
     .rst_ni(rst_ni),
 
     .test_en_i(test_en_i),
+    .scan_rst_ni(scan_rst_ni),
+    .ram_cfg_icache_tag_i(ram_cfg_icache_tag_i),
+    .ram_cfg_icache_data_i(ram_cfg_icache_data_i),
     .hart_id_i(hart_id_i),
     .boot_addr_i(boot_addr_i),
     .fetch_enable_i(fetch_enable_i),
@@ -76,12 +83,16 @@ bsd_cov_ibex_top_input_assumptions_inst
     .irq_nm_i(irq_nm_i),
 
     .debug_req_i(debug_req_i),
+    .scramble_key_valid_i(scramble_key_valid_i),
+    .scramble_key_i(scramble_key_i),
+    .scramble_nonce_i(scramble_nonce_i),
 
     .instr_req_o(instr_req_o),
     .instr_gnt_i(instr_gnt_i),
     .instr_rvalid_i(instr_rvalid_i),
     .instr_addr_o(instr_addr_o),
     .instr_rdata_i(instr_rdata_i),
+    .instr_rdata_intg_i(instr_rdata_intg_i),
     .instr_err_i(instr_err_i),
 
     .data_req_o(data_req_o),
@@ -92,7 +103,15 @@ bsd_cov_ibex_top_input_assumptions_inst
     .data_addr_o(data_addr_o),
     .data_wdata_o(data_wdata_o),
     .data_rdata_i(data_rdata_i),
-    .data_err_i(data_err_i)
+    .data_rdata_intg_i(data_rdata_intg_i),
+    .data_err_i(data_err_i),
+
+    .instr_valid_id_i(u_ibex_core.instr_valid_id),
+    .instr_fetch_err_id_i(u_ibex_core.instr_fetch_err),
+    .illegal_c_insn_id_i(u_ibex_core.illegal_c_insn_id),
+    .illegal_insn_id_i(u_ibex_core.illegal_insn_id),
+    .instr_is_compressed_id_i(u_ibex_core.instr_is_compressed_id),
+    .pc_id_i(u_ibex_core.pc_id)
 );
 
 
@@ -114,6 +133,7 @@ module bsd_cov_ibex_top_input_assumptions
     parameter bit RV32E = 1'b0,
     parameter ibex_pkg::rv32m_e RV32M = ibex_pkg::RV32MFast,
     parameter ibex_pkg::rv32b_e RV32B = ibex_pkg::RV32BNone,
+    parameter ibex_pkg::rv32zc_e RV32ZC = ibex_pkg::RV32ZcaZcbZcmp,
     parameter ibex_pkg::regfile_e RegFile = ibex_pkg::RegFileFF,
 
     parameter bit BranchTargetALU = 1'b0,
@@ -141,13 +161,16 @@ module bsd_cov_ibex_top_input_assumptions
     parameter int unsigned DATA_RVALID_MAX_LATENCY = 5,
 
     parameter bit ASSUME_NORMAL_ENVIRONMENT = 1'b1,
+    parameter bit ASSUME_RESET_BOOT = 1'b1,
+    parameter int unsigned RESET_BOOT_CYCLES = 2,
+
     parameter bit ASSUME_BOOT_ADDR_ZERO = 1'b1,
     parameter bit ASSUME_FETCH_ENABLE_ON = 1'b1,
     parameter bit ASSUME_TEST_EN_ON = 1'b1,
 
     parameter bit ASSUME_IMEM_ADDR_RANGE = 1'b1,
     parameter bit ASSUME_IMEM_WORD_ALIGNED = 1'b1,
-    parameter bit ASSUME_LEGAL_INSTR_SUBSET = 1'b1,
+    parameter bit ASSUME_LEGAL_ID_STAGE_INSTR = 1'b1,
 
     parameter bit ASSUME_DMEM_ADDR_RANGE = 1'b1,
     parameter bit ASSUME_DMEM_WORD_ALIGNED = 1'b1,
@@ -160,9 +183,12 @@ module bsd_cov_ibex_top_input_assumptions
     input  logic rst_ni,
 
     input  logic test_en_i,
+    input  logic scan_rst_ni,
+    input  prim_ram_1p_pkg::ram_1p_cfg_t ram_cfg_icache_tag_i,
+    input  prim_ram_1p_pkg::ram_1p_cfg_t ram_cfg_icache_data_i,
     input  logic [31:0] hart_id_i,
     input  logic [31:0] boot_addr_i,
-    input  ibex_pkg::mubi4_t fetch_enable_i,
+    input  ibex_pkg::ibex_mubi_t fetch_enable_i,
 
     input  logic irq_software_i,
     input  logic irq_timer_i,
@@ -171,12 +197,16 @@ module bsd_cov_ibex_top_input_assumptions
     input  logic irq_nm_i,
 
     input  logic debug_req_i,
+    input  logic scramble_key_valid_i,
+    input  logic [ibex_pkg::SCRAMBLE_KEY_W-1:0] scramble_key_i,
+    input  logic [ibex_pkg::SCRAMBLE_NONCE_W-1:0] scramble_nonce_i,
 
     input  logic instr_req_o,
     input  logic instr_gnt_i,
     input  logic instr_rvalid_i,
     input  logic [31:0] instr_addr_o,
     input  logic [31:0] instr_rdata_i,
+    input  logic [6:0] instr_rdata_intg_i,
     input  logic instr_err_i,
 
     input  logic data_req_o,
@@ -187,28 +217,38 @@ module bsd_cov_ibex_top_input_assumptions
     input  logic [31:0] data_addr_o,
     input  logic [31:0] data_wdata_o,
     input  logic [31:0] data_rdata_i,
-    input  logic data_err_i
+    input  logic [6:0] data_rdata_intg_i,
+    input  logic data_err_i,
+
+    input  logic instr_valid_id_i,
+    input  logic instr_fetch_err_id_i,
+    input  logic illegal_c_insn_id_i,
+    input  logic illegal_insn_id_i,
+    input  logic instr_is_compressed_id_i,
+    input  logic [31:0] pc_id_i
 );
 
     localparam int unsigned IMEM_AW = (IMEM_WORDS <= 1) ? 1 : $clog2(IMEM_WORDS);
     localparam int unsigned DMEM_AW = (DMEM_WORDS <= 1) ? 1 : $clog2(DMEM_WORDS);
+    localparam int unsigned IMEM_HALFWORDS = IMEM_WORDS * 2;
+    localparam int unsigned IMEM_HAW = (IMEM_HALFWORDS <= 1) ? 1 : $clog2(IMEM_HALFWORDS);
+    localparam int unsigned RESET_BOOT_CW = (RESET_BOOT_CYCLES <= 1) ? 1 :
+                                            $clog2(RESET_BOOT_CYCLES + 1);
+    localparam logic [RESET_BOOT_CW-1:0] RESET_BOOT_DONE_COUNT = RESET_BOOT_CYCLES;
 
     // -------------------------------------------------------------------------
-    // Symbolic replayable instruction memory.
-    //
-    // Initial values are formal-symbolic. The self-hold makes the instruction
-    // memory stable after initialization:
-    //
-    //   same PC -> same instruction
+    // Symbolic replayable instruction memory, stored as halfwords so the
+    // generated witness can contain compressed instructions and 32-bit
+    // instructions starting at halfword PCs.
     // -------------------------------------------------------------------------
 
-    logic [31:0] imem [0:IMEM_WORDS-1];
+    logic [15:0] imem_hword [0:IMEM_HALFWORDS-1];
 
     genvar gi;
     generate
-        for (gi = 0; gi < IMEM_WORDS; gi = gi + 1) begin : g_imem_hold
+        for (gi = 0; gi < IMEM_HALFWORDS; gi = gi + 1) begin : g_imem_hold
             always_ff @(posedge clk_i) begin
-                imem[gi] <= imem[gi];
+                imem_hword[gi] <= imem_hword[gi];
             end
         end
     endgenerate
@@ -231,16 +271,35 @@ module bsd_cov_ibex_top_input_assumptions
         imem_addr_in_range = (addr[31:IMEM_AW+2] == '0);
     endfunction
 
+    function automatic logic imem_pc_in_range(
+        input logic [31:0] addr,
+        input logic        is_compressed
+    );
+        imem_pc_in_range = (addr[0] == 1'b0) &&
+                           imem_addr_in_range(addr) &&
+                           (is_compressed || imem_addr_in_range(addr + 32'd2));
+    endfunction
+
     function automatic logic dmem_addr_in_range(input logic [31:0] addr);
         dmem_addr_in_range = (addr[31:DMEM_AW+2] == '0);
     endfunction
 
-    function automatic logic [IMEM_AW-1:0] imem_index(input logic [31:0] addr);
-        imem_index = addr[IMEM_AW+1:2];
+    function automatic logic [IMEM_HAW-1:0] imem_hword_index(input logic [31:0] addr);
+        imem_hword_index = addr[IMEM_HAW:1];
     endfunction
 
     function automatic logic [DMEM_AW-1:0] dmem_index(input logic [31:0] addr);
         dmem_index = addr[DMEM_AW+1:2];
+    endfunction
+
+    function automatic logic [31:0] imem_word_at_addr(input logic [31:0] addr);
+        logic [IMEM_HAW-1:0] idx;
+        logic [IMEM_HAW-1:0] idx_plus_one;
+        begin
+            idx = imem_hword_index(addr);
+            idx_plus_one = idx + 1'b1;
+            imem_word_at_addr = {imem_hword[idx_plus_one], imem_hword[idx]};
+        end
     endfunction
 
     function automatic logic [31:0] apply_store_mask(
@@ -262,134 +321,111 @@ module bsd_cov_ibex_top_input_assumptions
     endfunction
 
     // -------------------------------------------------------------------------
-    // Legal RV32I/M instruction subset.
+    // Reset-start model.
     //
-    // Allowed:
-    //   LUI, AUIPC,
-    //   JAL, JALR,
-    //   BEQ/BNE/BLT/BGE/BLTU/BGEU,
-    //   LW, SW,
-    //   ADDI/XORI/ORI/ANDI,
-    //   ADD/SUB/XOR/OR/AND,
-    //   MUL/MULH/MULHSU/MULHU/DIV/DIVU/REM/REMU.
+    // This prevents Jasper from seeding arbitrary post-reset pipeline state in
+    // cycle 0. The core and the local reference monitors must first observe a
+    // real reset, then any WB/outstanding/load-store state is produced only by
+    // subsequent instruction and data bus activity.
     // -------------------------------------------------------------------------
 
-    function automatic logic legal_rv32im_subset(input logic [31:0] insn);
-        logic [6:0] opcode;
-        logic [2:0] funct3;
-        logic [6:0] funct7;
-        begin
-            opcode = insn[6:0];
-            funct3 = insn[14:12];
-            funct7 = insn[31:25];
+    logic [RESET_BOOT_CW-1:0] reset_boot_count_q = '0;
 
-            legal_rv32im_subset = 1'b0;
-
-            unique case (opcode)
-                7'b0110111: begin
-                    legal_rv32im_subset = 1'b1; // LUI
-                end
-
-                7'b0010111: begin
-                    legal_rv32im_subset = 1'b1; // AUIPC
-                end
-
-                7'b1101111: begin
-                    legal_rv32im_subset = 1'b1; // JAL
-                end
-
-                7'b1100111: begin
-                    legal_rv32im_subset = (funct3 == 3'b000); // JALR
-                end
-
-                7'b1100011: begin
-                    unique case (funct3)
-                        3'b000,
-                        3'b001,
-                        3'b100,
-                        3'b101,
-                        3'b110,
-                        3'b111: legal_rv32im_subset = 1'b1;
-                        default: legal_rv32im_subset = 1'b0;
-                    endcase
-                end
-
-                7'b0000011: begin
-                    legal_rv32im_subset = (funct3 == 3'b010); // LW only
-                end
-
-                7'b0100011: begin
-                    legal_rv32im_subset = (funct3 == 3'b010); // SW only
-                end
-
-                7'b0010011: begin
-                    unique case (funct3)
-                        3'b000,
-                        3'b100,
-                        3'b110,
-                        3'b111: legal_rv32im_subset = 1'b1;
-                        default: legal_rv32im_subset = 1'b0;
-                    endcase
-                end
-
-                7'b0110011: begin
-                    unique case (funct7)
-                        7'b0000000: begin
-                            unique case (funct3)
-                                3'b000,
-                                3'b100,
-                                3'b110,
-                                3'b111: legal_rv32im_subset = 1'b1;
-                                default: legal_rv32im_subset = 1'b0;
-                            endcase
-                        end
-
-                        7'b0100000: begin
-                            legal_rv32im_subset = (funct3 == 3'b000); // SUB
-                        end
-
-                        7'b0000001: begin
-                            legal_rv32im_subset = 1'b1; // RV32M
-                        end
-
-                        default: begin
-                            legal_rv32im_subset = 1'b0;
-                        end
-                    endcase
-                end
-
-                default: begin
-                    legal_rv32im_subset = 1'b0;
-                end
-            endcase
-
-            legal_rv32im_subset = legal_rv32im_subset && (insn[1:0] == 2'b11);
+    always_ff @(posedge clk_i) begin
+        if (reset_boot_count_q < RESET_BOOT_DONE_COUNT) begin
+            reset_boot_count_q <= reset_boot_count_q + {{(RESET_BOOT_CW-1){1'b0}}, 1'b1};
         end
-    endfunction
+    end
+
+    generate
+        if (ASSUME_RESET_BOOT) begin : g_reset_boot_assumption
+            property p_reset_boot_asserted;
+                @(posedge clk_i)
+                    (reset_boot_count_q < RESET_BOOT_DONE_COUNT) |-> !rst_ni;
+            endproperty
+            asm_reset_boot_asserted: assume property (p_reset_boot_asserted);
+
+            property p_reset_boot_released;
+                @(posedge clk_i)
+                    (reset_boot_count_q >= RESET_BOOT_DONE_COUNT) |-> rst_ni;
+            endproperty
+            asm_reset_boot_released: assume property (p_reset_boot_released);
+        end
+    endgenerate
+
+    logic [2:0] valid_id_count_q;
+
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            valid_id_count_q <= '0;
+        end else if (instr_valid_id_i && valid_id_count_q != '1) begin
+            valid_id_count_q <= valid_id_count_q + 1'b1;
+        end
+    end
+
+    COV_BSDCOV_ENV_RESET_RELEASE:
+        cover property (@(posedge clk_i) rst_ni && $past(!rst_ni));
+
+    COV_BSDCOV_ENV_ONE_VALID_ID:
+        cover property (@(posedge clk_i) disable iff (!rst_ni) instr_valid_id_i);
+
+    COV_BSDCOV_ENV_TWO_VALID_ID:
+        cover property (@(posedge clk_i) disable iff (!rst_ni) valid_id_count_q >= 3'd2);
 
     // -------------------------------------------------------------------------
     // Instruction bus reference state.
     // -------------------------------------------------------------------------
 
-    logic instr_outstanding_q;
-    logic [31:0] instr_pending_addr_q;
+    logic [1:0]  instr_pending_count_q;
+    logic [31:0] instr_pending_addr0_q;
+    logic [31:0] instr_pending_addr1_q;
 
     wire instr_accept = instr_req_o && instr_gnt_i;
     wire instr_done   = instr_rvalid_i;
+    wire instr_pending_full = (instr_pending_count_q == 2'd2);
+    wire instr_pending_has_space = !instr_pending_full || instr_done;
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            instr_outstanding_q  <= 1'b0;
-            instr_pending_addr_q <= '0;
+            instr_pending_count_q <= 2'd0;
+            instr_pending_addr0_q <= '0;
+            instr_pending_addr1_q <= '0;
         end else begin
-            if (instr_accept) begin
-                instr_outstanding_q  <= 1'b1;
-                instr_pending_addr_q <= instr_addr_o;
-            end
+            unique case ({instr_done, instr_accept})
+                2'b01: begin
+                    if (instr_pending_count_q == 2'd0) begin
+                        instr_pending_addr0_q <= instr_addr_o;
+                        instr_pending_count_q <= 2'd1;
+                    end else if (instr_pending_count_q == 2'd1) begin
+                        instr_pending_addr1_q <= instr_addr_o;
+                        instr_pending_count_q <= 2'd2;
+                    end
+                end
 
-            if (instr_done) begin
-                instr_outstanding_q <= 1'b0;
-            end
+                2'b10: begin
+                    if (instr_pending_count_q == 2'd1) begin
+                        instr_pending_count_q <= 2'd0;
+                    end else if (instr_pending_count_q == 2'd2) begin
+                        instr_pending_addr0_q <= instr_pending_addr1_q;
+                        instr_pending_count_q <= 2'd1;
+                    end
+                end
+
+                2'b11: begin
+                    if (instr_pending_count_q == 2'd1) begin
+                        instr_pending_addr0_q <= instr_addr_o;
+                        instr_pending_count_q <= 2'd1;
+                    end else if (instr_pending_count_q == 2'd2) begin
+                        instr_pending_addr0_q <= instr_pending_addr1_q;
+                        instr_pending_addr1_q <= instr_addr_o;
+                        instr_pending_count_q <= 2'd2;
+                    end
+                end
+
+                default: begin
+                    instr_pending_count_q <= instr_pending_count_q;
+                end
+            endcase
         end
     end
 
@@ -397,43 +433,101 @@ module bsd_cov_ibex_top_input_assumptions
     // Data bus reference state.
     // -------------------------------------------------------------------------
 
-    logic data_outstanding_q;
-    logic [31:0] data_pending_addr_q;
-    logic        data_pending_we_q;
-    logic [3:0]  data_pending_be_q;
-    logic [31:0] data_pending_wdata_q;
+    logic [1:0]  data_pending_count_q;
+    logic [31:0] data_pending_addr0_q;
+    logic [31:0] data_pending_addr1_q;
+    logic        data_pending_we0_q;
+    logic        data_pending_we1_q;
+    logic [3:0]  data_pending_be0_q;
+    logic [3:0]  data_pending_be1_q;
+    logic [31:0] data_pending_wdata0_q;
+    logic [31:0] data_pending_wdata1_q;
 
     wire data_accept = data_req_o && data_gnt_i;
     wire data_done   = data_rvalid_i;
+    wire data_pending_full = (data_pending_count_q == 2'd2);
+    wire data_pending_has_space = !data_pending_full || data_done;
+
+    COV_BSDCOV_ENV_DATA_RESPONSE:
+        cover property (
+            @(posedge clk_i) disable iff (!rst_ni)
+                data_accept ##[1:DATA_RVALID_MAX_LATENCY] data_rvalid_i
+        );
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            data_outstanding_q   <= 1'b0;
-            data_pending_addr_q  <= '0;
-            data_pending_we_q    <= 1'b0;
-            data_pending_be_q    <= '0;
-            data_pending_wdata_q <= '0;
+            data_pending_count_q  <= 2'd0;
+            data_pending_addr0_q  <= '0;
+            data_pending_addr1_q  <= '0;
+            data_pending_we0_q    <= 1'b0;
+            data_pending_we1_q    <= 1'b0;
+            data_pending_be0_q    <= '0;
+            data_pending_be1_q    <= '0;
+            data_pending_wdata0_q <= '0;
+            data_pending_wdata1_q <= '0;
         end else begin
-            if (data_accept) begin
-                data_outstanding_q   <= 1'b1;
-                data_pending_addr_q  <= data_addr_o;
-                data_pending_we_q    <= data_we_o;
-                data_pending_be_q    <= data_be_o;
-                data_pending_wdata_q <= data_wdata_o;
-            end
+            unique case ({data_done, data_accept})
+                2'b01: begin
+                    if (data_pending_count_q == 2'd0) begin
+                        data_pending_addr0_q  <= data_addr_o;
+                        data_pending_we0_q    <= data_we_o;
+                        data_pending_be0_q    <= data_be_o;
+                        data_pending_wdata0_q <= data_wdata_o;
+                        data_pending_count_q  <= 2'd1;
+                    end else if (data_pending_count_q == 2'd1) begin
+                        data_pending_addr1_q  <= data_addr_o;
+                        data_pending_we1_q    <= data_we_o;
+                        data_pending_be1_q    <= data_be_o;
+                        data_pending_wdata1_q <= data_wdata_o;
+                        data_pending_count_q  <= 2'd2;
+                    end
+                end
 
-            if (data_done) begin
-                data_outstanding_q <= 1'b0;
-            end
+                2'b10: begin
+                    if (data_pending_count_q == 2'd1) begin
+                        data_pending_count_q <= 2'd0;
+                    end else if (data_pending_count_q == 2'd2) begin
+                        data_pending_addr0_q  <= data_pending_addr1_q;
+                        data_pending_we0_q    <= data_pending_we1_q;
+                        data_pending_be0_q    <= data_pending_be1_q;
+                        data_pending_wdata0_q <= data_pending_wdata1_q;
+                        data_pending_count_q  <= 2'd1;
+                    end
+                end
+
+                2'b11: begin
+                    if (data_pending_count_q == 2'd1) begin
+                        data_pending_addr0_q  <= data_addr_o;
+                        data_pending_we0_q    <= data_we_o;
+                        data_pending_be0_q    <= data_be_o;
+                        data_pending_wdata0_q <= data_wdata_o;
+                        data_pending_count_q  <= 2'd1;
+                    end else if (data_pending_count_q == 2'd2) begin
+                        data_pending_addr0_q  <= data_pending_addr1_q;
+                        data_pending_we0_q    <= data_pending_we1_q;
+                        data_pending_be0_q    <= data_pending_be1_q;
+                        data_pending_wdata0_q <= data_pending_wdata1_q;
+                        data_pending_addr1_q  <= data_addr_o;
+                        data_pending_we1_q    <= data_we_o;
+                        data_pending_be1_q    <= data_be_o;
+                        data_pending_wdata1_q <= data_wdata_o;
+                        data_pending_count_q  <= 2'd2;
+                    end
+                end
+
+                default: begin
+                    data_pending_count_q <= data_pending_count_q;
+                end
+            endcase
         end
     end
 
     always_ff @(posedge clk_i) begin
-        if (data_accept && data_we_o) begin
-            dmem[dmem_index(data_addr_o)] <= apply_store_mask(
-                dmem[dmem_index(data_addr_o)],
-                data_wdata_o,
-                data_be_o
+        if (rst_ni && data_done && data_pending_we0_q) begin
+            dmem[dmem_index(data_pending_addr0_q)] <= apply_store_mask(
+                dmem[dmem_index(data_pending_addr0_q)],
+                data_pending_wdata0_q,
+                data_pending_be0_q
             );
         end
     end
@@ -493,6 +587,34 @@ module bsd_cov_ibex_top_input_assumptions
             endproperty
             asm_no_data_err: assume property (p_no_data_err);
 
+            property p_scan_reset_released;
+                @(posedge clk_i) disable iff (!rst_ni)
+                    scan_rst_ni == 1'b1;
+            endproperty
+            asm_scan_reset_released: assume property (p_scan_reset_released);
+
+            property p_no_scramble_key;
+                @(posedge clk_i) disable iff (!rst_ni)
+                    scramble_key_valid_i == 1'b0 &&
+                    scramble_key_i == '0 &&
+                    scramble_nonce_i == '0;
+            endproperty
+            asm_no_scramble_key: assume property (p_no_scramble_key);
+
+            property p_no_mem_integrity_bits;
+                @(posedge clk_i) disable iff (!rst_ni)
+                    instr_rdata_intg_i == '0 &&
+                    data_rdata_intg_i == '0;
+            endproperty
+            asm_no_mem_integrity_bits: assume property (p_no_mem_integrity_bits);
+
+            property p_default_ram_cfg;
+                @(posedge clk_i) disable iff (!rst_ni)
+                    ram_cfg_icache_tag_i == prim_ram_1p_pkg::RAM_1P_CFG_DEFAULT &&
+                    ram_cfg_icache_data_i == prim_ram_1p_pkg::RAM_1P_CFG_DEFAULT;
+            endproperty
+            asm_default_ram_cfg: assume property (p_default_ram_cfg);
+
         end
     endgenerate
 
@@ -537,14 +659,16 @@ module bsd_cov_ibex_top_input_assumptions
     // -------------------------------------------------------------------------
 
     generate
-        if (ASSUME_LEGAL_INSTR_SUBSET) begin : g_legal_instr_subset_assumptions
-            for (gi = 0; gi < IMEM_WORDS; gi = gi + 1) begin : g_legal_imem_word
-                property p_legal_imem_word;
-                    @(posedge clk_i) disable iff (!rst_ni)
-                        legal_rv32im_subset(imem[gi]);
-                endproperty
-                asm_legal_imem_word: assume property (p_legal_imem_word);
-            end
+        if (ASSUME_LEGAL_ID_STAGE_INSTR) begin : g_legal_id_stage_instr_assumption
+            property p_legal_id_stage_instr;
+                @(posedge clk_i) disable iff (!rst_ni)
+                    instr_valid_id_i |->
+                    !instr_fetch_err_id_i &&
+                    !illegal_c_insn_id_i &&
+                    !illegal_insn_id_i &&
+                    imem_pc_in_range(pc_id_i, instr_is_compressed_id_i);
+            endproperty
+            asm_legal_id_stage_instr: assume property (p_legal_id_stage_instr);
         end
     endgenerate
 
@@ -552,31 +676,32 @@ module bsd_cov_ibex_top_input_assumptions
     // Instruction protocol assumptions.
     // -------------------------------------------------------------------------
 
-    property p_instr_gnt_only_on_req;
+    property p_instr_gnt_only_on_req_with_space;
         @(posedge clk_i) disable iff (!rst_ni)
-            instr_gnt_i |-> instr_req_o;
+            instr_gnt_i |-> instr_req_o && instr_pending_has_space;
     endproperty
-    asm_instr_gnt_only_on_req: assume property (p_instr_gnt_only_on_req);
+    asm_instr_gnt_only_on_req_with_space: assume property (p_instr_gnt_only_on_req_with_space);
 
     property p_instr_rvalid_only_when_outstanding;
         @(posedge clk_i) disable iff (!rst_ni)
-            instr_rvalid_i |-> instr_outstanding_q;
+            instr_rvalid_i |-> (instr_pending_count_q != 2'd0);
     endproperty
     asm_instr_rvalid_only_when_outstanding: assume property (p_instr_rvalid_only_when_outstanding);
 
     generate
         if (ASSUME_SINGLE_OUTSTANDING_INSTR) begin : g_single_outstanding_instr_assumption
-            property p_no_new_instr_accept_while_outstanding;
+            property p_no_second_instr_accept;
                 @(posedge clk_i) disable iff (!rst_ni)
-                    instr_outstanding_q |-> !instr_accept;
+                    (instr_pending_count_q != 2'd0 && !instr_done) |-> !instr_accept;
             endproperty
-            asm_no_new_instr_accept_while_outstanding: assume property (p_no_new_instr_accept_while_outstanding);
+            asm_no_second_instr_accept: assume property (p_no_second_instr_accept);
         end
     endgenerate
 
     property p_instr_req_gets_gnt;
         @(posedge clk_i) disable iff (!rst_ni)
-            instr_req_o |-> ##[0:INSTR_GNT_MAX_LATENCY] instr_gnt_i;
+            (instr_req_o && instr_pending_has_space)
+            |-> ##[0:INSTR_GNT_MAX_LATENCY] instr_gnt_i;
     endproperty
     asm_instr_req_gets_gnt: assume property (p_instr_req_gets_gnt);
 
@@ -608,7 +733,7 @@ module bsd_cov_ibex_top_input_assumptions
 
     property p_instr_rdata_matches_imem;
         @(posedge clk_i) disable iff (!rst_ni)
-            instr_rvalid_i |-> (instr_rdata_i == imem[imem_index(instr_pending_addr_q)]);
+            instr_rvalid_i |-> (instr_rdata_i == imem_word_at_addr(instr_pending_addr0_q));
     endproperty
     asm_instr_rdata_matches_imem: assume property (p_instr_rdata_matches_imem);
 
@@ -616,31 +741,32 @@ module bsd_cov_ibex_top_input_assumptions
     // Data protocol assumptions.
     // -------------------------------------------------------------------------
 
-    property p_data_gnt_only_on_req;
+    property p_data_gnt_only_on_req_with_space;
         @(posedge clk_i) disable iff (!rst_ni)
-            data_gnt_i |-> data_req_o;
+            data_gnt_i |-> data_req_o && data_pending_has_space;
     endproperty
-    asm_data_gnt_only_on_req: assume property (p_data_gnt_only_on_req);
+    asm_data_gnt_only_on_req_with_space: assume property (p_data_gnt_only_on_req_with_space);
 
     property p_data_rvalid_only_when_outstanding;
         @(posedge clk_i) disable iff (!rst_ni)
-            data_rvalid_i |-> data_outstanding_q;
+            data_rvalid_i |-> (data_pending_count_q != 2'd0);
     endproperty
     asm_data_rvalid_only_when_outstanding: assume property (p_data_rvalid_only_when_outstanding);
 
     generate
         if (ASSUME_SINGLE_OUTSTANDING_DATA) begin : g_single_outstanding_data_assumption
-            property p_no_new_data_accept_while_outstanding;
+            property p_no_second_data_accept;
                 @(posedge clk_i) disable iff (!rst_ni)
-                    data_outstanding_q |-> !data_accept;
+                    (data_pending_count_q != 2'd0 && !data_done) |-> !data_accept;
             endproperty
-            asm_no_new_data_accept_while_outstanding: assume property (p_no_new_data_accept_while_outstanding);
+            asm_no_second_data_accept: assume property (p_no_second_data_accept);
         end
     endgenerate
 
     property p_data_req_gets_gnt;
         @(posedge clk_i) disable iff (!rst_ni)
-            data_req_o |-> ##[0:DATA_GNT_MAX_LATENCY] data_gnt_i;
+            (data_req_o && data_pending_has_space)
+            |-> ##[0:DATA_GNT_MAX_LATENCY] data_gnt_i;
     endproperty
     asm_data_req_gets_gnt: assume property (p_data_req_gets_gnt);
 
@@ -672,9 +798,9 @@ module bsd_cov_ibex_top_input_assumptions
 
     property p_data_rdata_matches_dmem_on_load;
         @(posedge clk_i) disable iff (!rst_ni)
-            (data_rvalid_i && !data_pending_we_q)
+            (data_rvalid_i && !data_pending_we0_q)
             |->
-            (data_rdata_i == dmem[dmem_index(data_pending_addr_q)]);
+            (data_rdata_i == dmem[dmem_index(data_pending_addr0_q)]);
     endproperty
     asm_data_rdata_matches_dmem_on_load: assume property (p_data_rdata_matches_dmem_on_load);
 

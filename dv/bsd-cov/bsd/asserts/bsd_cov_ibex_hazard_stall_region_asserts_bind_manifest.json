@@ -1,0 +1,14 @@
+{
+  "accepted_region_count": 34,
+  "assertion_count": 34,
+  "bind_file": "designs/ibex/dv/bsd-cov/bsd/asserts/bsd_cov_ibex_hazard_stall_region_asserts_bind.sv",
+  "bind_instance": "ibex_top.u_ibex_core.id_stage_i",
+  "bind_module": "bsd_cov_ibex_hazard_stall_region_asserts_bind",
+  "cover_count": 34,
+  "property_prefix": "AST_BSDCOV_",
+  "regions_path": "exp/ibex_bsdcov/hazard_stall_baseline10k/artifacts/regions/regions.json",
+  "schema_version": "bsd_cov_region_asserts_v0.1",
+  "semantics": "hard_assert_region_predicate_implies_focus_outputs",
+  "target_id": "ibex_hazard_stall",
+  "target_path": "targets/ibex/hazard_stall.yaml"
+}

@@ -6784,11 +6784,11 @@
   config: epmp-tests
 
 # BSD-COV GENERATED BEGIN
-- test: bsd_cov_hybrid_prefix2000_suffix500
+- test: bsdcov_instr_seq_extra
   desc: >
     BSD-Cov generated hazard/stall directed test from regions.json.
   iterations: 1
-  test_srcs: bsd_cov_generated/bsd_cov_hybrid_prefix2000_suffix500.S
+  test_srcs: bsd_cov_generated/bsdcov_instr_seq_extra.S
   config: riscv-tests
   sim_opts: >
     +bsd_cov_hazard_stall_trace
