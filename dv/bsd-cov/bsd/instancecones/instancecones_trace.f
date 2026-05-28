@@ -1,0 +1,1 @@
+/home/lvzhengyang/workspace/BSD-Cov/exp/ibex_bsdcov/instancecones_baseline10k/artifacts/trace/bsd_cov_instancecones_trace_bind.sv

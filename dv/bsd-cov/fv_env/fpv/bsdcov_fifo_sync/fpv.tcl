@@ -18,38 +18,12 @@ puts "INFO: constraints  = fv_env/ibex_top.constraint.sv"
 puts "INFO: target set   = AST_BSDCOV_* region assertions"
 
 analyze -sv12 \
-  -f dut.f \
-  -f bsd/asserts/bsd_cov_region_asserts.f \
-  -f env.f
+  ../../bsdcov_fifo_sync.sv
 
-elaborate -top ibex_top \
-  -parameter RV32E                 0 \
-  -parameter RV32M                 {ibex_pkg::RV32MSingleCycle} \
-  -parameter RV32B                 {ibex_pkg::RV32BOTEarlGrey} \
-  -parameter RV32ZC                {ibex_pkg::RV32ZcaZcbZcmp} \
-  -parameter RegFile               {ibex_pkg::RegFileFF} \
-  -parameter BranchTargetALU       1 \
-  -parameter WritebackStage        1 \
-  -parameter ICache                1 \
-  -parameter ICacheECC             1 \
-  -parameter ICacheScramble        1 \
-  -parameter ICacheTweakInfection  0 \
-  -parameter BranchPredictor       0 \
-  -parameter DbgTriggerEn          1 \
-  -parameter DbgHwBreakNum         1 \
-  -parameter SecureIbex            1 \
-  -parameter LockstepOffset        1 \
-  -parameter PMPEnable             1 \
-  -parameter PMPGranularity        0 \
-  -parameter PMPNumRegions         16 \
-  -parameter MHPMCounterNum        10 \
-  -parameter MHPMCounterWidth      32 \
-  -parameter DmBaseAddr            {32'h1A110000} \
-  -parameter DmAddrMask            {32'h00000FFF} \
-  -parameter DmHaltAddr            {32'h80000000} \
-  -parameter DmExceptionAddr       {32'h80000008}
+elaborate -top bsdcov_fifo_sync \
+  -parameter Width 32 \
+  -parameter Depth 16
 clock clk_i
-
 reset ~rst_ni
 
 report -summary -file [file join $report_dir "fpv_setup_summary.$trace_name.txt"] -force
