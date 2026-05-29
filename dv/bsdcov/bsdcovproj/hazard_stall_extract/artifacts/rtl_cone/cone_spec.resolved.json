@@ -1,0 +1,79 @@
+{
+  "description": "Seed spec for generating a raw RTL cone target for Ibex ID-stage hazard/stall signals.\n",
+  "design": "ibex",
+  "endpoints": [
+    {
+      "hier": "stall_mem",
+      "name": "stall_mem",
+      "width": 1
+    },
+    {
+      "hier": "stall_ld_hz",
+      "name": "stall_ld_hz",
+      "width": 1
+    },
+    {
+      "hier": "stall_multdiv",
+      "name": "stall_multdiv",
+      "width": 1
+    },
+    {
+      "hier": "stall_branch",
+      "name": "stall_branch",
+      "width": 1
+    },
+    {
+      "hier": "stall_jump",
+      "name": "stall_jump",
+      "width": 1
+    },
+    {
+      "hier": "fcov_rf_rd_wb_hz",
+      "name": "rf_rd_wb_hz",
+      "width": 1
+    }
+  ],
+  "policies": {
+    "auto_promote_inputs": false,
+    "blackbox_policy": "error",
+    "deterministic_order": "hierarchical_path",
+    "flatten_instances": true,
+    "latch_boundary_policy": "error",
+    "memory_boundary_policy": "error",
+    "multi_driver_policy": "error",
+    "stop_at_module_inputs": true,
+    "stop_at_sequential_state": true,
+    "unresolved_policy": "error",
+    "unsupported_procedural_policy": "error"
+  },
+  "rtl": {
+    "defines": [],
+    "filelists": [
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/ibex_dv.f"
+    ],
+    "include_dirs": [],
+    "parameters": {
+      "BranchPredictor": 0,
+      "BranchTargetALU": 0,
+      "DataIndTiming": 0,
+      "MemECC": 0,
+      "RV32B": "RV32BNone",
+      "RV32E": 0,
+      "RV32M": "RV32MFast",
+      "WritebackStage": 1
+    },
+    "top_module": "ibex_id_stage"
+  },
+  "rtl_cone_dir": "designs/ibex/dv/bsdcov/bsdcovproj/hazard_stall_extract/artifacts/rtl_cone",
+  "run_dir": "designs/ibex/dv/bsdcov/bsdcovproj/hazard_stall_extract",
+  "source_seed": "designs/ibex/dv/bsdcov.old/targets/hazard_stall.seed.yaml",
+  "target_id": "ibex_hazard_stall",
+  "trace": {
+    "enable_plusarg": "bsd_cov_hazard_stall_trace",
+    "filename_suffix": "bsd_cov_hazard_stall.csv",
+    "invalid_policy": "drop",
+    "sample_condition": "instr_valid_i",
+    "sample_on": "posedge",
+    "x_policy": "drop"
+  }
+}

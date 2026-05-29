@@ -1,0 +1,8 @@
+updated_at = "2026-05-29T08:30:36.374556+00:00"
+status = "parsed"
+note = "Verific parse completed. Cone extraction and bind generation are the next prep increment."
+parse_log = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/db/log/parse.log"
+parsed_verilog = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/db/verilog/ibex_top.parsed.v"
+ports = 787
+nets = 2525
+instances = 426

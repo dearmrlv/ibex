@@ -1,0 +1,64 @@
+target_id: ibex_hazard_stall
+status: success
+top_module: ibex_id_stage
+golden_module: ibex_hazard_stall_cone
+
+endpoints:
+  total_bits: 6
+  signals:
+    - stall_mem
+    - stall_ld_hz
+    - stall_multdiv
+    - stall_branch
+    - stall_jump
+    - rf_rd_wb_hz
+
+boundaries:
+  module_inputs:
+    count: 11
+    signals:
+      - branch_decision_i
+      - data_ind_timing_i
+      - ex_valid_i
+      - instr_fetch_err_i
+      - instr_valid_i
+      - lsu_req_done_i
+      - lsu_resp_valid_i
+      - outstanding_load_wb_i
+      - outstanding_store_wb_i
+      - ready_wb_i
+      - rf_waddr_wb_i
+  state_cutpoints:
+    count: 11
+    signals:
+      - branch_in_dec
+      - controller_run
+      - div_en_dec
+      - id_fsm_q
+      - jump_in_dec
+      - lsu_req_dec
+      - mult_en_dec
+      - rf_raddr_a_o
+      - rf_raddr_b_o
+      - rf_ren_a
+      - rf_ren_b
+  constants:
+    count: 0
+  parameters:
+    count: 8
+
+checks:
+  unresolved_references: 0
+  blackbox_boundaries: 0
+  memory_boundaries: 0
+  latch_boundaries: 0
+  unsupported_procedural_blocks: 0
+  undriven_outputs: 0
+  multi_driver_conflicts: 0
+  width_mismatches: 0
+
+determinism:
+  input_order: sorted_by_hierarchical_path
+  output_order: endpoint_order_from_seed_spec
+
+implementation_note: Verific-backed Ibex id_stage hazard/stall cutpoint extraction
