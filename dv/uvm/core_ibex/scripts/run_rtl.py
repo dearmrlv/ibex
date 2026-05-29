@@ -40,6 +40,13 @@ def _using_xcelium_2009() -> bool:
     return False
 
 
+def _apply_cadence_xrun_wrapper(cmd):
+    cadence_xrun = os.environ.get('CADENCE_XRUN', '').strip()
+    if cadence_xrun and cmd and cmd[0] == 'xrun':
+        return [cadence_xrun] + cmd[1:]
+    return cmd
+
+
 def _main() -> int:
     """Generate and run rtl simulation commands."""
     parser = argparse.ArgumentParser()
@@ -111,7 +118,7 @@ def _main() -> int:
     logger.info(sim_cmds)
 
     trr.dir_test.mkdir(exist_ok=True, parents=True)
-    trr.rtl_cmds   = [format_to_cmd(cmd) for cmd in sim_cmds]
+    trr.rtl_cmds   = [_apply_cadence_xrun_wrapper(format_to_cmd(cmd)) for cmd in sim_cmds]
     trr.rtl_stdout = trr.dir_test / 'rtl_sim_stdstreams.log'
     # Since we cannot pass the logfile to VCS as an argument, we use stdstream log instead
     if (md.simulator == "vcs"):

@@ -6784,12 +6784,12 @@
   config: epmp-tests
 
 # BSD-COV GENERATED BEGIN
-- test: bsd_cov_sim_stall_ld_hz_001_bind
+- test: bsd_cov_hybrid_prefix2000_suffix500
   desc: >
     BSD-Cov generated hazard/stall directed test from regions.json.
   iterations: 1
-  test_srcs: bsd_cov_generated/bsd_cov_sim_stall_ld_hz_001_bind.S
+  test_srcs: bsd_cov_generated/bsd_cov_hybrid_prefix2000_suffix500.S
   config: riscv-tests
   sim_opts: >
-    +bsd_cov_hazard_stall_trace -input /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsd-cov/sim/out/stall_ld_hz_001/ucli.fsdb.cmd
+    +bsd_cov_hazard_stall_trace
 # BSD-COV GENERATED END

@@ -1,0 +1,42 @@
+design: ibex
+method: riscvdv
+experiment: ibex_bsd_cov_bind_stall_ld_hz_001
+
+ibex_dv_root: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex
+setup_env: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex/setup_env.sh
+
+make:
+  ibex_config: opentitan
+  simulator: xlm
+  iss: spike
+  waves: 0
+  cov: 0
+  verbose: 0
+  xrun: /home/lvzhengyang/workspace/cadence/xrun
+  extra_xrun_filelists:
+    - ${BSD_COV_ROOT}/designs/ibex/dv/bsd-cov/sim/out/stall_ld_hz_001/bsd_bind.f
+
+run:
+  start_seed: 888
+  num_seeds: 1
+
+budget:
+  primary_axis: generated_instr_count
+  generated_instr_budget: 2
+  per_seed_generated_instr: 2
+
+sampling:
+  mode: per_seed
+  trigger_type: generated
+  step: 2
+
+methods:
+  - id: bsd_cov_sim_stall_ld_hz_001_bind
+    name: bsd_cov_sim_stall_ld_hz_001_bind
+    type: directed_asm
+    test: bsd_cov_sim_stall_ld_hz_001_bind
+    description: BSD-Cov bind smoke simulation for R_stall_ld_hz_001.
+    requested_instr_cnt: 2
+    directed_test_src: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex/directed_tests/bsd_cov_generated/bsd_cov_sim_stall_ld_hz_001_bind.S
+    sim_opts: >
+      +bsd_cov_hazard_stall_trace -input /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsd-cov/sim/out/stall_ld_hz_001/ucli.fsdb.cmd

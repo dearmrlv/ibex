@@ -55,6 +55,7 @@ reset ~rst_ni
 report -summary -file [file join $report_dir "fpv_setup_summary.$trace_name.txt"] -force
 
 set_prove_dump_trace_type assert
+# set_trace_optimization standard
 set per_prop_time 300s
 
 set target_props {}
@@ -71,11 +72,13 @@ if {[llength $target_props] == 0} {
 
 puts "INFO: BSD-Cov region assertion count = [llength $target_props]"
 
+# prove -property $target_props -asserts -force \
+#   -per_property_time_limit $per_prop_time \
+#   -dump_trace \
+#   -dump_trace_type fsdb \
+#   -dump_trace_dir $trace_dir
 prove -property $target_props -asserts -force \
-  -per_property_time_limit $per_prop_time \
-  -dump_trace \
-  -dump_trace_type fsdb \
-  -dump_trace_dir $trace_dir
+  -per_property_time_limit $per_prop_time
 
 report -property $target_props -results -detailed \
   -file [file join $report_dir "fpv_report.$trace_name.txt"] -force

@@ -36,6 +36,13 @@ def _using_xcelium_2009() -> bool:
     return False
 
 
+def _apply_cadence_xrun_wrapper(cmd: List[str]) -> List[str]:
+    cadence_xrun = os.environ.get('CADENCE_XRUN', '').strip()
+    if cadence_xrun and cmd and cmd[0] == 'xrun':
+        return [cadence_xrun] + cmd[1:]
+    return cmd
+
+
 def _get_iss_pkgconfig_flags(specifiers: List[str], iss_pc: List[str], simulator: str) -> str:
     all_tokens = []
 
@@ -129,12 +136,25 @@ def _main() -> int:
         if md.simulator == 'xlm' and _using_xcelium_2009():
             xlm_cov_cfg_file = f"{md.ibex_dv_root}/xcelium_2009_cover.ccf"
 
+        extra_xrun_filelists = os.environ.get('BSD_COV_EXTRA_XRUN_FILELISTS', '').strip()
+        extra_xrun_filelist_opts = ''
+        if extra_xrun_filelists:
+            extra_xrun_filelist_opts = ' ' + ' '.join(
+                f'-f {path}' for path in extra_xrun_filelists.split())
+        extra_xrun_compile_opts = os.environ.get('BSD_COV_EXTRA_XRUN_COMPILE_OPTS', '').strip()
+        if extra_xrun_compile_opts:
+            extra_xrun_compile_opts = f' {extra_xrun_compile_opts}'
+        timescale_opt = ' -timescale 1ns/1ps' if md.simulator == 'xlm' else ''
+
         subst_vars_dict = {
             'core_ibex': md.ibex_dv_root,
             'tb_dir': md.dir_tb,
             'tb_build_log': md.tb_build_log,
             'cmp_opts':
-                get_compile_opts(md.ibex_config, md.simulator) + \
+                get_compile_opts(md.ibex_config, md.simulator) +
+                timescale_opt +
+                extra_xrun_compile_opts +
+                extra_xrun_filelist_opts + \
                 # Base address of the debug module. This is passed as a parameter
                 # at compile time as the PMP module must always allow debug mode
                 # accesses to it.
@@ -169,6 +189,7 @@ def _main() -> int:
                 'cosim_opts': True  # Always enable now post_compare is deprecated
             },
             user_subst_options=subst_vars_dict)
+        md.tb_build_cmds = [_apply_cadence_xrun_wrapper(cmd) for cmd in md.tb_build_cmds]
 
     # Write all compile-tb output into a single logfile
     with md.tb_build_stdout.open('wb') as compile_fd:

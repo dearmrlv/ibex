@@ -1,0 +1,8 @@
+- test: bsd_cov_unused_riscvdv_dummy
+  description: >
+    Unused dummy riscv-dv entry for directed BSD-Cov bind simulations.
+  gen_opts: >
+    +instr_cnt=1
+  iterations: 1
+  gen_test: riscv_instr_base_test
+  rtl_test: core_ibex_base_test
