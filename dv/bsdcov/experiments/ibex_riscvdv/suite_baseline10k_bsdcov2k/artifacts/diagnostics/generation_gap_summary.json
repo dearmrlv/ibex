@@ -1,0 +1,13 @@
+{
+  "nearregion_present_generated_absent": [
+    "branch_active",
+    "div_active",
+    "jump_active",
+    "lsu_wait",
+    "mult_active",
+    "stall_branch",
+    "stall_jump",
+    "stall_multdiv"
+  ],
+  "schema_version": "bsd_cov_generation_gap_summary_v0.1"
+}

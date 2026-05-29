@@ -1,0 +1,707 @@
+{
+  "baseline_prefix_run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888",
+  "baseline_prefix_trace_files": [
+    "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888/raw/baseline_prefix_10k_seed888/seed_888/out/run/tests/bsd_cov_baseline_prefix_10k.888/trace_core_bsd_cov_hazard_stall.csv"
+  ],
+  "baseline_prefix_trace_rows": 131586,
+  "common_threshold": 100,
+  "excluded_regions": [
+    {
+      "baseline_prefix_hit_count": 57730,
+      "intent_family": "memory_stall",
+      "intent_subtype": "lsu_burst",
+      "priority": 90,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_000",
+      "template": "memory_stall"
+    },
+    {
+      "baseline_prefix_hit_count": 19697,
+      "intent_family": "memory_stall",
+      "intent_subtype": "load_wait",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_001",
+      "template": "load_wait_mem"
+    },
+    {
+      "baseline_prefix_hit_count": 22433,
+      "intent_family": "memory_stall",
+      "intent_subtype": "store_wait",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_002",
+      "template": "store_wait_mem"
+    },
+    {
+      "baseline_prefix_hit_count": 781,
+      "intent_family": "load_use",
+      "intent_subtype": "rs1",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_ld_hz_001",
+      "template": "load_use_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 809,
+      "intent_family": "load_use",
+      "intent_subtype": "rs2",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_ld_hz_000",
+      "template": "load_use_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 407,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_rf_rd_wb_hz_005",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 465,
+      "intent_family": "jump",
+      "intent_subtype": "jump_basic",
+      "priority": 90,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_jump_003",
+      "template": "jump_jal"
+    },
+    {
+      "baseline_prefix_hit_count": 114,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_multdiv_008",
+      "template": "mul_active"
+    }
+  ],
+  "formal_witness_todo_regions": [],
+  "genseq_args": {
+    "exclude_regions": [
+      "R_stall_mem_000",
+      "R_stall_mem_001",
+      "R_stall_mem_002",
+      "R_stall_ld_hz_001",
+      "R_stall_ld_hz_000",
+      "R_rf_rd_wb_hz_005",
+      "R_stall_jump_003",
+      "R_stall_multdiv_008"
+    ],
+    "include_regions": [
+      "R_rf_rd_wb_hz_001",
+      "R_rf_rd_wb_hz_000",
+      "R_rf_rd_wb_hz_002",
+      "R_stall_jump_001",
+      "R_rf_rd_wb_hz_007",
+      "R_stall_multdiv_001",
+      "R_stall_jump_000",
+      "R_stall_multdiv_005",
+      "R_stall_jump_002",
+      "R_rf_rd_wb_hz_004",
+      "R_rf_rd_wb_hz_003",
+      "R_stall_branch_001",
+      "R_rf_rd_wb_hz_006",
+      "R_rf_rd_wb_hz_011",
+      "R_stall_multdiv_002",
+      "R_stall_multdiv_003",
+      "R_stall_multdiv_000",
+      "R_stall_branch_000",
+      "R_rf_rd_wb_hz_009",
+      "R_rf_rd_wb_hz_010",
+      "R_rf_rd_wb_hz_008",
+      "R_stall_multdiv_006",
+      "R_stall_multdiv_004",
+      "R_stall_multdiv_007",
+      "R_stall_branch_002",
+      "R_stall_multdiv_009"
+    ]
+  },
+  "region_hit_counts": {
+    "R_rf_rd_wb_hz_000": 0,
+    "R_rf_rd_wb_hz_001": 0,
+    "R_rf_rd_wb_hz_002": 0,
+    "R_rf_rd_wb_hz_003": 0,
+    "R_rf_rd_wb_hz_004": 0,
+    "R_rf_rd_wb_hz_005": 407,
+    "R_rf_rd_wb_hz_006": 0,
+    "R_rf_rd_wb_hz_007": 0,
+    "R_rf_rd_wb_hz_008": 0,
+    "R_rf_rd_wb_hz_009": 0,
+    "R_rf_rd_wb_hz_010": 0,
+    "R_rf_rd_wb_hz_011": 0,
+    "R_stall_branch_000": 0,
+    "R_stall_branch_001": 0,
+    "R_stall_branch_002": 0,
+    "R_stall_jump_000": 0,
+    "R_stall_jump_001": 0,
+    "R_stall_jump_002": 0,
+    "R_stall_jump_003": 465,
+    "R_stall_ld_hz_000": 809,
+    "R_stall_ld_hz_001": 781,
+    "R_stall_mem_000": 57730,
+    "R_stall_mem_001": 19697,
+    "R_stall_mem_002": 22433,
+    "R_stall_multdiv_000": 0,
+    "R_stall_multdiv_001": 0,
+    "R_stall_multdiv_002": 0,
+    "R_stall_multdiv_003": 0,
+    "R_stall_multdiv_004": 0,
+    "R_stall_multdiv_005": 0,
+    "R_stall_multdiv_006": 0,
+    "R_stall_multdiv_007": 0,
+    "R_stall_multdiv_008": 114,
+    "R_stall_multdiv_009": 0
+  },
+  "schema_version": "bsd_cov_target_selection_v0.1",
+  "selected_regions": [
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_001",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_000",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_002",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_001",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_007",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_001",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_000",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_005",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_002",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_004",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_003",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "branch",
+      "intent_subtype": "branch_basic",
+      "priority": 180,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_001",
+      "template": "branch_taken"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_006",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_011",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_002",
+      "template": "div_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_003",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_000",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "branch",
+      "intent_subtype": "branch_basic",
+      "priority": 180,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_000",
+      "template": "branch_taken"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_009",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_010",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_008",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_006",
+      "template": "div_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_004",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_007",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_002",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_009",
+      "template": "div_active"
+    }
+  ],
+  "target_id": "ibex_hazard_stall",
+  "template_supported_regions": [
+    {
+      "baseline_prefix_hit_count": 57730,
+      "intent_family": "memory_stall",
+      "intent_subtype": "lsu_burst",
+      "priority": 90,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_000",
+      "template": "memory_stall"
+    },
+    {
+      "baseline_prefix_hit_count": 19697,
+      "intent_family": "memory_stall",
+      "intent_subtype": "load_wait",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_001",
+      "template": "load_wait_mem"
+    },
+    {
+      "baseline_prefix_hit_count": 22433,
+      "intent_family": "memory_stall",
+      "intent_subtype": "store_wait",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_mem_002",
+      "template": "store_wait_mem"
+    },
+    {
+      "baseline_prefix_hit_count": 781,
+      "intent_family": "load_use",
+      "intent_subtype": "rs1",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_ld_hz_001",
+      "template": "load_use_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 809,
+      "intent_family": "load_use",
+      "intent_subtype": "rs2",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_ld_hz_000",
+      "template": "load_use_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_001",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_000",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_002",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_001",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_007",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_001",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_000",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 407,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_rf_rd_wb_hz_005",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_005",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_jump_002",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_004",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_003",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "branch",
+      "intent_subtype": "branch_basic",
+      "priority": 180,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_001",
+      "template": "branch_taken"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_006",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_011",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_002",
+      "template": "div_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_003",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_000",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "branch",
+      "intent_subtype": "branch_basic",
+      "priority": 180,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_000",
+      "template": "branch_taken"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs1",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_009",
+      "template": "rf_wb_hazard_rs1"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_010",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "rf_wb_hazard",
+      "intent_subtype": "rs2",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_rf_rd_wb_hz_008",
+      "template": "rf_wb_hazard_rs2"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_006",
+      "template": "div_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_004",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 465,
+      "intent_family": "jump",
+      "intent_subtype": "jump_basic",
+      "priority": 90,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_jump_003",
+      "template": "jump_jal"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_007",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "jump",
+      "intent_subtype": "jump_with_wait",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_branch_002",
+      "template": "jump_after_load"
+    },
+    {
+      "baseline_prefix_hit_count": 114,
+      "intent_family": "multdiv",
+      "intent_subtype": "mul_active",
+      "priority": 100,
+      "reason": "already common in baseline prefix",
+      "region_id": "R_stall_multdiv_008",
+      "template": "mul_active"
+    },
+    {
+      "baseline_prefix_hit_count": 0,
+      "intent_family": "multdiv",
+      "intent_subtype": "div_active",
+      "priority": 200,
+      "reason": "template-supported region with low baseline-prefix hit count",
+      "region_id": "R_stall_multdiv_009",
+      "template": "div_active"
+    }
+  ],
+  "template_unsupported_regions": [],
+  "unsupported_targets": []
+}

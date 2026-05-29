@@ -1,0 +1,64 @@
+{
+  "accepted_region_coverage_pct": 60.0,
+  "accepted_region_hit": 3,
+  "accepted_region_total": 5,
+  "bins_hit": 59,
+  "bins_total": 77,
+  "cross_coverage_pct": 50.0,
+  "design": "ibex",
+  "detail": {
+    "accepted_region_ids": [
+      "R_stall_ld_hz_001",
+      "R_stall_ld_hz_000",
+      "R_stall_mem_000",
+      "R_rf_rd_wb_hz_000",
+      "R_stall_mem_001"
+    ],
+    "accepted_regions": {
+      "hit": 3,
+      "total": 5
+    },
+    "cross_bins": {
+      "hit": 5,
+      "total": 10
+    },
+    "input_bool_bins": {
+      "hit": 32,
+      "total": 38
+    },
+    "output_bit_bins": {
+      "hit": 9,
+      "total": 12
+    },
+    "predicate_bins": {
+      "hit": 10,
+      "total": 12
+    }
+  },
+  "input_bool_coverage_pct": 84.21052631578948,
+  "invalid_rows": 0,
+  "method_name": "bsdcov_guided_hazard_stall_2k",
+  "output_bit_coverage_pct": 75.0,
+  "overall_target_coverage_pct": 70.50877192982456,
+  "predicate_coverage_pct": 83.33333333333333,
+  "run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_guided_hazard_stall_2k",
+  "schema_version": "bsd_cov_targetcov_v0.1",
+  "supported_region_coverage_pct": 100.0,
+  "supported_region_hit": 3,
+  "supported_region_total": 3,
+  "target_id": "ibex_hazard_stall",
+  "trace_files": [
+    "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_guided_hazard_stall_2k/raw/bsdcov_guided_hazard_stall_2k/seed_888/out/run/tests/bsd_cov_guided_hazard_stall_2k.888/trace_core_bsd_cov_hazard_stall.csv"
+  ],
+  "trace_rows": 14440,
+  "unique_input_vectors": 536,
+  "unique_output_vectors": 6,
+  "unique_output_vectors_list": [
+    "stall_mem=0,stall_ld_hz=0,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=0",
+    "stall_mem=0,stall_ld_hz=0,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=1",
+    "stall_mem=0,stall_ld_hz=1,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=1",
+    "stall_mem=1,stall_ld_hz=0,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=0",
+    "stall_mem=1,stall_ld_hz=0,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=1",
+    "stall_mem=1,stall_ld_hz=1,stall_multdiv=0,stall_branch=0,stall_jump=0,rf_rd_wb_hz=1"
+  ]
+}

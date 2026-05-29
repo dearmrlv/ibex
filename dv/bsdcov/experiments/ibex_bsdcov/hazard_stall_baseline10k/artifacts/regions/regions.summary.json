@@ -1,0 +1,320 @@
+{
+  "schema_version": "bsd_cov_regions_summary_v0.1",
+  "target_id": "ibex_hazard_stall",
+  "regions_total": 34,
+  "regions_by_output": {
+    "rf_rd_wb_hz": 12,
+    "stall_branch": 3,
+    "stall_jump": 4,
+    "stall_ld_hz": 2,
+    "stall_mem": 3,
+    "stall_multdiv": 10
+  },
+  "positive_counts_by_output": {
+    "stall_mem": 12426,
+    "stall_ld_hz": 4458,
+    "stall_multdiv": 1040,
+    "stall_branch": 442,
+    "stall_jump": 851,
+    "rf_rd_wb_hz": 8222
+  },
+  "eval_backend_resolved": "xcelium",
+  "xrun": "/home/lvzhengyang/workspace/cadence/xrun",
+  "xrun_args": "-licqueue",
+  "skip_baseline_eval": false,
+  "baseline_limit": null,
+  "reproduce_hint": "python3 main.py bsdcov regiongen --design ibex --target designs/ibex/dv/bsdcov/targets/hazard_stall.yaml --run-dir designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k --min-precision 0.95 --min-support 10 --max-regions-per-output 16 --validation-samples-per-region 1000 --eval-backend auto",
+  "top_regions": [
+    {
+      "region_id": "R_stall_mem_000",
+      "score": 20.953927,
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        "lsu_wait"
+      ]
+    },
+    {
+      "region_id": "R_stall_mem_001",
+      "score": 19.090392,
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        "outstanding_load_wb_i==1",
+        "lsu_resp_valid_i==0"
+      ]
+    },
+    {
+      "region_id": "R_stall_mem_002",
+      "score": 18.510818,
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        "outstanding_store_wb_i==1",
+        "lsu_resp_valid_i==0"
+      ]
+    },
+    {
+      "region_id": "R_stall_ld_hz_001",
+      "score": 17.891597,
+      "focus_outputs": [
+        "stall_ld_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "outstanding_load_wb_i==1",
+        "rf_ren_a==1"
+      ]
+    },
+    {
+      "region_id": "R_stall_ld_hz_000",
+      "score": 17.741568,
+      "focus_outputs": [
+        "stall_ld_hz"
+      ],
+      "predicates": [
+        "outstanding_load_wb_i==1",
+        "rf_raddr_b_o==rf_waddr_wb_i"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_001",
+      "score": 16.308879,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_b_o==rf_waddr_wb_i",
+        "rf_ren_a==0",
+        "rf_ren_b==1"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_000",
+      "score": 13.808551,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "rf_ren_a==1",
+        "id_fsm_q==1",
+        "lsu_resp_valid_i==1",
+        "controller_run==1"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_002",
+      "score": 11.321308,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "rf_ren_a==1",
+        "data_ind_timing_i==0",
+        "outstanding_load_wb_i==0",
+        "rf_ren_b==0",
+        "branch_in_dec==1"
+      ]
+    },
+    {
+      "region_id": "R_stall_jump_001",
+      "score": 10.61055,
+      "focus_outputs": [
+        "stall_jump"
+      ],
+      "predicates": [
+        "jump_in_dec==1",
+        "ready_wb_i==0",
+        "outstanding_load_wb_i==0",
+        "id_fsm_q==1",
+        "controller_run==1",
+        "instr_fetch_err_i==0"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_007",
+      "score": 10.390794,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "rf_ren_a==1",
+        "rf_raddr_b_o!=rf_waddr_wb_i",
+        "ready_wb_i==0",
+        "id_fsm_q==1",
+        "div_en_dec==0",
+        "jump_in_dec==1"
+      ]
+    },
+    {
+      "region_id": "R_stall_multdiv_001",
+      "score": 10.153479,
+      "focus_outputs": [
+        "stall_multdiv"
+      ],
+      "predicates": [
+        "mult_en_dec==1",
+        "instr_fetch_err_i==0",
+        "controller_run==1",
+        "id_fsm_q==1",
+        "lsu_wait",
+        "outstanding_load_wb_i==0"
+      ]
+    },
+    {
+      "region_id": "R_stall_jump_000",
+      "score": 10.107738,
+      "focus_outputs": [
+        "stall_jump"
+      ],
+      "predicates": [
+        "jump_in_dec==1",
+        "instr_fetch_err_i==0",
+        "controller_run==1",
+        "id_fsm_q==1",
+        "lsu_req_done_i==0",
+        "outstanding_load_wb_i==0"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_005",
+      "score": 9.785562,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "rf_waddr_wb_i!=0",
+        "rf_ren_a==1",
+        "outstanding_load_wb_i==1",
+        "controller_run==1",
+        "rf_raddr_b_o!=rf_waddr_wb_i",
+        "branch_in_dec==0",
+        "instr_fetch_err_i==0",
+        "data_ind_timing_i==1",
+        "ex_valid_i==1"
+      ]
+    },
+    {
+      "region_id": "R_stall_multdiv_005",
+      "score": 9.605021,
+      "focus_outputs": [
+        "stall_multdiv"
+      ],
+      "predicates": [
+        "instr_fetch_err_i==0",
+        "mult_en_dec==1",
+        "controller_run==1",
+        "id_fsm_q==1",
+        "rf_raddr_a_o!=rf_waddr_wb_i",
+        "rf_raddr_b_o!=rf_waddr_wb_i",
+        "ready_wb_i==0"
+      ]
+    },
+    {
+      "region_id": "R_stall_jump_002",
+      "score": 9.169935,
+      "focus_outputs": [
+        "stall_jump"
+      ],
+      "predicates": [
+        "jump_in_dec==1",
+        "instr_fetch_err_i==0",
+        "controller_run==1",
+        "id_fsm_q==1",
+        "ready_wb_i==0",
+        "rf_raddr_a_o!=rf_waddr_wb_i",
+        "rf_raddr_b_o!=rf_waddr_wb_i"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_004",
+      "score": 8.715452,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "rf_ren_a==1",
+        "lsu_req_dec==1",
+        "rf_ren_b==0",
+        "branch_decision_i==1",
+        "lsu_resp_valid_i==0",
+        "outstanding_load_wb_i==0",
+        "instr_fetch_err_i==0",
+        "controller_run==1"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_003",
+      "score": 8.286835,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "lsu_req_dec==1",
+        "lsu_req_done_i==0",
+        "data_ind_timing_i==0",
+        "id_fsm_q==0",
+        "rf_ren_b==1",
+        "ready_wb_i==0",
+        "lsu_resp_valid_i==0"
+      ]
+    },
+    {
+      "region_id": "R_stall_branch_001",
+      "score": 8.000295,
+      "focus_outputs": [
+        "stall_branch"
+      ],
+      "predicates": [
+        "branch_in_dec==1",
+        "controller_run==1",
+        "instr_fetch_err_i==0",
+        "outstanding_load_wb_i==0",
+        "id_fsm_q==1",
+        "ready_wb_i==0"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_006",
+      "score": 7.815404,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "controller_run==0",
+        "rf_ren_a==1",
+        "ex_valid_i==1",
+        "lsu_req_done_i==0",
+        "jump_in_dec==0",
+        "rf_raddr_b_o==rf_waddr_wb_i"
+      ]
+    },
+    {
+      "region_id": "R_rf_rd_wb_hz_011",
+      "score": 7.775523,
+      "focus_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "predicates": [
+        "rf_raddr_b_o==rf_waddr_wb_i",
+        "rf_waddr_wb_i!=0",
+        "outstanding_load_wb_i==1",
+        "mult_en_dec==1",
+        "jump_in_dec==0",
+        "rf_raddr_a_o==rf_waddr_wb_i",
+        "ex_valid_i==1"
+      ]
+    }
+  ],
+  "artifact": "artifacts/regions/regions.json"
+}

@@ -1,0 +1,42 @@
+{
+  "target_id": "ibex_hazard_stall",
+  "eval_mode": "train_replay",
+  "train_samples": 15120,
+  "eval_samples": 15120,
+  "average_accuracy": 0.949239417989,
+  "accuracy_parse_status": "parsed",
+  "per_output_bit_accuracy": [
+    {
+      "bit": 0,
+      "accuracy": 0.955886243386
+    },
+    {
+      "bit": 1,
+      "accuracy": 1.0
+    },
+    {
+      "bit": 2,
+      "accuracy": 0.955092592593
+    },
+    {
+      "bit": 3,
+      "accuracy": 0.837830687831
+    },
+    {
+      "bit": 4,
+      "accuracy": 0.999007936508
+    },
+    {
+      "bit": 5,
+      "accuracy": 0.947619047619
+    }
+  ],
+  "verilog_generated": true,
+  "replay_stats": {
+    "total_branch_replay_calls": 3256,
+    "empty_left_branches": 567,
+    "empty_right_branches": 1124,
+    "fallback_left_outputs": 35721,
+    "fallback_right_outputs": 70812
+  }
+}

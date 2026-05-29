@@ -1,0 +1,17 @@
+NearRegion total_unique: 16384
+NearRegion total_positive: 15102
+NearRegion global_density: 0.921753
+NearRegion diff_output_histogram: {'rf_rd_wb_hz': 8222, 'stall_branch': 442, 'stall_jump': 851, 'stall_ld_hz': 4458, 'stall_mem': 12426, 'stall_multdiv': 1040}
+Regions total: 34
+Regions by output: {'rf_rd_wb_hz': 12, 'stall_branch': 3, 'stall_jump': 4, 'stall_ld_hz': 2, 'stall_mem': 3, 'stall_multdiv': 10}
+Top 10 regions:
+1. R_stall_mem_000 score=20.953927 output=stall_mem predicates=lsu_wait
+2. R_stall_mem_001 score=19.090392 output=stall_mem predicates=outstanding_load_wb_i==1 && lsu_resp_valid_i==0
+3. R_stall_mem_002 score=18.510818 output=stall_mem predicates=outstanding_store_wb_i==1 && lsu_resp_valid_i==0
+4. R_stall_ld_hz_001 score=17.891597 output=stall_ld_hz predicates=rf_raddr_a_o==rf_waddr_wb_i && outstanding_load_wb_i==1 && rf_ren_a==1
+5. R_stall_ld_hz_000 score=17.741568 output=stall_ld_hz predicates=outstanding_load_wb_i==1 && rf_raddr_b_o==rf_waddr_wb_i
+6. R_rf_rd_wb_hz_001 score=16.308879 output=rf_rd_wb_hz predicates=rf_raddr_b_o==rf_waddr_wb_i && rf_ren_a==0 && rf_ren_b==1
+7. R_rf_rd_wb_hz_000 score=13.808551 output=rf_rd_wb_hz predicates=rf_raddr_a_o==rf_waddr_wb_i && rf_ren_a==1 && id_fsm_q==1 && lsu_resp_valid_i==1 && controller_run==1
+8. R_rf_rd_wb_hz_002 score=11.321308 output=rf_rd_wb_hz predicates=rf_raddr_a_o==rf_waddr_wb_i && rf_ren_a==1 && data_ind_timing_i==0 && outstanding_load_wb_i==0 && rf_ren_b==0 && branch_in_dec==1
+9. R_stall_jump_001 score=10.610550 output=stall_jump predicates=jump_in_dec==1 && ready_wb_i==0 && outstanding_load_wb_i==0 && id_fsm_q==1 && controller_run==1 && instr_fetch_err_i==0
+10. R_rf_rd_wb_hz_007 score=10.390794 output=rf_rd_wb_hz predicates=rf_raddr_a_o==rf_waddr_wb_i && rf_ren_a==1 && rf_raddr_b_o!=rf_waddr_wb_i && ready_wb_i==0 && id_fsm_q==1 && div_en_dec==0 && jump_in_dec==1

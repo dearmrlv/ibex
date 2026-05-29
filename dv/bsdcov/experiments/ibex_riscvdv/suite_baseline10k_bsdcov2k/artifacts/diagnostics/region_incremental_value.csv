@@ -1,0 +1,6 @@
+region_id,prefix_hit,prefix_hit_count,baseline_extra_hit,baseline_extra_hit_count,bsdcov_extra_hit,bsdcov_extra_hit_count,status
+R_stall_ld_hz_001,1,781,0,0,1,2343,already_hit_by_prefix
+R_stall_ld_hz_000,1,809,0,0,1,2817,already_hit_by_prefix
+R_stall_mem_000,1,57730,1,643,1,3520,already_hit_by_prefix
+R_rf_rd_wb_hz_000,0,0,0,0,0,0,missed_by_all
+R_stall_mem_001,1,76288,0,0,0,0,already_hit_by_prefix

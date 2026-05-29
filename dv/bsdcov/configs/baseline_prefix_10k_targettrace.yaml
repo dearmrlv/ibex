@@ -1,0 +1,47 @@
+design: ibex
+method: riscvdv
+experiment: ibex_baseline_prefix_10k_targettrace
+
+ibex_dv_root: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex
+setup_env: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex/setup_env.sh
+
+make:
+  ibex_config: opentitan
+  simulator: xlm
+  iss: spike
+  waves: 0
+  cov: 1
+  verbose: 0
+
+run:
+  start_seed: 888
+  num_seeds: 1
+
+budget:
+  primary_axis: generated_instr_count
+  generated_instr_budget: 10000
+  per_seed_generated_instr: 10000
+
+sampling:
+  mode: dense
+  trigger_type: generated
+  step: 1000
+  limit: 10000
+
+methods:
+  - id: baseline_prefix_10k_seed888
+    name: baseline_prefix_10k_seed888
+    type: baseline
+    test: bsd_cov_baseline_prefix_10k
+    description: Baseline prefix for BSD-Cov augmentation experiment.
+    gen_test: riscv_instr_base_test
+    rtl_test: core_ibex_base_test
+    requested_instr_cnt: 10000
+    gen_opts:
+      - +instr_cnt=10000
+      - +num_of_sub_program=5
+      - +gen_all_csrs_by_default=1
+      - +add_csr_write=MSTATUS,MEPC,MCAUSE,MTVAL,0x7c0,0x7c1
+      - +no_csr_instr=0
+    sim_opts: >
+      +bsd_cov_hazard_stall_trace

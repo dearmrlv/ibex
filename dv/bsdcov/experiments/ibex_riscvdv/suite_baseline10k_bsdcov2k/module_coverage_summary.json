@@ -1,0 +1,84 @@
+{
+  "coverage_mode": "cone_replay_final_only",
+  "curve_complete": false,
+  "extra_limit": 2000,
+  "final_comparison": {
+    "assertion": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "block": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 93.33,
+      "baseline_plus_bsdcov_12k": 93.33,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 93.33
+    },
+    "branch": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "covergroup": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "expression": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "fsm": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "statement": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "statement_dup": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 0.0,
+      "baseline_plus_bsdcov_12k": 0.0,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 0.0
+    },
+    "toggle": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 95.83,
+      "baseline_plus_bsdcov_12k": 95.83,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 95.83
+    }
+  },
+  "module_name": "ibex_hazard_stall_cone",
+  "prefix_instr_count": 10000,
+  "prefix_segment_identical": true,
+  "reason": "ibex_hazard_stall_cone was not present in full-design UCD report",
+  "schema_version": "bsd_cov_module_coverage_v0.1"
+}

@@ -1,0 +1,107 @@
+category,bin_name,prefix_hit,prefix_hit_count,baseline_suite_hit,baseline_suite_hit_count,bsdcov_suite_hit,bsdcov_suite_hit_count,status
+cross,rf_rd_wb_hz & raw_hazard_rs1,1,7301,1,8573,1,9357,already_hit_by_prefix
+cross,rf_rd_wb_hz & raw_hazard_rs2,1,6664,1,7595,1,9507,already_hit_by_prefix
+cross,stall_branch & branch_active,1,1735,1,1735,1,1735,already_hit_by_prefix
+cross,stall_branch & branch_taken,1,712,1,712,1,712,already_hit_by_prefix
+cross,stall_jump & jump_active,0,0,0,0,0,0,missed_by_all
+cross,stall_ld_hz & raw_hazard_rs1 & load_wait,1,654,1,654,1,1810,already_hit_by_prefix
+cross,stall_ld_hz & raw_hazard_rs2 & load_wait,1,25,1,25,1,247,already_hit_by_prefix
+cross,stall_mem & lsu_wait,1,57730,1,58373,1,58905,already_hit_by_prefix
+cross,stall_multdiv & div_active,1,35184,1,54446,1,39720,already_hit_by_prefix
+cross,stall_multdiv & mult_active,1,985,1,1565,1,985,already_hit_by_prefix
+input_bool,branch_decision_i==0,1,116770,1,144858,1,125868,already_hit_by_prefix
+input_bool,branch_decision_i==1,1,14816,1,18671,1,15153,already_hit_by_prefix
+input_bool,branch_in_dec==0,1,126863,1,157420,1,136253,already_hit_by_prefix
+input_bool,branch_in_dec==1,1,4723,1,6109,1,4768,already_hit_by_prefix
+input_bool,controller_run==0,1,783,1,812,1,790,already_hit_by_prefix
+input_bool,controller_run==1,1,130803,1,162717,1,140231,already_hit_by_prefix
+input_bool,data_ind_timing_i==0,1,50557,1,82500,1,59992,already_hit_by_prefix
+input_bool,data_ind_timing_i==1,1,81029,1,81029,1,81029,already_hit_by_prefix
+input_bool,div_en_dec==0,1,95319,1,107253,1,100092,already_hit_by_prefix
+input_bool,div_en_dec==1,1,36267,1,56276,1,40929,already_hit_by_prefix
+input_bool,ex_valid_i==0,1,36191,1,56033,1,40727,already_hit_by_prefix
+input_bool,ex_valid_i==1,1,95395,1,107496,1,100294,already_hit_by_prefix
+input_bool,id_fsm_q==0,1,72509,1,84212,1,76233,already_hit_by_prefix
+input_bool,id_fsm_q==1,1,59077,1,79317,1,64788,already_hit_by_prefix
+input_bool,instr_fetch_err_i==0,1,131586,1,163529,1,141021,already_hit_by_prefix
+input_bool,instr_fetch_err_i==1,0,0,0,0,0,0,missed_by_all
+input_bool,instr_valid_i==0,0,0,0,0,0,0,missed_by_all
+input_bool,instr_valid_i==1,1,131586,1,163529,1,141021,already_hit_by_prefix
+input_bool,jump_in_dec==0,1,131121,1,162826,1,140334,already_hit_by_prefix
+input_bool,jump_in_dec==1,1,465,1,703,1,687,already_hit_by_prefix
+input_bool,lsu_req_dec==0,1,64963,1,96120,1,72864,already_hit_by_prefix
+input_bool,lsu_req_dec==1,1,66623,1,67409,1,68157,already_hit_by_prefix
+input_bool,lsu_req_done_i==0,1,122693,1,154493,1,131769,already_hit_by_prefix
+input_bool,lsu_req_done_i==1,1,8893,1,9036,1,9252,already_hit_by_prefix
+input_bool,lsu_resp_valid_i==0,1,123167,1,154991,1,132299,already_hit_by_prefix
+input_bool,lsu_resp_valid_i==1,1,8419,1,8538,1,8722,already_hit_by_prefix
+input_bool,mult_en_dec==0,1,129632,1,160191,1,138983,already_hit_by_prefix
+input_bool,mult_en_dec==1,1,1954,1,3338,1,2038,already_hit_by_prefix
+input_bool,outstanding_load_wb_i==0,1,107920,1,139813,1,115675,already_hit_by_prefix
+input_bool,outstanding_load_wb_i==1,1,23666,1,23716,1,25346,already_hit_by_prefix
+input_bool,outstanding_store_wb_i==0,1,104703,1,136040,1,114137,already_hit_by_prefix
+input_bool,outstanding_store_wb_i==1,1,26883,1,27489,1,26884,already_hit_by_prefix
+input_bool,ready_wb_i==0,1,42130,1,42667,1,43508,already_hit_by_prefix
+input_bool,ready_wb_i==1,1,89456,1,120862,1,97513,already_hit_by_prefix
+input_bool,rf_ren_a==0,1,3669,1,4874,1,3905,already_hit_by_prefix
+input_bool,rf_ren_a==1,1,127917,1,158655,1,137116,already_hit_by_prefix
+input_bool,rf_ren_b==0,1,47938,1,53269,1,52028,already_hit_by_prefix
+input_bool,rf_ren_b==1,1,83648,1,110260,1,88993,already_hit_by_prefix
+output_bit,rf_rd_wb_hz==0,1,117692,1,147526,1,122228,already_hit_by_prefix
+output_bit,rf_rd_wb_hz==1,1,13894,1,16003,1,18793,already_hit_by_prefix
+output_bit,stall_branch==0,1,129851,1,161794,1,139286,already_hit_by_prefix
+output_bit,stall_branch==1,1,1735,1,1735,1,1735,already_hit_by_prefix
+output_bit,stall_jump==0,1,131586,1,163529,1,141021,already_hit_by_prefix
+output_bit,stall_jump==1,0,0,0,0,0,0,missed_by_all
+output_bit,stall_ld_hz==0,1,130793,1,162736,1,138548,already_hit_by_prefix
+output_bit,stall_ld_hz==1,1,793,1,793,1,2473,already_hit_by_prefix
+output_bit,stall_mem==0,1,67424,1,98432,1,74306,already_hit_by_prefix
+output_bit,stall_mem==1,1,64162,1,65097,1,66715,already_hit_by_prefix
+output_bit,stall_multdiv==0,1,95417,1,107518,1,100316,already_hit_by_prefix
+output_bit,stall_multdiv==1,1,36169,1,56011,1,40705,already_hit_by_prefix
+predicate,branch_active,1,4723,1,6109,1,4768,already_hit_by_prefix
+predicate,branch_taken,1,2062,1,2756,1,2106,already_hit_by_prefix
+predicate,div_active,1,36267,1,56276,1,40929,already_hit_by_prefix
+predicate,jump_active,1,465,1,703,1,687,already_hit_by_prefix
+predicate,load_wait,1,19697,1,19737,1,21075,already_hit_by_prefix
+predicate,lsu_wait,1,57730,1,58373,1,58905,already_hit_by_prefix
+predicate,mult_active,1,1954,1,3338,1,2038,already_hit_by_prefix
+predicate,raw_hazard_rs1,1,7301,1,8573,1,9357,already_hit_by_prefix
+predicate,raw_hazard_rs2,1,6664,1,7595,1,9507,already_hit_by_prefix
+predicate,store_wait,1,22433,1,22930,1,22433,already_hit_by_prefix
+predicate,wb_nonzero,1,116198,1,144835,1,125518,already_hit_by_prefix
+predicate,wb_zero,1,15388,1,18694,1,15503,already_hit_by_prefix
+region,region:R_rf_rd_wb_hz_000,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_001,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_002,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_003,0,0,1,10,0,0,new_by_baseline_extra_only
+region,region:R_rf_rd_wb_hz_004,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_005,1,407,1,407,1,407,already_hit_by_prefix
+region,region:R_rf_rd_wb_hz_006,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_007,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_008,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_009,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_010,0,0,0,0,0,0,missed_by_all
+region,region:R_rf_rd_wb_hz_011,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_branch_000,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_branch_001,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_branch_002,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_jump_000,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_jump_001,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_jump_002,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_jump_003,1,465,1,686,1,687,already_hit_by_prefix
+region,region:R_stall_ld_hz_000,1,809,1,809,1,1084,already_hit_by_prefix
+region,region:R_stall_ld_hz_001,1,781,1,781,1,2186,already_hit_by_prefix
+region,region:R_stall_mem_000,1,57730,1,58373,1,58905,already_hit_by_prefix
+region,region:R_stall_mem_001,1,19697,1,19737,1,21075,already_hit_by_prefix
+region,region:R_stall_mem_002,1,22433,1,22930,1,22433,already_hit_by_prefix
+region,region:R_stall_multdiv_000,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_001,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_002,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_003,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_004,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_005,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_006,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_007,0,0,0,0,0,0,missed_by_all
+region,region:R_stall_multdiv_008,1,114,1,114,1,114,already_hit_by_prefix
+region,region:R_stall_multdiv_009,0,0,0,0,0,0,missed_by_all

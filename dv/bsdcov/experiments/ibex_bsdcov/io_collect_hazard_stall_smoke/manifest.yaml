@@ -1,0 +1,12 @@
+project: BSD-Cov
+design: ibex
+method: bsdcov
+run_tag: io_collect_hazard_stall_smoke
+run_dir: designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/io_collect_hazard_stall_smoke
+config: config.resolved.yaml
+target: designs/ibex/dv/bsdcov/targets/hazard_stall.yaml
+created_at: 1779440965
+stages:
+- iogen
+artifacts:
+  io_samples: artifacts/io_samples

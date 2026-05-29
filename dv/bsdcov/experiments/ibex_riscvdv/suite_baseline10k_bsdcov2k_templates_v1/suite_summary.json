@@ -1,0 +1,83 @@
+{
+  "diagnosis": [
+    "BSD-Cov extra does not improve any whole-design coverage metric over baseline extra."
+  ],
+  "extra_limit": 2000,
+  "final_comparison": {
+    "assertion": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 94.62,
+      "baseline_plus_bsdcov_12k": 94.62,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 94.62
+    },
+    "block": {
+      "baseline_extra_gain": 0.20000000000000284,
+      "baseline_only_12k": 78.98,
+      "baseline_plus_bsdcov_12k": 78.85,
+      "bsdcov_advantage": -0.13000000000000966,
+      "bsdcov_extra_gain": 0.06999999999999318,
+      "prefix_10k": 78.78
+    },
+    "branch": {
+      "baseline_extra_gain": 0.3399999999999963,
+      "baseline_only_12k": 60.91,
+      "baseline_plus_bsdcov_12k": 60.71,
+      "bsdcov_advantage": -0.19999999999999574,
+      "bsdcov_extra_gain": 0.14000000000000057,
+      "prefix_10k": 60.57
+    },
+    "covergroup": {
+      "baseline_extra_gain": 0.7799999999999994,
+      "baseline_only_12k": 8.19,
+      "baseline_plus_bsdcov_12k": 7.51,
+      "bsdcov_advantage": -0.6799999999999997,
+      "bsdcov_extra_gain": 0.09999999999999964,
+      "prefix_10k": 7.41
+    },
+    "expression": {
+      "baseline_extra_gain": 0.28000000000000114,
+      "baseline_only_12k": 68.36,
+      "baseline_plus_bsdcov_12k": 68.11,
+      "bsdcov_advantage": -0.25,
+      "bsdcov_extra_gain": 0.030000000000001137,
+      "prefix_10k": 68.08
+    },
+    "fsm": {
+      "baseline_extra_gain": 0.0,
+      "baseline_only_12k": 60.87,
+      "baseline_plus_bsdcov_12k": 60.87,
+      "bsdcov_advantage": 0.0,
+      "bsdcov_extra_gain": 0.0,
+      "prefix_10k": 60.87
+    },
+    "statement": {
+      "baseline_extra_gain": 0.12999999999999545,
+      "baseline_only_12k": 80.5,
+      "baseline_plus_bsdcov_12k": 80.44,
+      "bsdcov_advantage": -0.060000000000002274,
+      "bsdcov_extra_gain": 0.06999999999999318,
+      "prefix_10k": 80.37
+    },
+    "statement_dup": {
+      "baseline_extra_gain": 0.12999999999999545,
+      "baseline_only_12k": 80.5,
+      "baseline_plus_bsdcov_12k": 80.44,
+      "bsdcov_advantage": -0.060000000000002274,
+      "bsdcov_extra_gain": 0.06999999999999318,
+      "prefix_10k": 80.37
+    },
+    "toggle": {
+      "baseline_extra_gain": 1.1799999999999926,
+      "baseline_only_12k": 69.16,
+      "baseline_plus_bsdcov_12k": 68.36,
+      "bsdcov_advantage": -0.7999999999999972,
+      "bsdcov_extra_gain": 0.37999999999999545,
+      "prefix_10k": 67.98
+    }
+  },
+  "prefix_instr_count": 10000,
+  "prefix_segment_identical": true,
+  "schema_version": "bsd_cov_suite_summary_v0.1"
+}

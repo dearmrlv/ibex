@@ -1,0 +1,68 @@
+# BSD-Cov Baseline Augmentation Suite
+
+Main comparison:
+
+`Coverage(Baseline10k + BSD-CovExtra2k)` vs `Coverage(Baseline10k + BaselineExtra2k)`
+
+Prefix segment identical: True
+
+## Final Whole-Design Coverage
+
+| Metric | Prefix 10k | Baseline-only 12k | Baseline+BSD-Cov 12k | Baseline Extra Gain | BSD-Cov Extra Gain | BSD-Cov Advantage |
+|---|---:|---:|---:|---:|---:|---:|
+| block | 78.78 | 78.98 | 78.85 | +0.20 | +0.07 | -0.13 |
+| branch | 60.57 | 60.91 | 60.71 | +0.34 | +0.14 | -0.20 |
+| statement | 80.37 | 80.50 | 80.44 | +0.13 | +0.07 | -0.06 |
+| expression | 68.08 | 68.36 | 68.11 | +0.28 | +0.03 | -0.25 |
+| toggle | 67.98 | 69.16 | 68.36 | +1.18 | +0.38 | -0.80 |
+| statement_dup | 80.37 | 80.50 | 80.44 | +0.13 | +0.07 | -0.06 |
+| fsm | 60.87 | 60.87 | 60.87 | +0.00 | +0.00 | +0.00 |
+| assertion | 94.62 | 94.62 | 94.62 | +0.00 | +0.00 | +0.00 |
+| covergroup | 7.41 | 8.19 | 7.56 | +0.78 | +0.15 | -0.63 |
+
+## Module-level Coverage: ibex_hazard_stall_cone
+
+Coverage mode: cone_replay_final_only
+Prefix segment identical: True
+
+ibex_hazard_stall_cone was not present in full-design UCD report
+
+The cone module was not present in the full-design UCD hierarchy.
+This module-level coverage was obtained by replaying target trace rows against the standalone generated cone RTL.
+Cone replay fallback currently reports final-point module coverage only.
+
+| Metric | Prefix 10k | Baseline-only 12k | Baseline+BSD-Cov 12k | Baseline Extra Gain | BSD-Cov Extra Gain | BSD-Cov Advantage |
+|---|---:|---:|---:|---:|---:|---:|
+| block | 93.33 | 93.33 | 93.33 | +0.00 | +0.00 | +0.00 |
+| branch | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| statement | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| expression | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| toggle | 95.83 | 95.83 | 95.83 | +0.00 | +0.00 | +0.00 |
+| statement_dup | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| fsm | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| assertion | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+| covergroup | 0.00 | 0.00 | 0.00 | +0.00 | +0.00 | +0.00 |
+
+## Incremental Target-Cone Bins
+
+- Already hit by prefix: 72
+- New by baseline extra: 0
+- New by BSD-Cov extra: 0
+- New by BSD-Cov only: 0
+- New by baseline only: 0
+- New by both: 0
+
+## Extra-Only Signature Diversity
+
+| Extra Run | Unique Signatures | Entropy | Top1 % | Top5 % | Top10 % |
+|---|---:|---:|---:|---:|---:|
+| Baseline extra | 49 | 2.66 | 51.05 | 82.28 | 91.36 |
+| BSD-Cov extra | 15 | 2.64 | 32.42 | 86.52 | 99.70 |
+
+## CEX / NearRegion / Genseq Gap
+
+- Features where NearRegion positives are present but generated regions/templates are absent: branch_active, div_active, jump_active, lsu_wait, mult_active, stall_branch, stall_jump, stall_multdiv
+
+## Main Diagnosis
+
+- BSD-Cov extra does not improve any whole-design coverage metric over baseline extra.

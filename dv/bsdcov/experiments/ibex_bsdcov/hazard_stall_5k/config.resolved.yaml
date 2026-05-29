@@ -1,0 +1,55 @@
+design: ibex
+method: bsdcov
+experiment: ibex_bsdcov_hazard_stall
+target: /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/targets/hazard_stall.yaml
+ibex_dv_root: /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex
+setup_env: /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/setup_env.sh
+make:
+  ibex_config: opentitan
+  simulator: xlm
+  iss: spike
+  waves: 0
+  cov: 1
+  verbose: 0
+run:
+  start_seed: 888
+  num_seeds: 1
+budget:
+  primary_axis: generated_instr_count
+  io_sample_budget: 5000
+  batch_instr_count: 1000
+  max_batches: 10
+sampling:
+  mode: per_seed
+  trigger_type: generated
+  step: 1000
+bsdcov:
+  stages:
+  - iogen
+  - bsdgen
+  iogen:
+    enable_trace_plusarg: +bsd_cov_hazard_stall_trace
+  bsdgen:
+    bsd_root: /home/lvzhengyang/workspace/BSD-Cov/thirdparty/BSD
+    threads: 8
+    replay_samples: 16
+    fixed_variable_order: identity
+    dataset_mode: mask_aware_dataset_replay
+methods:
+- id: bsdcov_seed_riscvdv
+  name: bsdcov_seed_riscvdv
+  type: io_collect
+  test: bsd_cov_riscv_rand_instr_io_collect
+  description: riscv-dv seed generation for BSD-Cov IO collection.
+  gen_test: riscv_instr_base_test
+  rtl_test: core_ibex_base_test
+  requested_instr_cnt: 1000
+  gen_opts:
+  - +instr_cnt=1000
+  - +num_of_sub_program=1
+  - +gen_all_csrs_by_default=1
+  - +add_csr_write=MSTATUS,MEPC,MCAUSE,MTVAL,0x7c0,0x7c1
+  - +no_csr_instr=0
+  sim_opts: '+bsd_cov_hazard_stall_trace
+
+    '

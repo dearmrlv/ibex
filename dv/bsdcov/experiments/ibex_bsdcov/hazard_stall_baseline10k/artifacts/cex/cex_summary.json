@@ -1,0 +1,620 @@
+{
+  "schema_version": "bsd_cov_cex_summary_v0.1",
+  "target_id": "ibex_hazard_stall",
+  "design": "ibex",
+  "run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k",
+  "cex_type": "comb_level",
+  "legal_mode": "minimal",
+  "block_mode": "exact",
+  "output_filter": "any",
+  "trace_type": "vcd",
+  "max_cex": 64,
+  "generated_cex": 64,
+  "stop_reason": "max_cex_reached",
+  "iterations": [
+    {
+      "cex_id": 0,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x3ffffffff",
+      "runtime_s": 6.298
+    },
+    {
+      "cex_id": 1,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x1ffffffff",
+      "runtime_s": 3.568
+    },
+    {
+      "cex_id": 2,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x1bfffffff",
+      "runtime_s": 3.457
+    },
+    {
+      "cex_id": 3,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2531ed2d0",
+      "runtime_s": 3.941
+    },
+    {
+      "cex_id": 4,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x34a02504f",
+      "runtime_s": 4.028
+    },
+    {
+      "cex_id": 5,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x203d35bd5",
+      "runtime_s": 3.889
+    },
+    {
+      "cex_id": 6,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x20b839601",
+      "runtime_s": 3.719
+    },
+    {
+      "cex_id": 7,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x30b933282",
+      "runtime_s": 3.883
+    },
+    {
+      "cex_id": 8,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x30a933282",
+      "runtime_s": 3.855
+    },
+    {
+      "cex_id": 9,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x32ba6d2d0",
+      "runtime_s": 3.7
+    },
+    {
+      "cex_id": 10,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2d6bcd3d4",
+      "runtime_s": 3.919
+    },
+    {
+      "cex_id": 11,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x31b933282",
+      "runtime_s": 3.919
+    },
+    {
+      "cex_id": 12,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x232a3f3c7",
+      "runtime_s": 3.75
+    },
+    {
+      "cex_id": 13,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x032a3f3c7",
+      "runtime_s": 3.858
+    },
+    {
+      "cex_id": 14,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x1f202946f",
+      "runtime_s": 3.899
+    },
+    {
+      "cex_id": 15,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x36a02504f",
+      "runtime_s": 3.708
+    },
+    {
+      "cex_id": 16,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x3ffb38337",
+      "runtime_s": 3.891
+    },
+    {
+      "cex_id": 17,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x08f829795",
+      "runtime_s": 3.938
+    },
+    {
+      "cex_id": 18,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2878ba354",
+      "runtime_s": 3.91
+    },
+    {
+      "cex_id": 19,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2ca823395",
+      "runtime_s": 3.76
+    },
+    {
+      "cex_id": 20,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x08f866895",
+      "runtime_s": 3.887
+    },
+    {
+      "cex_id": 21,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x08fae4955",
+      "runtime_s": 3.943
+    },
+    {
+      "cex_id": 22,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem",
+        "stall_jump"
+      ],
+      "i_hex": "0x0db85179d",
+      "runtime_s": 3.926
+    },
+    {
+      "cex_id": 23,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x3bfffffff",
+      "runtime_s": 3.629
+    },
+    {
+      "cex_id": 24,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x1a2941f26",
+      "runtime_s": 3.948
+    },
+    {
+      "cex_id": 25,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x08a84bc0b",
+      "runtime_s": 3.95
+    },
+    {
+      "cex_id": 26,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x33ba6d2d0",
+      "runtime_s": 3.729
+    },
+    {
+      "cex_id": 27,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x0e2e41257",
+      "runtime_s": 3.87
+    },
+    {
+      "cex_id": 28,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2e2c92894",
+      "runtime_s": 3.917
+    },
+    {
+      "cex_id": 29,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2d6bcd354",
+      "runtime_s": 3.699
+    },
+    {
+      "cex_id": 30,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2a2b47002",
+      "runtime_s": 3.879
+    },
+    {
+      "cex_id": 31,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2aead61f2",
+      "runtime_s": 3.89
+    },
+    {
+      "cex_id": 32,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x20a933282",
+      "runtime_s": 3.718
+    },
+    {
+      "cex_id": 33,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2a2812645",
+      "runtime_s": 3.869
+    },
+    {
+      "cex_id": 34,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x28aac64f3",
+      "runtime_s": 3.9
+    },
+    {
+      "cex_id": 35,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x02ad4e009",
+      "runtime_s": 3.728
+    },
+    {
+      "cex_id": 36,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x0cae18ed8",
+      "runtime_s": 3.89
+    },
+    {
+      "cex_id": 37,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2d6bed354",
+      "runtime_s": 3.939
+    },
+    {
+      "cex_id": 38,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x0da48ce09",
+      "runtime_s": 3.911
+    },
+    {
+      "cex_id": 39,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x0a2bda979",
+      "runtime_s": 3.697
+    },
+    {
+      "cex_id": 40,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x08afdacfa",
+      "runtime_s": 3.907
+    },
+    {
+      "cex_id": 41,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem",
+        "stall_ld_hz",
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x0caddc9b3",
+      "runtime_s": 3.92
+    },
+    {
+      "cex_id": 42,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x00e8b2203",
+      "runtime_s": 3.719
+    },
+    {
+      "cex_id": 43,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x00a0aca8b",
+      "runtime_s": 3.899
+    },
+    {
+      "cex_id": 44,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x03a49a01d",
+      "runtime_s": 3.948
+    },
+    {
+      "cex_id": 45,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x03a09a050",
+      "runtime_s": 3.911
+    },
+    {
+      "cex_id": 46,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x03a09e450",
+      "runtime_s": 3.698
+    },
+    {
+      "cex_id": 47,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x03a0f31c8",
+      "runtime_s": 3.919
+    },
+    {
+      "cex_id": 48,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_jump"
+      ],
+      "i_hex": "0x29bc1bc66",
+      "runtime_s": 3.918
+    },
+    {
+      "cex_id": 49,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x27e87f2cf",
+      "runtime_s": 3.709
+    },
+    {
+      "cex_id": 50,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x27eb3305f",
+      "runtime_s": 3.891
+    },
+    {
+      "cex_id": 51,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2fa1b6836",
+      "runtime_s": 3.936
+    },
+    {
+      "cex_id": 52,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2a21b2776",
+      "runtime_s": 3.92
+    },
+    {
+      "cex_id": 53,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x0d21b2c60",
+      "runtime_s": 3.721
+    },
+    {
+      "cex_id": 54,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x2d2028ebd",
+      "runtime_s": 3.896
+    },
+    {
+      "cex_id": 55,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2d20b2fb2",
+      "runtime_s": 3.958
+    },
+    {
+      "cex_id": 56,
+      "status": "cex",
+      "diff_outputs": [
+        "rf_rd_wb_hz"
+      ],
+      "i_hex": "0x0d20271c7",
+      "runtime_s": 3.932
+    },
+    {
+      "cex_id": 57,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem",
+        "stall_multdiv",
+        "stall_jump"
+      ],
+      "i_hex": "0x2cb923395",
+      "runtime_s": 3.727
+    },
+    {
+      "cex_id": 58,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x033815d73",
+      "runtime_s": 3.898
+    },
+    {
+      "cex_id": 59,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x03b91fd71",
+      "runtime_s": 3.95
+    },
+    {
+      "cex_id": 60,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x0bb57ae59",
+      "runtime_s": 3.931
+    },
+    {
+      "cex_id": 61,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x0b3b1f041",
+      "runtime_s": 3.726
+    },
+    {
+      "cex_id": 62,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x3ffb38377",
+      "runtime_s": 3.889
+    },
+    {
+      "cex_id": 63,
+      "status": "cex",
+      "diff_outputs": [
+        "stall_mem"
+      ],
+      "i_hex": "0x2bf99b849",
+      "runtime_s": 3.919
+    }
+  ],
+  "diff_output_histogram": {
+    "rf_rd_wb_hz": 14,
+    "stall_jump": 3,
+    "stall_ld_hz": 6,
+    "stall_mem": 50,
+    "stall_multdiv": 1
+  },
+  "artifacts": {
+    "seeds": "artifacts/cex/seeds",
+    "reports": "artifacts/cex/reports",
+    "traces": "artifacts/cex/traces"
+  },
+  "todos": [
+    "signature_blocking",
+    "data_freeze",
+    "targeted_output_filter",
+    "top_level_instruction_sequence"
+  ]
+}

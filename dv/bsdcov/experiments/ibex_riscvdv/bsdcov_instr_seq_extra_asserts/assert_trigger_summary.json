@@ -1,0 +1,84 @@
+{
+  "status": "bsd_cov_assertion_triggered",
+  "test_binary": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra/raw/bsdcov_instr_seq_extra/seed_888/out/run/tests/bsdcov_instr_seq_extra.888/test.bin",
+  "formal_bind_file": "designs/ibex/dv/bsd-cov/bsd/asserts/bsd_cov_ibex_hazard_stall_region_asserts_bind.sv",
+  "simulation_bind_copy": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/bsd_cov_ibex_hazard_stall_region_asserts_bind_xrun.sv",
+  "compile_log": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/build/tb/compile_tb_with_region_asserts.log",
+  "simulation_log": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/run/rtl_sim_with_region_asserts.log",
+  "coverage_report": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/report_abs/report/cov_report.txt",
+  "imc_report_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/report_abs/report",
+  "bind_note": "The formal bind file was not modified. Xcelium simulation used a local copy rewritten to module-level bind ibex_id_stage because the original bind instance path syntax did not elaborate in this simulation context.",
+  "trigger_count": 2,
+  "triggered_regions": [
+    "R_stall_jump_003"
+  ],
+  "triggers": [
+    {
+      "time_ns": 8313,
+      "region_id": "R_stall_jump_003",
+      "assertion_path": "core_ibex_tb_top.dut.u_ibex_top.u_ibex_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst.AST_BSDCOV_R_stall_jump_003",
+      "assertion_name": "AST_BSDCOV_R_stall_jump_003",
+      "instance_path": "core_ibex_tb_top.dut.u_ibex_top.u_ibex_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "source_file": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/bsd_cov_ibex_hazard_stall_region_asserts_bind_xrun.sv",
+      "source_line": 722,
+      "message": "BSD-Cov region assertion failed: R_stall_jump_003"
+    },
+    {
+      "time_ns": 8333,
+      "region_id": "R_stall_jump_003",
+      "assertion_path": "core_ibex_tb_top.dut.u_ibex_top.gen_lockstep.u_ibex_lockstep.u_shadow_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst.AST_BSDCOV_R_stall_jump_003",
+      "assertion_name": "AST_BSDCOV_R_stall_jump_003",
+      "instance_path": "core_ibex_tb_top.dut.u_ibex_top.gen_lockstep.u_ibex_lockstep.u_shadow_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "source_file": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra_asserts/bsd_cov_ibex_hazard_stall_region_asserts_bind_xrun.sv",
+      "source_line": 722,
+      "message": "BSD-Cov region assertion failed: R_stall_jump_003"
+    }
+  ],
+  "simulation_final_status": "failed",
+  "uvm_no_alerts_triggered": true,
+  "imc_bsdcov_assertion_item_count": 204,
+  "imc_r_stall_jump_003_items": [
+    {
+      "title": "COV_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "bsd_cov_ibex_hazard_stall_region_asserts_bind",
+      "assertion_status_grd": "n/a",
+      "all_average_grd": "0%",
+      "source": "COV_BSDCOV_R_stall_jump_003: cover property ("
+    },
+    {
+      "title": "AST_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "bsd_cov_ibex_hazard_stall_region_asserts_bind",
+      "assertion_status_grd": "0%",
+      "all_average_grd": "0%",
+      "source": "AST_BSDCOV_R_stall_jump_003: assert property (p_BSDCOV_R_stall_jump_003)"
+    },
+    {
+      "title": "COV_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "ibex_top.u_ibex_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "assertion_status_grd": "n/a",
+      "all_average_grd": "0%",
+      "source": "COV_BSDCOV_R_stall_jump_003: cover property ("
+    },
+    {
+      "title": "AST_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "ibex_top.u_ibex_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "assertion_status_grd": "0%",
+      "all_average_grd": "0%",
+      "source": "AST_BSDCOV_R_stall_jump_003: assert property (p_BSDCOV_R_stall_jump_003)"
+    },
+    {
+      "title": "COV_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "ibex_top.gen_lockstep.u_ibex_lockstep.u_shadow_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "assertion_status_grd": "n/a",
+      "all_average_grd": "0%",
+      "source": "COV_BSDCOV_R_stall_jump_003: cover property ("
+    },
+    {
+      "title": "AST_BSDCOV_R_stall_jump_003",
+      "enclosing_entity": "ibex_top.gen_lockstep.u_ibex_lockstep.u_shadow_core.id_stage_i.bsd_cov_ibex_hazard_stall_region_asserts_bind_inst",
+      "assertion_status_grd": "0%",
+      "all_average_grd": "0%",
+      "source": "AST_BSDCOV_R_stall_jump_003: assert property (p_BSDCOV_R_stall_jump_003)"
+    }
+  ]
+}

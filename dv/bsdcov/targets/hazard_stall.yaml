@@ -1,0 +1,203 @@
+target_id: ibex_hazard_stall
+design: ibex
+description: >
+  Verific-generated raw RTL cone target for Ibex ID-stage hazard/stall signals.
+
+source:
+  generated_by: verific_conegen
+  seed: designs/ibex/dv/bsdcov/targets/hazard_stall.seed.yaml
+  top_module: ibex_id_stage
+  golden_module: ibex_hazard_stall_cone
+  golden_rtl: designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k/artifacts/rtl_cone/ibex_hazard_stall_cone.sv
+  cone_manifest: designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k/artifacts/rtl_cone/cone_manifest.yaml
+
+trace:
+  filename_suffix: bsd_cov_hazard_stall.csv
+  enable_plusarg: bsd_cov_hazard_stall_trace
+
+sample:
+  sample_on: posedge
+  condition: instr_valid_i
+  invalid_policy: drop
+  x_policy: drop
+
+raw_signals:
+  - name: branch_decision_i
+    width: 1
+    kind: module_input
+    hier: branch_decision_i
+  - name: branch_in_dec
+    width: 1
+    kind: state_cutpoint
+    hier: branch_in_dec
+  - name: controller_run
+    width: 1
+    kind: state_cutpoint
+    hier: controller_run
+  - name: data_ind_timing_i
+    width: 1
+    kind: module_input
+    hier: data_ind_timing_i
+  - name: div_en_dec
+    width: 1
+    kind: state_cutpoint
+    hier: div_en_dec
+  - name: ex_valid_i
+    width: 1
+    kind: module_input
+    hier: ex_valid_i
+  - name: id_fsm_q
+    width: 1
+    kind: state_cutpoint
+    hier: id_fsm_q
+  - name: instr_fetch_err_i
+    width: 1
+    kind: module_input
+    hier: instr_fetch_err_i
+  - name: instr_valid_i
+    width: 1
+    kind: module_input
+    hier: instr_valid_i
+  - name: jump_in_dec
+    width: 1
+    kind: state_cutpoint
+    hier: jump_in_dec
+  - name: lsu_req_dec
+    width: 1
+    kind: state_cutpoint
+    hier: lsu_req_dec
+  - name: lsu_req_done_i
+    width: 1
+    kind: module_input
+    hier: lsu_req_done_i
+  - name: lsu_resp_valid_i
+    width: 1
+    kind: module_input
+    hier: lsu_resp_valid_i
+  - name: mult_en_dec
+    width: 1
+    kind: state_cutpoint
+    hier: mult_en_dec
+  - name: outstanding_load_wb_i
+    width: 1
+    kind: module_input
+    hier: outstanding_load_wb_i
+  - name: outstanding_store_wb_i
+    width: 1
+    kind: module_input
+    hier: outstanding_store_wb_i
+  - name: ready_wb_i
+    width: 1
+    kind: module_input
+    hier: ready_wb_i
+  - name: rf_raddr_a_o
+    width: 5
+    kind: state_cutpoint
+    hier: rf_raddr_a_o
+  - name: rf_raddr_b_o
+    width: 5
+    kind: state_cutpoint
+    hier: rf_raddr_b_o
+  - name: rf_ren_a
+    width: 1
+    kind: state_cutpoint
+    hier: rf_ren_a
+  - name: rf_ren_b
+    width: 1
+    kind: state_cutpoint
+    hier: rf_ren_b
+  - name: rf_waddr_wb_i
+    width: 5
+    kind: module_input
+    hier: rf_waddr_wb_i
+  - name: stall_mem
+    width: 1
+    kind: endpoint
+    hier: stall_mem
+  - name: stall_ld_hz
+    width: 1
+    kind: endpoint
+    hier: stall_ld_hz
+  - name: stall_multdiv
+    width: 1
+    kind: endpoint
+    hier: stall_multdiv
+  - name: stall_branch
+    width: 1
+    kind: endpoint
+    hier: stall_branch
+  - name: stall_jump
+    width: 1
+    kind: endpoint
+    hier: stall_jump
+  - name: rf_rd_wb_hz
+    width: 1
+    kind: endpoint
+    hier: fcov_rf_rd_wb_hz
+
+derived_signals: []
+
+input:
+  - branch_decision_i
+  - branch_in_dec
+  - controller_run
+  - data_ind_timing_i
+  - div_en_dec
+  - ex_valid_i
+  - id_fsm_q
+  - instr_fetch_err_i
+  - instr_valid_i
+  - jump_in_dec
+  - lsu_req_dec
+  - lsu_req_done_i
+  - lsu_resp_valid_i
+  - mult_en_dec
+  - outstanding_load_wb_i
+  - outstanding_store_wb_i
+  - ready_wb_i
+  - rf_raddr_a_o
+  - rf_raddr_b_o
+  - rf_ren_a
+  - rf_ren_b
+  - rf_waddr_wb_i
+
+output:
+  - stall_mem
+  - stall_ld_hz
+  - stall_multdiv
+  - stall_branch
+  - stall_jump
+  - rf_rd_wb_hz
+
+aux: []
+
+rtl_cone:
+  top_module: ibex_id_stage
+  golden_module: ibex_hazard_stall_cone
+  golden_rtl: designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k/artifacts/rtl_cone/ibex_hazard_stall_cone.sv
+  endpoints:
+    - name: stall_mem
+      width: 1
+      hier: stall_mem
+    - name: stall_ld_hz
+      width: 1
+      hier: stall_ld_hz
+    - name: stall_multdiv
+      width: 1
+      hier: stall_multdiv
+    - name: stall_branch
+      width: 1
+      hier: stall_branch
+    - name: stall_jump
+      width: 1
+      hier: stall_jump
+    - name: rf_rd_wb_hz
+      width: 1
+      hier: fcov_rf_rd_wb_hz
+  extraction:
+    strict: true
+    flatten_instances: true
+    stop_at_module_inputs: true
+    stop_at_sequential_state: true
+    auto_promote_inputs: false
+    deterministic_order: hierarchical_path

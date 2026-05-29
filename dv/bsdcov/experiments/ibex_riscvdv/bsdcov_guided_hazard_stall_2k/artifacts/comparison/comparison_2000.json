@@ -1,0 +1,64 @@
+{
+  "baseline_name": "baseline_riscvdv_200k_dense_seed888",
+  "baseline_samples": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_200k/coverage/samples.csv",
+  "candidate_name": "bsdcov_guided_hazard_stall_2k",
+  "candidate_samples": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_guided_hazard_stall_2k/coverage/samples.csv",
+  "instruction_count": 2000,
+  "metrics": [
+    {
+      "baseline_pct": 78.21,
+      "candidate_pct": 72.12,
+      "delta_pct": -6.089999999999989,
+      "metric": "block"
+    },
+    {
+      "baseline_pct": 59.55,
+      "candidate_pct": 47.59,
+      "delta_pct": -11.959999999999994,
+      "metric": "branch"
+    },
+    {
+      "baseline_pct": 79.47,
+      "candidate_pct": 73.17,
+      "delta_pct": -6.299999999999997,
+      "metric": "statement"
+    },
+    {
+      "baseline_pct": 67.43,
+      "candidate_pct": 59.41,
+      "delta_pct": -8.02000000000001,
+      "metric": "expression"
+    },
+    {
+      "baseline_pct": 67.01,
+      "candidate_pct": 44.8,
+      "delta_pct": -22.210000000000008,
+      "metric": "toggle"
+    },
+    {
+      "baseline_pct": 79.47,
+      "candidate_pct": 73.17,
+      "delta_pct": -6.299999999999997,
+      "metric": "statement_dup"
+    },
+    {
+      "baseline_pct": 60.87,
+      "candidate_pct": 37.68,
+      "delta_pct": -23.189999999999998,
+      "metric": "fsm"
+    },
+    {
+      "baseline_pct": 95.9,
+      "candidate_pct": 90.26,
+      "delta_pct": -5.640000000000001,
+      "metric": "assertion"
+    },
+    {
+      "baseline_pct": 7.15,
+      "candidate_pct": 4.36,
+      "delta_pct": -2.79,
+      "metric": "covergroup"
+    }
+  ],
+  "schema_version": "bsd_cov_coverage_comparison_v0.1"
+}

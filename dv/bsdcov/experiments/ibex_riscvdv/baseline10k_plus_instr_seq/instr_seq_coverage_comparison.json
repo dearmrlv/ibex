@@ -1,0 +1,87 @@
+{
+  "baseline_cov_report": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888/sample_cov/baseline_prefix_10k_seed888/bsd_cov_sample_010000/report/cov_report.txt",
+  "baseline_prefix_run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888",
+  "extra_instr_count": 10,
+  "extra_run_dir": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/bsdcov_instr_seq_extra",
+  "included_files": [
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_rf_rd_wb_hz_003.S",
+      "word_count": 2
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_rf_rd_wb_hz_004.S",
+      "word_count": 1
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_rf_rd_wb_hz_006.S",
+      "word_count": 1
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_rf_rd_wb_hz_008.S",
+      "word_count": 1
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_stall_jump_000.S",
+      "word_count": 1
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_stall_ld_hz_000.S",
+      "word_count": 2
+    },
+    {
+      "path": "designs/ibex/dv/bsd-cov/bsd/instr_seq/AST_BSDCOV_R_stall_ld_hz_001.S",
+      "word_count": 2
+    }
+  ],
+  "merged_cov_report": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline10k_plus_instr_seq/merged_cov/baseline10k_plus_instr_seq/report/cov_report.txt",
+  "metrics": {
+    "assertion": {
+      "baseline10k_pct": 94.62,
+      "baseline10k_plus_instr_seq_pct": 94.62,
+      "delta_pct": 0.0
+    },
+    "block": {
+      "baseline10k_pct": 78.78,
+      "baseline10k_plus_instr_seq_pct": 78.79,
+      "delta_pct": 0.010000000000005116
+    },
+    "branch": {
+      "baseline10k_pct": 60.57,
+      "baseline10k_plus_instr_seq_pct": 60.6,
+      "delta_pct": 0.030000000000001137
+    },
+    "covergroup": {
+      "baseline10k_pct": 7.41,
+      "baseline10k_plus_instr_seq_pct": 7.41,
+      "delta_pct": 0.0
+    },
+    "expression": {
+      "baseline10k_pct": 68.08,
+      "baseline10k_plus_instr_seq_pct": 68.11,
+      "delta_pct": 0.030000000000001137
+    },
+    "fsm": {
+      "baseline10k_pct": 60.87,
+      "baseline10k_plus_instr_seq_pct": 60.87,
+      "delta_pct": 0.0
+    },
+    "statement": {
+      "baseline10k_pct": 80.37,
+      "baseline10k_plus_instr_seq_pct": 80.38,
+      "delta_pct": 0.009999999999990905
+    },
+    "statement_dup": {
+      "baseline10k_pct": 80.37,
+      "baseline10k_plus_instr_seq_pct": 80.38,
+      "delta_pct": 0.009999999999990905
+    },
+    "toggle": {
+      "baseline10k_pct": 67.98,
+      "baseline10k_plus_instr_seq_pct": 67.98,
+      "delta_pct": 0.0
+    }
+  },
+  "prefix_instr_count": 10000,
+  "schema_version": "bsd_cov_instr_seq_coverage_comparison_v0.1",
+  "skipped_files": []
+}

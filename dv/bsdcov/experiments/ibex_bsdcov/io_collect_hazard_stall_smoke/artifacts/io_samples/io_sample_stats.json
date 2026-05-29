@@ -1,0 +1,12 @@
+{
+  "target_id": "ibex_hazard_stall",
+  "raw_samples": 6418,
+  "valid_samples": 6418,
+  "unique_inputs": 3038,
+  "unique_io_pairs": 3038,
+  "conflicting_inputs": 0,
+  "dropped_x_rows": 0,
+  "dropped_invalid_rows": 0,
+  "input_width": 40,
+  "output_width": 4
+}
