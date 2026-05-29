@@ -1,9 +1,0 @@
-{
-  "method_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888/sim",
-  "mode": "import_existing_run",
-  "note": "IO samples imported from Baseline10k prefix trace.",
-  "run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_bsdcov/hazard_stall_baseline10k",
-  "source_kind": "baseline_prefix_10k",
-  "source_run_dir": "designs/ibex/dv/bsdcov/experiments/ibex_riscvdv/baseline_prefix_10k_seed888",
-  "target": "designs/ibex/dv/bsdcov/targets/hazard_stall.yaml"
-}

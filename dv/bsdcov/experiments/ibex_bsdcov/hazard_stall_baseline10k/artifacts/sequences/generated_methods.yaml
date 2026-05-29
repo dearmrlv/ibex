@@ -1,8 +1,0 @@
-methods:
-- id: bsdcov_extra_2k_baseline10k_templates_v1
-  name: bsdcov_extra_2k_baseline10k_templates_v1
-  type: directed_asm
-  test: bsd_cov_extra_2k_baseline10k_templates_v1
-  description: BSD-Cov generated directed hazard/stall test.
-  requested_instr_cnt: 2000
-  directed_test_src: ${BSD_COV_ROOT}/designs/ibex/dv/uvm/core_ibex/directed_tests/bsd_cov_generated/bsd_cov_extra_2k_baseline10k_templates_v1.S
