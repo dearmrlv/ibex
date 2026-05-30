@@ -4,13 +4,19 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IBEX_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 CORE_IBEX_DIR="$IBEX_ROOT/dv/uvm/core_ibex"
+CALLER_PWD="$PWD"
 
 # Make the RISC-V toolchain, Spike pkg-config paths, and Cadence variables
-# available to every launch_sim sub-step.  In particular, riscv-dv --asm_test
-# requires RISCV_GCC/RISCV_OBJCOPY during the .S -> .bin compile step.
+# available to every launch_sim sub-step.  setup_env.sh uses relative paths, so
+# source it from core_ibex, then restore the caller cwd.  Otherwise relative
+# --instr-seq paths such as riscvdv/assembly/*.chunks.f get resolved from the
+# wrong directory.
 if [[ -f "$CORE_IBEX_DIR/setup_env.sh" ]]; then
+  pushd "$CORE_IBEX_DIR" >/dev/null
   # shellcheck disable=SC1091
-  source "$CORE_IBEX_DIR/setup_env.sh"
+  source ./setup_env.sh
+  popd >/dev/null
+  cd "$CALLER_PWD"
 fi
 
 # Use the local Cadence wrapper by default.  This keeps both the Ibex DV
@@ -64,8 +70,8 @@ if [[ -z "$PYTHON_BIN" ]]; then
     export VIRTUAL_ENV="$IBEX_ROOT/.venv"
     export PATH="$IBEX_ROOT/.venv/bin:$PATH"
   elif command -v uv >/dev/null 2>&1; then
-    cd "$IBEX_ROOT"
-    exec uv run python "$SCRIPT_DIR/_launch_sim.py" "$@"
+    cd "$CALLER_PWD"
+    exec uv run --project "$IBEX_ROOT" python "$SCRIPT_DIR/_launch_sim.py" "$@"
   else
     PYTHON_BIN="$(command -v python3)"
   fi
@@ -77,4 +83,5 @@ else
   fi
 fi
 
+cd "$CALLER_PWD"
 exec "$PYTHON_BIN" "$SCRIPT_DIR/_launch_sim.py" "$@"
