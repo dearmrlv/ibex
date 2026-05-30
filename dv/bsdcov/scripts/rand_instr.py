@@ -75,11 +75,6 @@ def _nonnegative_int(value: str) -> int:
     return parsed
 
 
-def _quote_yaml_scalar(value: str) -> str:
-    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
-    return f'"{escaped}"'
-
-
 def _write_text(path: Path, text: str, *, force: bool) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists() and not force and path.read_text(encoding="utf-8") != text:
@@ -98,13 +93,17 @@ def _copy_file(src: Path, dst: Path, *, force: bool) -> None:
 
 def _build_pythonpath(repo_root: Path) -> str:
     core_ibex = repo_root / "dv" / "uvm" / "core_ibex"
+    riscvdv_root = repo_root / "vendor" / "google_riscv-dv"
     paths = [
         repo_root,
         repo_root / "util",
         core_ibex / "scripts",
         core_ibex / "riscv_dv_extension",
         core_ibex / "yaml",
-        repo_root / "vendor" / "google_riscv-dv" / "scripts",
+        riscvdv_root,
+        riscvdv_root / "scripts",
+        riscvdv_root / "pygen",
+        riscvdv_root / "pygen" / "pygen_src",
     ]
     existing = os.environ.get("PYTHONPATH", "")
     if existing:
