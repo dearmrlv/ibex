@@ -9,7 +9,9 @@ This internal Python implementation is normally entered through
   test;
 * chunk simulations may run independently;
 * coverage samples are produced by prefix-merging chunk coverage databases in the
-  user-provided order.
+  user-provided order;
+* BSD-Cov IO samples dumped by bind/interface files are collected per chunk and
+  merged into cook-ready CSVs.
 
 This is cumulative test-suite coverage, not a single continuously-running
 processor state sampled at runtime.
@@ -53,6 +55,8 @@ ASM_DIRECTIVES = {
     ".quad", ".section", ".set", ".size", ".space", ".string", ".text", ".type",
     ".word", ".zero",
 }
+IO_SAMPLE_PREFIX = "bsdcov_trace_"
+IO_SAMPLE_SUFFIX = ".io_samples.csv"
 
 
 @dataclass(frozen=True)
@@ -83,7 +87,6 @@ class ChunkResult:
 
 
 def _repo_root() -> Path:
-    # dv/bsdcov/scripts/_launch_sim.py -> ibex repo root
     return Path(__file__).resolve().parents[3]
 
 
@@ -171,9 +174,8 @@ def _read_list_file(path: Path) -> list[Path]:
     out: list[Path] = []
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw.split("#", 1)[0].strip()
-        if not line:
-            continue
-        out.append(Path(line).expanduser())
+        if line:
+            out.append(Path(line).expanduser())
     return out
 
 
@@ -259,19 +261,9 @@ def _compile_tb(*, repo_root: Path, run_dir: Path, bind_flists: list[Path], pyth
     out_dir = run_dir / "ibex_dv_out"
     env = _base_env(repo_root, bind_flists, python)
     make_args = [
-        "make",
-        "--keep-going",
-        "GOAL=rtl_tb_compile",
-        f"OUT={out_dir}",
-        "IBEX_CONFIG=opentitan",
-        f"SIMULATOR={simulator}",
-        f"ISS={iss}",
-        "TEST=empty",
-        "ITERATIONS=1",
-        f"SEED={seed}",
-        "WAVES=0",
-        "COV=1",
-        "VERBOSE=0",
+        "make", "--keep-going", "GOAL=rtl_tb_compile", f"OUT={out_dir}",
+        "IBEX_CONFIG=opentitan", f"SIMULATOR={simulator}", f"ISS={iss}",
+        "TEST=empty", "ITERATIONS=1", f"SEED={seed}", "WAVES=0", "COV=1", "VERBOSE=0",
     ]
     if force_compile:
         make_args.insert(2, "-B")
@@ -288,27 +280,11 @@ def _compile_asm(*, repo_root: Path, python: Path, asm: Path, chunk_dir: Path, s
     out_dir = chunk_dir / "asm_compile"
     env = _base_env(repo_root, [], python)
     cmd = [
-        str(python),
-        str(riscvdv_root / "run.py"),
-        "--asm_test",
-        str(asm),
-        "--target",
-        isa,
-        "--custom_target",
-        str(core_ibex / "riscv_dv_extension"),
-        "--csr_yaml",
-        str(core_ibex / "riscv_dv_extension" / "csr_description.yaml"),
-        "--mabi",
-        mabi,
-        "--isa",
-        isa,
-        "--iss",
-        iss,
-        "--seed",
-        str(seed),
-        "--output",
-        str(out_dir),
-        "--gcc_opts=-mno-strict-align",
+        str(python), str(riscvdv_root / "run.py"), "--asm_test", str(asm),
+        "--target", isa, "--custom_target", str(core_ibex / "riscv_dv_extension"),
+        "--csr_yaml", str(core_ibex / "riscv_dv_extension" / "csr_description.yaml"),
+        "--mabi", mabi, "--isa", isa, "--iss", iss, "--seed", str(seed),
+        "--output", str(out_dir), "--gcc_opts=-mno-strict-align",
     ]
     _run(cmd, cwd=repo_root, env=env, log=chunk_dir / "compile_asm.log", dry_run=dry_run)
     binary = out_dir / "directed_asm_test" / (asm.stem + ".bin")
@@ -335,36 +311,14 @@ def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir
     trace_base = chunk_dir / "trace_core"
     cov_dir = chunk_dir / "coverage"
     cmd = [
-        xrun,
-        "-64bit",
-        "-R",
-        "-xmlibdirpath",
-        str(tb_dir),
-        "-licqueue",
-        "-svseed",
-        str(chunk.seed),
-        "-svrnc",
-        "rand_struct",
-        "-nokey",
-        "-l",
-        str(chunk_dir / "rtl_sim.log"),
-        f"+UVM_TESTNAME={rtl_test}",
-        "+UVM_VERBOSITY=UVM_LOW",
-        f"+bin={binary}",
-        f"+ibex_tracer_file_base={trace_base}",
-        f"+cosim_log_file={chunk_dir / 'cosim.log'}",
-        "-covmodeldir",
-        str(cov_dir),
-        "-covworkdir",
-        str(chunk_dir),
-        "-covscope",
-        "coverage",
-        "-covtest",
-        f"{chunk.test_name}.{chunk.seed}",
-        "-covoverwrite",
-        "+enable_ibex_fcov=1",
-        "+bsdcov_io_dump",
-        f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
+        xrun, "-64bit", "-R", "-xmlibdirpath", str(tb_dir), "-licqueue",
+        "-svseed", str(chunk.seed), "-svrnc", "rand_struct", "-nokey", "-l",
+        str(chunk_dir / "rtl_sim.log"), f"+UVM_TESTNAME={rtl_test}", "+UVM_VERBOSITY=UVM_LOW",
+        f"+bin={binary}", f"+ibex_tracer_file_base={trace_base}",
+        f"+cosim_log_file={chunk_dir / 'cosim.log'}", "-covmodeldir", str(cov_dir),
+        "-covworkdir", str(chunk_dir), "-covscope", "coverage", "-covtest",
+        f"{chunk.test_name}.{chunk.seed}", "-covoverwrite", "+enable_ibex_fcov=1",
+        "+bsdcov_io_dump", f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
     ]
     _run(cmd, cwd=repo_root / "dv" / "uvm" / "core_ibex", env=env,
          log=chunk_dir / "launch_rtl.log", dry_run=dry_run)
@@ -422,28 +376,18 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
     except Exception as err:
         rtl_error = err
         (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
-
     ucds = _collect_chunk_ucds(chunk_dir)
-    if rtl_error is None:
-        status = "pass" if dry_run or ucds else "missing_coverage"
-    else:
+    status = "pass" if rtl_error is None and (dry_run or ucds) else "missing_coverage"
+    if rtl_error is not None:
         status = "fail_with_coverage" if ucds else "fail"
     trace_candidates = sorted(chunk_dir.glob("trace_core*.log"))
     return ChunkResult(
-        index=chunk.index,
-        test_name=chunk.test_name,
-        seed=chunk.seed,
-        asm=str(chunk.asm),
-        chunk_dir=str(chunk_dir),
-        binary=str(binary),
-        rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
+        index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm),
+        chunk_dir=str(chunk_dir), binary=str(binary), rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
         rtl_trace=str(trace_candidates[0]) if trace_candidates else "",
-        cosim_log=str(chunk_dir / "cosim.log"),
-        coverage_ucds=[str(p) for p in ucds],
-        status=status,
-        elapsed_s=time.perf_counter() - started,
-        static_instr_count=static_total,
-        static_main_instr_count=static_main,
+        cosim_log=str(chunk_dir / "cosim.log"), coverage_ucds=[str(p) for p in ucds],
+        status=status, elapsed_s=time.perf_counter() - started,
+        static_instr_count=static_total, static_main_instr_count=static_main,
     )
 
 
@@ -458,10 +402,7 @@ def _empty_cov_row() -> dict[str, Any]:
 
 
 def parse_cov_report(path: Path, module: str = "ibex_top") -> dict[str, dict[str, Any]]:
-    parsed: dict[str, dict[str, Any]] = {
-        metric: {"pct": "", "covered": "", "total": "", "uncovered": ""}
-        for metric in METRICS
-    }
+    parsed: dict[str, dict[str, Any]] = {metric: {"pct": "", "covered": "", "total": "", "uncovered": ""} for metric in METRICS}
     for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         if not line.startswith(module + " "):
             continue
@@ -512,35 +453,20 @@ def _run_imc_report(*, repo_root: Path, run_dir: Path, prefix_idx: int,
             seen.add(run_dir_ucd)
             run_dirs.append(run_dir_ucd)
     runfile.write_text("\n".join(str(p) for p in run_dirs) + "\n", encoding="utf-8")
-
     core_ibex = repo_root / "dv" / "uvm" / "core_ibex"
     xcelium_scripts = repo_root / "vendor" / "lowrisc_ip" / "dv" / "tools" / "xcelium"
     waivers = core_ibex / "waivers" / "coverage_waivers_xlm.tcl"
     env = _base_env(repo_root, [], Path(sys.executable))
     env.update({
-        "cov_merge_db_dir": str(merged_dir),
-        "cov_report_dir": str(report_dir),
+        "cov_merge_db_dir": str(merged_dir), "cov_report_dir": str(report_dir),
         "cov_db_dirs": " ".join(str(p.parent) for p in run_dirs),
-        "cov_db_runfile": str(runfile),
-        "DUT_TOP": module,
+        "cov_db_runfile": str(runfile), "DUT_TOP": module,
     })
-    merge_inner = [
-        "imc", "-64bit", "-licqueue",
-        "-exec", str(xcelium_scripts / "cov_merge.tcl"),
-        "-logfile", str(point_dir / "merge.log"),
-    ]
-    report_inner = [
-        "imc", "-64bit", "-licqueue",
-        "-load", str(merged_dir),
-        "-init", str(waivers),
-        "-exec", str(xcelium_scripts / "cov_report.tcl"),
-        "-logfile", str(point_dir / "report.log"),
-    ]
+    merge_inner = ["imc", "-64bit", "-licqueue", "-exec", str(xcelium_scripts / "cov_merge.tcl"), "-logfile", str(point_dir / "merge.log")]
+    report_inner = ["imc", "-64bit", "-licqueue", "-load", str(merged_dir), "-init", str(waivers), "-exec", str(xcelium_scripts / "cov_report.tcl"), "-logfile", str(point_dir / "report.log")]
     setup = _source_setup_prefix(core_ibex)
-    _run_shell(setup + "script -q -e -c " + shlex.quote(shlex.join(merge_inner)) + " /dev/null",
-               cwd=core_ibex, env=env, log=point_dir / "imc_merge.stdout.log", dry_run=dry_run)
-    _run_shell(setup + "script -q -e -c " + shlex.quote(shlex.join(report_inner)) + " /dev/null",
-               cwd=core_ibex, env=env, log=point_dir / "imc_report.stdout.log", dry_run=dry_run)
+    _run_shell(setup + "script -q -e -c " + shlex.quote(shlex.join(merge_inner)) + " /dev/null", cwd=core_ibex, env=env, log=point_dir / "imc_merge.stdout.log", dry_run=dry_run)
+    _run_shell(setup + "script -q -e -c " + shlex.quote(shlex.join(report_inner)) + " /dev/null", cwd=core_ibex, env=env, log=point_dir / "imc_report.stdout.log", dry_run=dry_run)
     report = report_dir / "cov_report.txt"
     return report if dry_run or report.exists() else None
 
@@ -571,11 +497,7 @@ def write_svg(path: Path, rows: list[dict[str, Any]], title: str) -> None:
     xs = [_numeric(row.get("instruction_count")) for row in rows]
     xs = [x for x in xs if x is not None]
     max_x = max(xs) if xs else 1.0
-    colors = {
-        "block": "#2563eb", "branch": "#dc2626", "statement": "#16a34a",
-        "expression": "#9333ea", "toggle": "#ea580c", "statement_dup": "#0891b2",
-        "fsm": "#4d7c0f", "assertion": "#be123c", "covergroup": "#475569",
-    }
+    colors = {"block": "#2563eb", "branch": "#dc2626", "statement": "#16a34a", "expression": "#9333ea", "toggle": "#ea580c", "statement_dup": "#0891b2", "fsm": "#4d7c0f", "assertion": "#be123c", "covergroup": "#475569"}
 
     def pt(row: dict[str, Any], metric: str) -> tuple[float, float] | None:
         x_val = _numeric(row.get("instruction_count"))
@@ -584,15 +506,7 @@ def write_svg(path: Path, rows: list[dict[str, Any]], title: str) -> None:
             return None
         return left + (x_val / max_x) * plot_w, top + (100.0 - y_val) / 100.0 * plot_h
 
-    lines = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-        '<rect width="100%" height="100%" fill="white"/>',
-        f'<line x1="{left}" y1="{top + plot_h}" x2="{left + plot_w}" y2="{top + plot_h}" stroke="#111827"/>',
-        f'<line x1="{left}" y1="{top}" x2="{left}" y2="{top + plot_h}" stroke="#111827"/>',
-        f'<text x="{width / 2}" y="{height - 20}" text-anchor="middle" font-family="sans-serif" font-size="18">Instruction Count</text>',
-        f'<text x="24" y="{height / 2}" transform="rotate(-90 24 {height / 2})" text-anchor="middle" font-family="sans-serif" font-size="18">Coverage (%)</text>',
-        f'<text x="{left}" y="24" font-family="sans-serif" font-size="20">{title}</text>',
-    ]
+    lines = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">', '<rect width="100%" height="100%" fill="white"/>', f'<line x1="{left}" y1="{top + plot_h}" x2="{left + plot_w}" y2="{top + plot_h}" stroke="#111827"/>', f'<line x1="{left}" y1="{top}" x2="{left}" y2="{top + plot_h}" stroke="#111827"/>', f'<text x="{width / 2}" y="{height - 20}" text-anchor="middle" font-family="sans-serif" font-size="18">Instruction Count</text>', f'<text x="24" y="{height / 2}" transform="rotate(-90 24 {height / 2})" text-anchor="middle" font-family="sans-serif" font-size="18">Coverage (%)</text>', f'<text x="{left}" y="24" font-family="sans-serif" font-size="20">{title}</text>']
     for idx in range(5):
         value = max_x * idx / 4
         x = left + (value / max_x) * plot_w
@@ -629,20 +543,90 @@ def _write_latest_link(sim_dir: Path, run_dir: Path) -> None:
         (sim_dir / "latest.txt").write_text(str(run_dir) + "\n", encoding="utf-8")
 
 
+def _io_sample_cone_name(path: Path) -> str | None:
+    name = path.name
+    if not (name.startswith(IO_SAMPLE_PREFIX) and name.endswith(IO_SAMPLE_SUFFIX)):
+        return None
+    return name[len(IO_SAMPLE_PREFIX):-len(IO_SAMPLE_SUFFIX)]
+
+
+def _find_canonical_io_sample_path(bsdcov_dir: Path, cone_name: str) -> Path | None:
+    cones_root = bsdcov_dir / "bsdcovproj" / "cones"
+    if not cones_root.exists():
+        return None
+    matches = sorted(cones_root.glob(f"*/{cone_name}/{cone_name}.io_samples.csv"))
+    if matches:
+        return matches[0]
+    matches = sorted(cones_root.rglob(f"{cone_name}.io_samples.csv"))
+    return matches[0] if matches else None
+
+
+def _merge_one_io_sample(cone_name: str, inputs: list[tuple[int, Path]], output: Path) -> tuple[int, list[dict[str, Any]]]:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    header: str | None = None
+    total_rows = 0
+    manifest_rows: list[dict[str, Any]] = []
+    with output.open("w", encoding="utf-8", newline="") as out_fd:
+        for chunk_idx, src in inputs:
+            rows_this_file = 0
+            with src.open("r", encoding="utf-8", errors="ignore", newline="") as in_fd:
+                first = in_fd.readline()
+                if not first:
+                    manifest_rows.append({"cone_name": cone_name, "chunk_index": chunk_idx, "rows": 0, "source": str(src), "note": "empty file"})
+                    continue
+                if header is None:
+                    header = first
+                    out_fd.write(header)
+                elif first.strip() != header.strip():
+                    raise RuntimeError(f"IO sample header mismatch for {cone_name}: {src}")
+                for line in in_fd:
+                    if not line.strip():
+                        continue
+                    out_fd.write(line)
+                    rows_this_file += 1
+            total_rows += rows_this_file
+            manifest_rows.append({"cone_name": cone_name, "chunk_index": chunk_idx, "rows": rows_this_file, "source": str(src), "note": ""})
+        if header is None:
+            out_fd.write("\n")
+    return total_rows, manifest_rows
+
+
+def merge_io_samples(*, bsdcov_dir: Path, run_dir: Path, results: list[ChunkResult], update_cone_samples: bool) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    by_cone: dict[str, list[tuple[int, Path]]] = {}
+    for result in sorted(results, key=lambda r: r.index):
+        chunk_dir = Path(result.chunk_dir)
+        for sample in sorted(chunk_dir.glob(f"{IO_SAMPLE_PREFIX}*{IO_SAMPLE_SUFFIX}")):
+            cone_name = _io_sample_cone_name(sample)
+            if cone_name is not None:
+                by_cone.setdefault(cone_name, []).append((result.index, sample))
+    merged_rows: list[dict[str, Any]] = []
+    manifest_rows: list[dict[str, Any]] = []
+    run_io_dir = run_dir / "io_samples"
+    for cone_name, inputs in sorted(by_cone.items()):
+        merged_path = run_io_dir / f"{cone_name}.io_samples.csv"
+        total_rows, per_file_rows = _merge_one_io_sample(cone_name, inputs, merged_path)
+        manifest_rows.extend(per_file_rows)
+        canonical_path = _find_canonical_io_sample_path(bsdcov_dir, cone_name)
+        canonical_updated = False
+        if update_cone_samples and canonical_path is not None:
+            canonical_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(merged_path, canonical_path)
+            canonical_updated = True
+        merged_rows.append({"cone_name": cone_name, "merged_io_samples": str(merged_path), "canonical_io_samples": str(canonical_path) if canonical_path else "", "canonical_updated": 1 if canonical_updated else 0, "num_source_files": len(inputs), "num_rows": total_rows})
+    if merged_rows:
+        write_csv(run_io_dir / "manifest.csv", merged_rows, ["cone_name", "merged_io_samples", "canonical_io_samples", "canonical_updated", "num_source_files", "num_rows"])
+        write_csv(run_io_dir / "sources.csv", manifest_rows, ["cone_name", "chunk_index", "rows", "source", "note"])
+    return merged_rows, manifest_rows
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Launch BSD-Cov Ibex simulations for instruction chunks.")
-    parser.add_argument("--instr-seq", action="append", type=Path, required=True,
-                        help="Instruction .S file, or a .chunks.f/.f list. Can be repeated.")
-    parser.add_argument("--bind-flist", action="append", type=Path, default=[],
-                        help="Optional bind filelist, e.g. bsdcovproj/sim_bind.f. Can be repeated.")
-    parser.add_argument("--cov-update", type=_positive_int, required=True,
-                        help="Instruction interval represented by each chunk in cumulative coverage samples.")
-    parser.add_argument("--jobs", type=_positive_int, default=1,
-                        help="Parallel RTL simulations. Default: 1")
-    parser.add_argument("--run-tag", default=None,
-                        help="Run tag under dv/bsdcov/sim/runs. Default: timestamped tag.")
-    parser.add_argument("--python", type=Path, default=None,
-                        help="Python executable for Ibex/riscv-dv scripts. Default: <repo>/.venv/bin/python if present.")
+    parser.add_argument("--instr-seq", action="append", type=Path, required=True, help="Instruction .S file, or a .chunks.f/.f list. Can be repeated.")
+    parser.add_argument("--bind-flist", action="append", type=Path, default=[], help="Optional bind filelist, e.g. bsdcovproj/sim_bind.f. Can be repeated.")
+    parser.add_argument("--cov-update", type=_positive_int, required=True, help="Instruction interval represented by each chunk in cumulative coverage samples.")
+    parser.add_argument("--jobs", type=_positive_int, default=1, help="Parallel RTL simulations. Default: 1")
+    parser.add_argument("--run-tag", default=None, help="Run tag under dv/bsdcov/sim/runs. Default: timestamped tag.")
+    parser.add_argument("--python", type=Path, default=None, help="Python executable for Ibex/riscv-dv scripts. Default: <repo>/.venv/bin/python if present.")
     parser.add_argument("--seed", type=_nonnegative_int, default=1)
     parser.add_argument("--simulator", default="xlm")
     parser.add_argument("--iss", default="spike")
@@ -652,8 +636,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cov-module", default="ibex_top")
     parser.add_argument("--force-compile", action="store_true")
     parser.add_argument("--skip-cov-merge", action="store_true")
-    parser.add_argument("--exclude-fail", action="store_true",
-                        help="Exclude failing chunks from cumulative coverage merge. By default, fail_with_coverage chunks are included.")
+    parser.add_argument("--exclude-fail", action="store_true", help="Exclude failing chunks from cumulative coverage merge. By default, fail_with_coverage chunks are included.")
+    parser.add_argument("--no-update-cone-samples", action="store_true", help="Do not overwrite bsdcovproj/cones/.../*.io_samples.csv with merged samples.")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -665,7 +649,6 @@ def main() -> int:
     python = _resolve_python(repo_root, args.python)
     instr_seqs = _expand_instr_seq(args.instr_seq)
     bind_flists = _resolve_bind_flists(args.bind_flist)
-
     run_tag = args.run_tag or f"run.{_timestamp_tag()}.n{len(instr_seqs)}.step{args.cov_update}"
     sim_dir = bsdcov_dir / "sim"
     run_dir = sim_dir / "runs" / run_tag
@@ -673,50 +656,13 @@ def main() -> int:
     (run_dir / "logs").mkdir(parents=True, exist_ok=True)
     (run_dir / "chunks").mkdir(parents=True, exist_ok=True)
     (run_dir / "coverage").mkdir(parents=True, exist_ok=True)
-
-    chunks = [
-        ChunkSpec(
-            index=idx,
-            asm=asm,
-            seed=args.seed + idx,
-            sample_instruction_count=(idx + 1) * args.cov_update,
-            test_name=f"bsdcov_chunk_{idx:04d}",
-        )
-        for idx, asm in enumerate(instr_seqs)
-    ]
-
-    config = {
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "semantics": "independent_standalone_chunks_prefix_coverage",
-        "repo_root": str(repo_root),
-        "python": str(python),
-        "run_tag": run_tag,
-        "cov_update": args.cov_update,
-        "jobs": args.jobs,
-        "simulator": args.simulator,
-        "iss": args.iss,
-        "isa": args.isa,
-        "mabi": args.mabi,
-        "rtl_test": args.rtl_test,
-        "exclude_fail": args.exclude_fail,
-        "instr_seq": [str(p) for p in instr_seqs],
-        "bind_flist": [str(p) for p in bind_flists],
-    }
+    chunks = [ChunkSpec(index=idx, asm=asm, seed=args.seed + idx, sample_instruction_count=(idx + 1) * args.cov_update, test_name=f"bsdcov_chunk_{idx:04d}") for idx, asm in enumerate(instr_seqs)]
+    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-
-    tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists,
-                         python=python, simulator=args.simulator, iss=args.iss,
-                         seed=args.seed, force_compile=args.force_compile,
-                         dry_run=args.dry_run)
-
+    tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, dry_run=args.dry_run)
     results: list[ChunkResult] = []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
-        future_map = {
-            ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks",
-                      args.simulator, args.rtl_test, args.isa, args.mabi, args.iss,
-                      args.dry_run): chunk
-            for chunk in chunks
-        }
+        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, args.dry_run): chunk for chunk in chunks}
         for fut in as_completed(future_map):
             chunk = future_map[fut]
             try:
@@ -726,37 +672,15 @@ def main() -> int:
                 chunk_dir.mkdir(parents=True, exist_ok=True)
                 (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
                 ucds = _collect_chunk_ucds(chunk_dir)
-                result = ChunkResult(
-                    index=chunk.index,
-                    test_name=chunk.test_name,
-                    seed=chunk.seed,
-                    asm=str(chunk.asm),
-                    chunk_dir=str(chunk_dir),
-                    binary="",
-                    rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
-                    rtl_trace="",
-                    cosim_log=str(chunk_dir / "cosim.log"),
-                    coverage_ucds=[str(p) for p in ucds],
-                    status="fail_with_coverage" if ucds else "fail",
-                    elapsed_s=0.0,
-                    static_instr_count=0,
-                    static_main_instr_count=0,
-                )
+                result = ChunkResult(index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm), chunk_dir=str(chunk_dir), binary="", rtl_sim_log=str(chunk_dir / "rtl_sim.log"), rtl_trace="", cosim_log=str(chunk_dir / "cosim.log"), coverage_ucds=[str(p) for p in ucds], status="fail_with_coverage" if ucds else "fail", elapsed_s=0.0, static_instr_count=0, static_main_instr_count=0)
             print(f"chunk {result.index:04d}: {result.status}")
             results.append(result)
     results.sort(key=lambda r: r.index)
-
-    run_rows = [asdict(r) for r in results]
-    write_csv(
-        run_dir / "runs.csv",
-        run_rows,
-        [
-            "index", "test_name", "seed", "status", "asm", "chunk_dir", "binary",
-            "rtl_sim_log", "rtl_trace", "cosim_log", "elapsed_s",
-            "static_instr_count", "static_main_instr_count", "coverage_ucds",
-        ],
-    )
-
+    write_csv(run_dir / "runs.csv", [asdict(r) for r in results], ["index", "test_name", "seed", "status", "asm", "chunk_dir", "binary", "rtl_sim_log", "rtl_trace", "cosim_log", "elapsed_s", "static_instr_count", "static_main_instr_count", "coverage_ucds"])
+    io_merged_rows: list[dict[str, Any]] = []
+    io_source_rows: list[dict[str, Any]] = []
+    if not args.dry_run:
+        io_merged_rows, io_source_rows = merge_io_samples(bsdcov_dir=bsdcov_dir, run_dir=run_dir, results=results, update_cone_samples=not args.no_update_cone_samples)
     sample_rows: list[dict[str, Any]] = []
     cumulative_ucds: list[Path] = []
     coverage_included_count = 0
@@ -766,22 +690,11 @@ def main() -> int:
         if include_for_cov:
             cumulative_ucds.extend(result_ucds)
             coverage_included_count += 1
-        row: dict[str, Any] = {
-            "sample_idx": result.index + 1,
-            "instruction_count": chunk.sample_instruction_count,
-            "num_chunks": result.index + 1,
-            "chunk_status": result.status,
-            "coverage_included": 1 if include_for_cov else 0,
-            "cov_report": "",
-        }
+        row: dict[str, Any] = {"sample_idx": result.index + 1, "instruction_count": chunk.sample_instruction_count, "num_chunks": result.index + 1, "chunk_status": result.status, "coverage_included": 1 if include_for_cov else 0, "cov_report": ""}
         row.update(_empty_cov_row())
         if not args.skip_cov_merge and cumulative_ucds:
             try:
-                report = _run_imc_report(repo_root=repo_root, run_dir=run_dir,
-                                         prefix_idx=result.index + 1,
-                                         ucds=cumulative_ucds,
-                                         module=args.cov_module,
-                                         dry_run=args.dry_run)
+                report = _run_imc_report(repo_root=repo_root, run_dir=run_dir, prefix_idx=result.index + 1, ucds=cumulative_ucds, module=args.cov_module, dry_run=args.dry_run)
                 if report:
                     row["cov_report"] = str(report)
                     cov = parse_cov_report(report, args.cov_module) if report.exists() else {}
@@ -794,36 +707,20 @@ def main() -> int:
             except Exception as err:
                 row["chunk_status"] = f"coverage_merge_failed: {err}"
         sample_rows.append(row)
-
     sample_fields = ["sample_idx", "instruction_count", "num_chunks", "chunk_status", "coverage_included", "cov_report"]
     for metric in METRICS:
-        sample_fields.extend([
-            f"{metric}_pct", f"{metric}_covered", f"{metric}_total", f"{metric}_uncovered",
-        ])
+        sample_fields.extend([f"{metric}_pct", f"{metric}_covered", f"{metric}_total", f"{metric}_uncovered"])
     write_csv(run_dir / "coverage" / "samples.csv", sample_rows, sample_fields)
-
-    summary = {
-        "run_tag": run_tag,
-        "num_chunks": len(chunks),
-        "num_pass": sum(1 for r in results if r.status == "pass"),
-        "num_fail": sum(1 for r in results if r.status.startswith("fail")),
-        "num_fail_with_coverage": sum(1 for r in results if r.status == "fail_with_coverage"),
-        "num_missing_coverage": sum(1 for r in results if r.status == "missing_coverage"),
-        "exclude_fail": args.exclude_fail,
-        "num_coverage_included": coverage_included_count,
-        "samples_csv": str(run_dir / "coverage" / "samples.csv"),
-        "runs_csv": str(run_dir / "runs.csv"),
-    }
-    (run_dir / "coverage" / "coverage_summary.csv").write_text(
-        "metric,value\n" + "".join(f"{k},{v}\n" for k, v in summary.items()), encoding="utf-8")
-    write_svg(run_dir / "coverage" / "coverage.svg", sample_rows,
-              f"BSD-Cov cumulative coverage: {run_tag}")
+    summary = {"run_tag": run_tag, "num_chunks": len(chunks), "num_pass": sum(1 for r in results if r.status == "pass"), "num_fail": sum(1 for r in results if r.status.startswith("fail")), "num_fail_with_coverage": sum(1 for r in results if r.status == "fail_with_coverage"), "num_missing_coverage": sum(1 for r in results if r.status == "missing_coverage"), "exclude_fail": args.exclude_fail, "num_coverage_included": coverage_included_count, "num_io_sample_cones": len(io_merged_rows), "num_io_sample_source_files": len(io_source_rows), "samples_csv": str(run_dir / "coverage" / "samples.csv"), "runs_csv": str(run_dir / "runs.csv"), "io_samples_manifest": str(run_dir / "io_samples" / "manifest.csv") if io_merged_rows else ""}
+    (run_dir / "coverage" / "coverage_summary.csv").write_text("metric,value\n" + "".join(f"{k},{v}\n" for k, v in summary.items()), encoding="utf-8")
+    write_svg(run_dir / "coverage" / "coverage.svg", sample_rows, f"BSD-Cov cumulative coverage: {run_tag}")
     _write_latest_link(sim_dir, run_dir)
-
     print(f"Run directory: {run_dir}")
     print(f"Runs CSV     : {run_dir / 'runs.csv'}")
     print(f"Samples CSV  : {run_dir / 'coverage' / 'samples.csv'}")
     print(f"Coverage SVG : {run_dir / 'coverage' / 'coverage.svg'}")
+    if io_merged_rows:
+        print(f"IO Samples   : {run_dir / 'io_samples' / 'manifest.csv'}")
     return 0
 
 
