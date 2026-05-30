@@ -12,7 +12,7 @@ if [[ -z "$PYTHON_BIN" ]]; then
     export PATH="$IBEX_ROOT/.venv/bin:$PATH"
   elif command -v uv >/dev/null 2>&1; then
     cd "$IBEX_ROOT"
-    exec uv run python "$SCRIPT_DIR/_rand_instr.py" "$@"
+    exec uv run python "$SCRIPT_DIR/_rand_instr.py" --num-of-sub-program 0 "$@"
   else
     PYTHON_BIN="$(command -v python3)"
   fi
@@ -24,4 +24,9 @@ else
   fi
 fi
 
-exec "$PYTHON_BIN" "$SCRIPT_DIR/_rand_instr.py" "$@"
+# BSD-Cov chunk generation uses independent standalone tests.  Default to no
+# riscv-dv sub-programs to avoid the pyflow callstack path, which is broken in
+# this vendored riscv-dv revision.  A user-provided --num-of-sub-program later
+# on the command line overrides this default through argparse's normal last-wins
+# behavior.
+exec "$PYTHON_BIN" "$SCRIPT_DIR/_rand_instr.py" --num-of-sub-program 0 "$@"
