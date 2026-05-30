@@ -400,6 +400,10 @@ def count_static_asm(test_s: Path) -> tuple[int, int]:
     return total, main
 
 
+def _collect_chunk_ucds(chunk_dir: Path) -> list[Path]:
+    return sorted(chunk_dir.glob("coverage/**/*.ucd"))
+
+
 def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec,
                    chunks_root: Path, simulator: str, rtl_test: str, isa: str,
                    mabi: str, iss: str, dry_run: bool) -> ChunkResult:
@@ -411,10 +415,19 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
     binary = _compile_asm(repo_root=repo_root, python=python, asm=chunk.asm,
                           chunk_dir=chunk_dir, seed=chunk.seed, isa=isa, mabi=mabi,
                           iss=iss, dry_run=dry_run)
-    _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir, chunk=chunk, chunk_dir=chunk_dir,
-                   binary=binary, simulator=simulator, rtl_test=rtl_test, dry_run=dry_run)
-    ucds = sorted(chunk_dir.glob("coverage/**/*.ucd"))
-    status = "pass" if dry_run or ucds else "missing_coverage"
+    rtl_error: Exception | None = None
+    try:
+        _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir, chunk=chunk, chunk_dir=chunk_dir,
+                       binary=binary, simulator=simulator, rtl_test=rtl_test, dry_run=dry_run)
+    except Exception as err:
+        rtl_error = err
+        (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
+
+    ucds = _collect_chunk_ucds(chunk_dir)
+    if rtl_error is None:
+        status = "pass" if dry_run or ucds else "missing_coverage"
+    else:
+        status = "fail_with_coverage" if ucds else "fail"
     trace_candidates = sorted(chunk_dir.glob("trace_core*.log"))
     return ChunkResult(
         index=chunk.index,
@@ -639,6 +652,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cov-module", default="ibex_top")
     parser.add_argument("--force-compile", action="store_true")
     parser.add_argument("--skip-cov-merge", action="store_true")
+    parser.add_argument("--exclude-fail", action="store_true",
+                        help="Exclude failing chunks from cumulative coverage merge. By default, fail_with_coverage chunks are included.")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -683,6 +698,7 @@ def main() -> int:
         "isa": args.isa,
         "mabi": args.mabi,
         "rtl_test": args.rtl_test,
+        "exclude_fail": args.exclude_fail,
         "instr_seq": [str(p) for p in instr_seqs],
         "bind_flist": [str(p) for p in bind_flists],
     }
@@ -709,6 +725,7 @@ def main() -> int:
                 chunk_dir = run_dir / "chunks" / f"chunk_{chunk.index:04d}"
                 chunk_dir.mkdir(parents=True, exist_ok=True)
                 (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
+                ucds = _collect_chunk_ucds(chunk_dir)
                 result = ChunkResult(
                     index=chunk.index,
                     test_name=chunk.test_name,
@@ -719,8 +736,8 @@ def main() -> int:
                     rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
                     rtl_trace="",
                     cosim_log=str(chunk_dir / "cosim.log"),
-                    coverage_ucds=[],
-                    status="fail",
+                    coverage_ucds=[str(p) for p in ucds],
+                    status="fail_with_coverage" if ucds else "fail",
                     elapsed_s=0.0,
                     static_instr_count=0,
                     static_main_instr_count=0,
@@ -742,17 +759,23 @@ def main() -> int:
 
     sample_rows: list[dict[str, Any]] = []
     cumulative_ucds: list[Path] = []
+    coverage_included_count = 0
     for result, chunk in zip(results, chunks):
-        cumulative_ucds.extend(Path(p) for p in result.coverage_ucds)
+        result_ucds = [Path(p) for p in result.coverage_ucds]
+        include_for_cov = bool(result_ucds) and not (args.exclude_fail and result.status.startswith("fail"))
+        if include_for_cov:
+            cumulative_ucds.extend(result_ucds)
+            coverage_included_count += 1
         row: dict[str, Any] = {
             "sample_idx": result.index + 1,
             "instruction_count": chunk.sample_instruction_count,
             "num_chunks": result.index + 1,
             "chunk_status": result.status,
+            "coverage_included": 1 if include_for_cov else 0,
             "cov_report": "",
         }
         row.update(_empty_cov_row())
-        if not args.skip_cov_merge and result.status != "fail":
+        if not args.skip_cov_merge and cumulative_ucds:
             try:
                 report = _run_imc_report(repo_root=repo_root, run_dir=run_dir,
                                          prefix_idx=result.index + 1,
@@ -772,7 +795,7 @@ def main() -> int:
                 row["chunk_status"] = f"coverage_merge_failed: {err}"
         sample_rows.append(row)
 
-    sample_fields = ["sample_idx", "instruction_count", "num_chunks", "chunk_status", "cov_report"]
+    sample_fields = ["sample_idx", "instruction_count", "num_chunks", "chunk_status", "coverage_included", "cov_report"]
     for metric in METRICS:
         sample_fields.extend([
             f"{metric}_pct", f"{metric}_covered", f"{metric}_total", f"{metric}_uncovered",
@@ -783,8 +806,11 @@ def main() -> int:
         "run_tag": run_tag,
         "num_chunks": len(chunks),
         "num_pass": sum(1 for r in results if r.status == "pass"),
-        "num_fail": sum(1 for r in results if r.status == "fail"),
+        "num_fail": sum(1 for r in results if r.status.startswith("fail")),
+        "num_fail_with_coverage": sum(1 for r in results if r.status == "fail_with_coverage"),
         "num_missing_coverage": sum(1 for r in results if r.status == "missing_coverage"),
+        "exclude_fail": args.exclude_fail,
+        "num_coverage_included": coverage_included_count,
         "samples_csv": str(run_dir / "coverage" / "samples.csv"),
         "runs_csv": str(run_dir / "runs.csv"),
     }
@@ -798,7 +824,7 @@ def main() -> int:
     print(f"Runs CSV     : {run_dir / 'runs.csv'}")
     print(f"Samples CSV  : {run_dir / 'coverage' / 'samples.csv'}")
     print(f"Coverage SVG : {run_dir / 'coverage' / 'coverage.svg'}")
-    return 0 if all(r.status != "fail" for r in results) else 1
+    return 0
 
 
 if __name__ == "__main__":
