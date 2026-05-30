@@ -4,6 +4,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IBEX_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
+# Use the local Cadence wrapper by default.  This keeps both the Ibex DV
+# compile_tb.py path and the direct xrun -R path on the same license/tool setup.
+export CADENCE_XRUN="${CADENCE_XRUN:-/home/lvzhengyang/workspace/cadence/xrun}"
+
 PYTHON_BIN="${BSDCOV_PYTHON:-}"
 if [[ -z "$PYTHON_BIN" ]]; then
   if [[ -x "$IBEX_ROOT/.venv/bin/python" ]]; then
