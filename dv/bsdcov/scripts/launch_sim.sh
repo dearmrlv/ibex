@@ -3,6 +3,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IBEX_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+CORE_IBEX_DIR="$IBEX_ROOT/dv/uvm/core_ibex"
+
+# Make the RISC-V toolchain, Spike pkg-config paths, and Cadence variables
+# available to every launch_sim sub-step.  In particular, riscv-dv --asm_test
+# requires RISCV_GCC/RISCV_OBJCOPY during the .S -> .bin compile step.
+if [[ -f "$CORE_IBEX_DIR/setup_env.sh" ]]; then
+  # shellcheck disable=SC1091
+  source "$CORE_IBEX_DIR/setup_env.sh"
+fi
 
 # Use the local Cadence wrapper by default.  This keeps both the Ibex DV
 # compile_tb.py path and the direct xrun -R path on the same license/tool setup.
