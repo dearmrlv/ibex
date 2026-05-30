@@ -1,0 +1,144 @@
+{
+  "target_id": "stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111",
+  "design": "generic",
+  "description": "BSD-Cov extracted cone for ibex_id_stage: stall_mem,stall_ld_hz,stall_multdiv,stall_branch,stall_jump",
+  "source_seed": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/module_bind/stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111/cone_spec.resolved.json",
+  "run_dir": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/module_bind/stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111",
+  "rtl_cone_dir": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/module_bind/stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111/_conegen_out",
+  "dut": {
+    "top_module": "ibex_top",
+    "sim_dut_inst": "core_ibex_tb_top.dut.u_ibex_top"
+  },
+  "rtl": {
+    "top_module": "ibex_id_stage",
+    "filelists": [
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/db/tcl/dut.normalized.f"
+    ],
+    "include_dirs": [
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/ip/prim/rtl",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/rtl",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/common",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/dv_utils",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/dv_base_reg",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/csr_utils",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/dv_lib",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/mem_model",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/push_pull_agent",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/push_pull_agent/seq_lib",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/vendor/lowrisc_ip/dv/sv/str_utils",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/env",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/fcov",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/tests",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/common/ibex_mem_intf_agent",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/common/irq_agent",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/uvm/core_ibex/common/ibex_cosim_agent",
+      "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/cosim"
+    ],
+    "defines": [
+      "SYNTHESIS"
+    ],
+    "parameters": {
+      "RV32E": "0",
+      "RV32M": "ibex_pkg::RV32MSingleCycle",
+      "RV32B": "ibex_pkg::RV32BOTEarlGrey",
+      "RV32ZC": "ibex_pkg::RV32ZcaZcbZcmp",
+      "RegFile": "ibex_pkg::RegFileFF",
+      "BranchTargetALU": "1",
+      "WritebackStage": "1",
+      "ICache": "1",
+      "ICacheECC": "1",
+      "ICacheScramble": "1",
+      "ICacheTweakInfection": "0",
+      "BranchPredictor": "0",
+      "DbgTriggerEn": "1",
+      "SecureIbex": "1",
+      "PMPEnable": "1",
+      "PMPGranularity": "0",
+      "PMPNumRegions": "16",
+      "MHPMCounterNum": "10",
+      "MHPMCounterWidth": "32",
+      "DbgHwBreakNum": "1",
+      "DmBaseAddr": "32'h1A110000",
+      "DmAddrMask": "32'h00000FFF",
+      "DmHaltAddr": "32'h80000000",
+      "DmExceptionAddr": "32'h80000008",
+      "BootAddr": "32'h80000000"
+    }
+  },
+  "cone": {
+    "module": "ibex_id_stage",
+    "outputs": [
+      {
+        "name": "stall_mem",
+        "hier": "stall_mem",
+        "width": 1
+      },
+      {
+        "name": "stall_ld_hz",
+        "hier": "stall_ld_hz",
+        "width": 1
+      },
+      {
+        "name": "stall_multdiv",
+        "hier": "stall_multdiv",
+        "width": 1
+      },
+      {
+        "name": "stall_branch",
+        "hier": "stall_branch",
+        "width": 1
+      },
+      {
+        "name": "stall_jump",
+        "hier": "stall_jump",
+        "width": 1
+      }
+    ]
+  },
+  "endpoints": [
+    {
+      "name": "stall_mem",
+      "hier": "stall_mem",
+      "width": 1
+    },
+    {
+      "name": "stall_ld_hz",
+      "hier": "stall_ld_hz",
+      "width": 1
+    },
+    {
+      "name": "stall_multdiv",
+      "hier": "stall_multdiv",
+      "width": 1
+    },
+    {
+      "name": "stall_branch",
+      "hier": "stall_branch",
+      "width": 1
+    },
+    {
+      "name": "stall_jump",
+      "hier": "stall_jump",
+      "width": 1
+    }
+  ],
+  "policies": {
+    "flatten_instances": true,
+    "stop_at_module_inputs": true,
+    "stop_at_sequential_state": true,
+    "unresolved_policy": "error",
+    "blackbox_policy": "error",
+    "memory_boundary_policy": "error",
+    "latch_boundary_policy": "error",
+    "multi_driver_policy": "error",
+    "unsupported_procedural_policy": "error"
+  },
+  "trace": {
+    "filename_suffix": "stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111.io_samples.csv",
+    "enable_plusarg": "bsdcov_io_dump",
+    "sample_on": "posedge",
+    "sample_condition": "1'b1",
+    "invalid_policy": "drop",
+    "x_policy": "drop"
+  }
+}

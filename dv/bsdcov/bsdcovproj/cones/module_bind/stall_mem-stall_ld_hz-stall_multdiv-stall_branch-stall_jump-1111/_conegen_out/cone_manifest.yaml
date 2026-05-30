@@ -1,0 +1,725 @@
+target_id: "stall_mem-stall_ld_hz-stall_multdiv-stall_branch-stall_jump-1111"
+status: success
+target_module: "ibex_id_stage"
+cone_module: "bsdcov_cone_stall_mem_stall_ld_hz_stall_multdiv_stall_branch_stall_jump_1111"
+
+endpoints:
+  count: 5
+  signals:
+    - name: "stall_mem"
+      hier: "stall_mem"
+      width: 1
+    - name: "stall_ld_hz"
+      hier: "stall_ld_hz"
+      width: 1
+    - name: "stall_multdiv"
+      hier: "stall_multdiv"
+      width: 1
+    - name: "stall_branch"
+      hier: "stall_branch"
+      width: 1
+    - name: "stall_jump"
+      hier: "stall_jump"
+      width: 1
+
+boundaries:
+  count: 43
+  signals:
+    - name: "branch_in_dec"
+      hier: "ibex_id_stage.branch_in_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "branch_not_set"
+      hier: "ibex_id_stage.branch_not_set"
+      width: 1
+      kind: constant
+    - name: "controller_run"
+      hier: "ibex_id_stage.controller_run"
+      width: 1
+      kind: hierarchical_output
+    - name: "csr_mstatus_tw_i"
+      hier: "ibex_id_stage.csr_mstatus_tw_i"
+      width: 1
+      kind: module_input
+    - name: "data_ind_timing_i"
+      hier: "ibex_id_stage.data_ind_timing_i"
+      width: 1
+      kind: module_input
+    - name: "debug_mode_o"
+      hier: "ibex_id_stage.debug_mode_o"
+      width: 1
+      kind: hierarchical_output
+    - name: "div_en_dec"
+      hier: "ibex_id_stage.div_en_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "dret_insn_dec"
+      hier: "ibex_id_stage.dret_insn_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "ex_valid_i"
+      hier: "ibex_id_stage.ex_valid_i"
+      width: 1
+      kind: module_input
+    - name: "id_fsm_q"
+      hier: "ibex_id_stage.id_fsm_q"
+      width: 1
+      kind: state_cutpoint
+    - name: "illegal_csr_insn_i"
+      hier: "ibex_id_stage.illegal_csr_insn_i"
+      width: 1
+      kind: module_input
+    - name: "illegal_insn_dec"
+      hier: "ibex_id_stage.illegal_insn_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "instr_fetch_err_i"
+      hier: "ibex_id_stage.instr_fetch_err_i"
+      width: 1
+      kind: module_input
+    - name: "instr_valid_i"
+      hier: "ibex_id_stage.instr_valid_i"
+      width: 1
+      kind: module_input
+    - name: "jump_in_dec"
+      hier: "ibex_id_stage.jump_in_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "lsu_req_dec"
+      hier: "ibex_id_stage.lsu_req_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "lsu_req_done_i"
+      hier: "ibex_id_stage.lsu_req_done_i"
+      width: 1
+      kind: module_input
+    - name: "lsu_resp_valid_i"
+      hier: "ibex_id_stage.lsu_resp_valid_i"
+      width: 1
+      kind: module_input
+    - name: "mret_insn_dec"
+      hier: "ibex_id_stage.mret_insn_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "mult_en_dec"
+      hier: "ibex_id_stage.mult_en_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "outstanding_load_wb_i"
+      hier: "ibex_id_stage.outstanding_load_wb_i"
+      width: 1
+      kind: module_input
+    - name: "outstanding_store_wb_i"
+      hier: "ibex_id_stage.outstanding_store_wb_i"
+      width: 1
+      kind: module_input
+    - name: "priv_mode_i[0]"
+      hier: "ibex_id_stage.priv_mode_i[0]"
+      width: 2
+      kind: module_input
+    - name: "priv_mode_i[1]"
+      hier: "ibex_id_stage.priv_mode_i[1]"
+      width: 2
+      kind: module_input
+    - name: "ready_wb_i"
+      hier: "ibex_id_stage.ready_wb_i"
+      width: 1
+      kind: module_input
+    - name: "rf_raddr_a_o[0]"
+      hier: "ibex_id_stage.rf_raddr_a_o[0]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_a_o[1]"
+      hier: "ibex_id_stage.rf_raddr_a_o[1]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_a_o[2]"
+      hier: "ibex_id_stage.rf_raddr_a_o[2]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_a_o[3]"
+      hier: "ibex_id_stage.rf_raddr_a_o[3]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_a_o[4]"
+      hier: "ibex_id_stage.rf_raddr_a_o[4]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_b_o[0]"
+      hier: "ibex_id_stage.rf_raddr_b_o[0]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_b_o[1]"
+      hier: "ibex_id_stage.rf_raddr_b_o[1]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_b_o[2]"
+      hier: "ibex_id_stage.rf_raddr_b_o[2]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_b_o[3]"
+      hier: "ibex_id_stage.rf_raddr_b_o[3]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_raddr_b_o[4]"
+      hier: "ibex_id_stage.rf_raddr_b_o[4]"
+      width: 5
+      kind: hierarchical_output
+    - name: "rf_ren_a_dec"
+      hier: "ibex_id_stage.rf_ren_a_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "rf_ren_b_dec"
+      hier: "ibex_id_stage.rf_ren_b_dec"
+      width: 1
+      kind: hierarchical_output
+    - name: "rf_waddr_wb_i[0]"
+      hier: "ibex_id_stage.rf_waddr_wb_i[0]"
+      width: 5
+      kind: module_input
+    - name: "rf_waddr_wb_i[1]"
+      hier: "ibex_id_stage.rf_waddr_wb_i[1]"
+      width: 5
+      kind: module_input
+    - name: "rf_waddr_wb_i[2]"
+      hier: "ibex_id_stage.rf_waddr_wb_i[2]"
+      width: 5
+      kind: module_input
+    - name: "rf_waddr_wb_i[3]"
+      hier: "ibex_id_stage.rf_waddr_wb_i[3]"
+      width: 5
+      kind: module_input
+    - name: "rf_waddr_wb_i[4]"
+      hier: "ibex_id_stage.rf_waddr_wb_i[4]"
+      width: 5
+      kind: module_input
+    - name: "wfi_insn_dec"
+      hier: "ibex_id_stage.wfi_insn_dec"
+      width: 1
+      kind: hierarchical_output
+
+nodes:
+  count: 69
+  instances:
+    - name: "i615"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.gen_stall_mem.outstanding_memory_access"
+      inputs:
+        - "ibex_id_stage.n951"
+        - "ibex_id_stage.n952"
+    - name: "i652"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.gen_stall_mem.rf_rd_a_hz"
+      inputs:
+        - "ibex_id_stage.gen_stall_mem.rf_rd_a_wb_match"
+        - "ibex_id_stage.rf_ren_a"
+    - name: "i643"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.gen_stall_mem.rf_rd_a_wb_match"
+      inputs:
+        - "ibex_id_stage.n979"
+        - "ibex_id_stage.n980"
+    - name: "i653"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.gen_stall_mem.rf_rd_b_hz"
+      inputs:
+        - "ibex_id_stage.gen_stall_mem.rf_rd_b_wb_match"
+        - "ibex_id_stage.rf_ren_b"
+    - name: "i651"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.gen_stall_mem.rf_rd_b_wb_match"
+      inputs:
+        - "ibex_id_stage.n987"
+        - "ibex_id_stage.n988"
+    - name: "i495"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.illegal_dret_insn"
+      inputs:
+        - "ibex_id_stage.dret_insn_dec"
+        - "ibex_id_stage.n763"
+    - name: "i505"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.illegal_insn_o"
+      inputs:
+        - "ibex_id_stage.instr_valid_i"
+        - "ibex_id_stage.n773"
+    - name: "i501"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.illegal_umode_insn"
+      inputs:
+        - "ibex_id_stage.n767"
+        - "ibex_id_stage.n769"
+    - name: "i625"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.instr_executing_spec"
+      inputs:
+        - "ibex_id_stage.n961"
+        - "ibex_id_stage.n962"
+    - name: "i554"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.instr_type_wb_o[1]"
+      inputs:
+        - "ibex_id_stage.lsu_req_dec"
+    - name: "i507"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.multdiv_en_dec"
+      inputs:
+        - "ibex_id_stage.mult_en_dec"
+        - "ibex_id_stage.div_en_dec"
+    - name: "i612"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.multicycle_done"
+      inputs:
+        - "ibex_id_stage.ex_valid_i"
+        - "ibex_id_stage.n949"
+        - "ibex_id_stage.lsu_req_dec"
+    - name: "i720"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n1058"
+      inputs:
+        - "ibex_id_stage.gen_stall_mem.rf_rd_a_hz"
+        - "ibex_id_stage.gen_stall_mem.rf_rd_b_hz"
+    - name: "i4"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n4"
+      inputs:
+        - "ibex_id_stage.instr_fetch_err_i"
+    - name: "i5"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n5"
+      inputs:
+        - "ibex_id_stage.instr_valid_i"
+        - "ibex_id_stage.n4"
+    - name: "i6"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n6"
+      inputs:
+        - "ibex_id_stage.illegal_insn_o"
+    - name: "i7"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n7"
+      inputs:
+        - "ibex_id_stage.n5"
+        - "ibex_id_stage.n6"
+    - name: "i494"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n763"
+      inputs:
+        - "ibex_id_stage.debug_mode_o"
+    - name: "i496"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n765"
+      inputs:
+        - "ibex_id_stage.priv_mode_i[0]"
+    - name: "i497"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n766"
+      inputs:
+        - "ibex_id_stage.priv_mode_i[1]"
+    - name: "reduce_or_497"
+      cell: "reduce_or_2"
+      output: "ibex_id_stage.n767"
+      inputs:
+        - "ibex_id_stage.n766"
+        - "ibex_id_stage.n765"
+    - name: "i499"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n768"
+      inputs:
+        - "ibex_id_stage.csr_mstatus_tw_i"
+        - "ibex_id_stage.wfi_insn_dec"
+    - name: "i500"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n769"
+      inputs:
+        - "ibex_id_stage.mret_insn_dec"
+        - "ibex_id_stage.n768"
+    - name: "i502"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n771"
+      inputs:
+        - "ibex_id_stage.illegal_insn_dec"
+        - "ibex_id_stage.illegal_csr_insn_i"
+    - name: "i503"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n772"
+      inputs:
+        - "ibex_id_stage.n771"
+        - "ibex_id_stage.illegal_dret_insn"
+    - name: "i504"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n773"
+      inputs:
+        - "ibex_id_stage.n772"
+        - "ibex_id_stage.illegal_umode_insn"
+    - name: "i545"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n883"
+      inputs:
+        - "ibex_id_stage.ex_valid_i"
+    - name: "i555"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n893"
+      inputs:
+        - "ibex_id_stage.multdiv_en_dec"
+        - "ibex_id_stage.instr_type_wb_o[1]"
+    - name: "i556"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n894"
+      inputs:
+        - "ibex_id_stage.lsu_req_dec"
+        - "ibex_id_stage.multdiv_en_dec"
+    - name: "i557"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n895"
+      inputs:
+        - "ibex_id_stage.n894"
+    - name: "i558"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n896"
+      inputs:
+        - "ibex_id_stage.branch_in_dec"
+        - "ibex_id_stage.n895"
+    - name: "i571"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n909"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n883"
+        - "ibex_id_stage.n893"
+    - name: "i572"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n910"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.data_ind_timing_i"
+        - "ibex_id_stage.n896"
+    - name: "i577"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n915"
+      inputs:
+        - "ibex_id_stage.multicycle_done"
+        - "ibex_id_stage.ready_wb_i"
+    - name: "i579"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n917"
+      inputs:
+        - "ibex_id_stage.multdiv_en_dec"
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n915"
+    - name: "i580"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n918"
+      inputs:
+        - "ibex_id_stage.branch_in_dec"
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n915"
+    - name: "i581"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n919"
+      inputs:
+        - "ibex_id_stage.jump_in_dec"
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n915"
+    - name: "i584"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n922"
+      inputs:
+        - "ibex_id_stage.n909"
+        - "ibex_id_stage.n917"
+        - "ibex_id_stage.id_fsm_q"
+    - name: "i585"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n923"
+      inputs:
+        - "ibex_id_stage.n910"
+        - "ibex_id_stage.n918"
+        - "ibex_id_stage.id_fsm_q"
+    - name: "i586"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.n924"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n919"
+        - "ibex_id_stage.id_fsm_q"
+    - name: "i611"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n949"
+      inputs:
+        - "ibex_id_stage.stall_mem"
+    - name: "i613"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n951"
+      inputs:
+        - "ibex_id_stage.outstanding_load_wb_i"
+        - "ibex_id_stage.outstanding_store_wb_i"
+    - name: "i614"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n952"
+      inputs:
+        - "ibex_id_stage.lsu_resp_valid_i"
+    - name: "i623"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n961"
+      inputs:
+        - "ibex_id_stage.n5"
+        - "ibex_id_stage.controller_run"
+    - name: "i624"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n962"
+      inputs:
+        - "ibex_id_stage.stall_ld_hz"
+    - name: "i632"
+      cell: "VERIFIC_INV"
+      output: "ibex_id_stage.n970"
+      inputs:
+        - "ibex_id_stage.lsu_req_done_i"
+    - name: "i633"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.n971"
+      inputs:
+        - "ibex_id_stage.lsu_req_dec"
+        - "ibex_id_stage.n970"
+    - name: "i634"
+      cell: "VERIFIC_OR"
+      output: "ibex_id_stage.n972"
+      inputs:
+        - "ibex_id_stage.gen_stall_mem.outstanding_memory_access"
+        - "ibex_id_stage.n971"
+    - name: "i636"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n974"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[0]"
+        - "ibex_id_stage.rf_raddr_a_o[0]"
+    - name: "i637"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n975"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[1]"
+        - "ibex_id_stage.rf_raddr_a_o[1]"
+    - name: "i638"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n976"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[2]"
+        - "ibex_id_stage.rf_raddr_a_o[2]"
+    - name: "i639"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n977"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[3]"
+        - "ibex_id_stage.rf_raddr_a_o[3]"
+    - name: "i640"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n978"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[4]"
+        - "ibex_id_stage.rf_raddr_a_o[4]"
+    - name: "reduce_nor_640"
+      cell: "reduce_nor_5"
+      output: "ibex_id_stage.n979"
+      inputs:
+        - "ibex_id_stage.n978"
+        - "ibex_id_stage.n977"
+        - "ibex_id_stage.n976"
+        - "ibex_id_stage.n975"
+        - "ibex_id_stage.n974"
+    - name: "reduce_or_641"
+      cell: "reduce_or_5"
+      output: "ibex_id_stage.n980"
+      inputs:
+        - "ibex_id_stage.rf_raddr_a_o[4]"
+        - "ibex_id_stage.rf_raddr_a_o[3]"
+        - "ibex_id_stage.rf_raddr_a_o[2]"
+        - "ibex_id_stage.rf_raddr_a_o[1]"
+        - "ibex_id_stage.rf_raddr_a_o[0]"
+    - name: "i644"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n982"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[0]"
+        - "ibex_id_stage.rf_raddr_b_o[0]"
+    - name: "i645"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n983"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[1]"
+        - "ibex_id_stage.rf_raddr_b_o[1]"
+    - name: "i646"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n984"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[2]"
+        - "ibex_id_stage.rf_raddr_b_o[2]"
+    - name: "i647"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n985"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[3]"
+        - "ibex_id_stage.rf_raddr_b_o[3]"
+    - name: "i648"
+      cell: "VERIFIC_XOR"
+      output: "ibex_id_stage.n986"
+      inputs:
+        - "ibex_id_stage.rf_waddr_wb_i[4]"
+        - "ibex_id_stage.rf_raddr_b_o[4]"
+    - name: "reduce_nor_648"
+      cell: "reduce_nor_5"
+      output: "ibex_id_stage.n987"
+      inputs:
+        - "ibex_id_stage.n986"
+        - "ibex_id_stage.n985"
+        - "ibex_id_stage.n984"
+        - "ibex_id_stage.n983"
+        - "ibex_id_stage.n982"
+    - name: "reduce_or_649"
+      cell: "reduce_or_5"
+      output: "ibex_id_stage.n988"
+      inputs:
+        - "ibex_id_stage.rf_raddr_b_o[4]"
+        - "ibex_id_stage.rf_raddr_b_o[3]"
+        - "ibex_id_stage.rf_raddr_b_o[2]"
+        - "ibex_id_stage.rf_raddr_b_o[1]"
+        - "ibex_id_stage.rf_raddr_b_o[0]"
+    - name: "i8"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.rf_ren_a"
+      inputs:
+        - "ibex_id_stage.n7"
+        - "ibex_id_stage.rf_ren_a_dec"
+    - name: "i13"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.rf_ren_b"
+      inputs:
+        - "ibex_id_stage.n7"
+        - "ibex_id_stage.rf_ren_b_dec"
+    - name: "i594"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.stall_branch"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n923"
+        - "ibex_id_stage.instr_executing_spec"
+    - name: "i595"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.stall_jump"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n924"
+        - "ibex_id_stage.instr_executing_spec"
+    - name: "i721"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.stall_ld_hz"
+      inputs:
+        - "ibex_id_stage.outstanding_load_wb_i"
+        - "ibex_id_stage.n1058"
+    - name: "i635"
+      cell: "VERIFIC_AND"
+      output: "ibex_id_stage.stall_mem"
+      inputs:
+        - "ibex_id_stage.instr_valid_i"
+        - "ibex_id_stage.n972"
+    - name: "i593"
+      cell: "VERIFIC_MUX"
+      output: "ibex_id_stage.stall_multdiv"
+      inputs:
+        - "ibex_id_stage.branch_not_set"
+        - "ibex_id_stage.n922"
+        - "ibex_id_stage.instr_executing_spec"
+
+diagnostics:
+  count: 23
+  items:
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.lsu_req_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.controller_run"
+      message: "driver is an unflattened module boundary: name=controller_i cell=ibex_controller(WritebackStage=1'b1,MemECC=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.branch_in_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.jump_in_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_ren_a_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_ren_b_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.mult_en_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.div_en_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_a_o[4]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_a_o[3]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_a_o[2]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_a_o[1]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_a_o[0]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_b_o[4]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_b_o[3]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_b_o[2]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_b_o[1]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.rf_raddr_b_o[0]"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.illegal_insn_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.dret_insn_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.mret_insn_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.debug_mode_o"
+      message: "driver is an unflattened module boundary: name=controller_i cell=ibex_controller(WritebackStage=1'b1,MemECC=1'b1)"
+    - severity: warning
+      code: hierarchical_boundary
+      net: "ibex_id_stage.wfi_insn_dec"
+      message: "driver is an unflattened module boundary: name=decoder_i cell=ibex_decoder(RV32E=1'b0,RV32M=3,RV32B=2,BranchTargetALU=1'b1)"
