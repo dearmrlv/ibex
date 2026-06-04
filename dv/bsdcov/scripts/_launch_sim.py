@@ -79,6 +79,7 @@ class ChunkResult:
     rtl_sim_log: str
     rtl_trace: str
     cosim_log: str
+    fsdb_wave: str
     coverage_ucds: list[str]
     status: str
     elapsed_s: float
@@ -150,7 +151,8 @@ def _build_pythonpath(repo_root: Path) -> str:
     return os.pathsep.join(str(path) for path in paths)
 
 
-def _base_env(repo_root: Path, bind_flists: list[Path], python: Path) -> dict[str, str]:
+def _base_env(repo_root: Path, bind_flists: list[Path], python: Path,
+              fsdb: bool = False) -> dict[str, str]:
     env = os.environ.copy()
     venv_bin = repo_root / ".venv" / "bin"
     if venv_bin.exists():
@@ -167,6 +169,14 @@ def _base_env(repo_root: Path, bind_flists: list[Path], python: Path) -> dict[st
     env.setdefault("EXTRA_COSIM_CFLAGS", "")
     if bind_flists:
         env["BSD_COV_EXTRA_XRUN_FILELISTS"] = " ".join(str(p) for p in bind_flists)
+    if fsdb:
+        env.setdefault("VERDI_HOME", "/home/lvzhengyang/workspace/synopsys/verdi/T-2022.06")
+        extra_compile_opts = "-access +rwc -loadpli1 debpli:novas_pli_boot"
+        existing_compile_opts = env.get("BSD_COV_EXTRA_XRUN_COMPILE_OPTS", "").strip()
+        env["BSD_COV_EXTRA_XRUN_COMPILE_OPTS"] = (
+            f"{existing_compile_opts} {extra_compile_opts}".strip()
+            if existing_compile_opts else extra_compile_opts
+        )
     return env
 
 
@@ -256,16 +266,16 @@ def _source_setup_prefix(core_ibex: Path) -> str:
 
 def _compile_tb(*, repo_root: Path, run_dir: Path, bind_flists: list[Path], python: Path,
                 simulator: str, iss: str, seed: int, force_compile: bool,
-                dry_run: bool) -> Path:
+                fsdb: bool, dry_run: bool) -> Path:
     core_ibex = repo_root / "dv" / "uvm" / "core_ibex"
     out_dir = run_dir / "ibex_dv_out"
-    env = _base_env(repo_root, bind_flists, python)
+    env = _base_env(repo_root, bind_flists, python, fsdb=fsdb)
     make_args = [
         "make", "--keep-going", "GOAL=rtl_tb_compile", f"OUT={out_dir}",
         "IBEX_CONFIG=opentitan", f"SIMULATOR={simulator}", f"ISS={iss}",
         "TEST=empty", "ITERATIONS=1", f"SEED={seed}", "WAVES=0", "COV=1", "VERBOSE=0",
     ]
-    if force_compile:
+    if force_compile or fsdb:
         make_args.insert(2, "-B")
     command = _source_setup_prefix(core_ibex) + shlex.join(make_args)
     _run_shell(command, cwd=core_ibex, env=env, log=run_dir / "logs" / "rtl_tb_compile.log",
@@ -303,13 +313,31 @@ def _xrun_binary(repo_root: Path) -> str:
 
 
 def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir: Path,
-                   binary: Path, simulator: str, rtl_test: str, dry_run: bool) -> None:
+                   binary: Path, simulator: str, rtl_test: str, fsdb_dir: Path | None,
+                   dry_run: bool) -> str:
     if simulator != "xlm":
         raise RuntimeError("launch_sim.sh currently implements direct RTL launch for --simulator xlm only")
     env = _base_env(repo_root, [], Path(sys.executable))
     xrun = _xrun_binary(repo_root)
     trace_base = chunk_dir / "trace_core"
     cov_dir = chunk_dir / "coverage"
+    fsdb_wave = ""
+    fsdb_ucli = ""
+    if fsdb_dir is not None:
+        fsdb_dir.mkdir(parents=True, exist_ok=True)
+        fsdb_path = fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb"
+        fsdb_ucli_path = fsdb_dir / f"{chunk.test_name}.{chunk.seed}.ucli.fsdb.cmd"
+        fsdb_wave = str(fsdb_path)
+        fsdb_ucli = str(fsdb_ucli_path)
+        if not dry_run:
+            fsdb_ucli_path.write_text("\n".join([
+                f'call fsdbDumpfile {{"{fsdb_path}"}}',
+                'call fsdbDumpvars {0} {core_ibex_tb_top} {"+mda"} {"+struct"} {"+parameter"}',
+                "call fsdbDumpSVA",
+                "run",
+                "quit",
+                "",
+            ]), encoding="utf-8")
     cmd = [
         xrun, "-64bit", "-R", "-xmlibdirpath", str(tb_dir), "-licqueue",
         "-svseed", str(chunk.seed), "-svrnc", "rand_struct", "-nokey", "-l",
@@ -320,8 +348,11 @@ def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir
         f"{chunk.test_name}.{chunk.seed}", "-covoverwrite", "+enable_ibex_fcov=1",
         "+bsdcov_io_dump", f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
     ]
+    if fsdb_ucli:
+        cmd.extend(["-input", fsdb_ucli])
     _run(cmd, cwd=repo_root / "dv" / "uvm" / "core_ibex", env=env,
          log=chunk_dir / "launch_rtl.log", dry_run=dry_run)
+    return fsdb_wave
 
 
 def is_asm_instruction(line: str) -> bool:
@@ -360,7 +391,8 @@ def _collect_chunk_ucds(chunk_dir: Path) -> list[Path]:
 
 def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec,
                    chunks_root: Path, simulator: str, rtl_test: str, isa: str,
-                   mabi: str, iss: str, dry_run: bool) -> ChunkResult:
+                   mabi: str, iss: str, fsdb_dir: Path | None,
+                   dry_run: bool) -> ChunkResult:
     started = time.perf_counter()
     chunk_dir = chunks_root / f"chunk_{chunk.index:04d}"
     chunk_dir.mkdir(parents=True, exist_ok=True)
@@ -370,12 +402,17 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
                           chunk_dir=chunk_dir, seed=chunk.seed, isa=isa, mabi=mabi,
                           iss=iss, dry_run=dry_run)
     rtl_error: Exception | None = None
+    fsdb_wave = ""
     try:
-        _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir, chunk=chunk, chunk_dir=chunk_dir,
-                       binary=binary, simulator=simulator, rtl_test=rtl_test, dry_run=dry_run)
+        fsdb_wave = _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir, chunk=chunk,
+                                   chunk_dir=chunk_dir, binary=binary,
+                                   simulator=simulator, rtl_test=rtl_test,
+                                   fsdb_dir=fsdb_dir, dry_run=dry_run)
     except Exception as err:
         rtl_error = err
         (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
+        if fsdb_dir is not None:
+            fsdb_wave = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb")
     ucds = _collect_chunk_ucds(chunk_dir)
     status = "pass" if rtl_error is None and (dry_run or ucds) else "missing_coverage"
     if rtl_error is not None:
@@ -385,7 +422,8 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
         index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm),
         chunk_dir=str(chunk_dir), binary=str(binary), rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
         rtl_trace=str(trace_candidates[0]) if trace_candidates else "",
-        cosim_log=str(chunk_dir / "cosim.log"), coverage_ucds=[str(p) for p in ucds],
+        cosim_log=str(chunk_dir / "cosim.log"), fsdb_wave=fsdb_wave,
+        coverage_ucds=[str(p) for p in ucds],
         status=status, elapsed_s=time.perf_counter() - started,
         static_instr_count=static_total, static_main_instr_count=static_main,
     )
@@ -635,6 +673,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rtl-test", default="core_ibex_base_test")
     parser.add_argument("--cov-module", default="ibex_top")
     parser.add_argument("--force-compile", action="store_true")
+    parser.add_argument("--fsdb", action="store_true", help="Dump one FSDB waveform per chunk under the run-level fsdb/ directory.")
     parser.add_argument("--skip-cov-merge", action="store_true")
     parser.add_argument("--exclude-fail", action="store_true", help="Exclude failing chunks from cumulative coverage merge. By default, fail_with_coverage chunks are included.")
     parser.add_argument("--no-update-cone-samples", action="store_true", help="Do not overwrite bsdcovproj/cones/.../*.io_samples.csv with merged samples.")
@@ -656,13 +695,16 @@ def main() -> int:
     (run_dir / "logs").mkdir(parents=True, exist_ok=True)
     (run_dir / "chunks").mkdir(parents=True, exist_ok=True)
     (run_dir / "coverage").mkdir(parents=True, exist_ok=True)
+    fsdb_dir = run_dir / "fsdb" if args.fsdb else None
+    if fsdb_dir is not None:
+        fsdb_dir.mkdir(parents=True, exist_ok=True)
     chunks = [ChunkSpec(index=idx, asm=asm, seed=args.seed + idx, sample_instruction_count=(idx + 1) * args.cov_update, test_name=f"bsdcov_chunk_{idx:04d}") for idx, asm in enumerate(instr_seqs)]
-    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
+    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "fsdb": args.fsdb, "fsdb_dir": str(fsdb_dir) if fsdb_dir else "", "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-    tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, dry_run=args.dry_run)
+    tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, fsdb=args.fsdb, dry_run=args.dry_run)
     results: list[ChunkResult] = []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
-        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, args.dry_run): chunk for chunk in chunks}
+        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, fsdb_dir, args.dry_run): chunk for chunk in chunks}
         for fut in as_completed(future_map):
             chunk = future_map[fut]
             try:
@@ -672,11 +714,12 @@ def main() -> int:
                 chunk_dir.mkdir(parents=True, exist_ok=True)
                 (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
                 ucds = _collect_chunk_ucds(chunk_dir)
-                result = ChunkResult(index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm), chunk_dir=str(chunk_dir), binary="", rtl_sim_log=str(chunk_dir / "rtl_sim.log"), rtl_trace="", cosim_log=str(chunk_dir / "cosim.log"), coverage_ucds=[str(p) for p in ucds], status="fail_with_coverage" if ucds else "fail", elapsed_s=0.0, static_instr_count=0, static_main_instr_count=0)
+                fsdb_wave = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb") if fsdb_dir is not None else ""
+                result = ChunkResult(index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm), chunk_dir=str(chunk_dir), binary="", rtl_sim_log=str(chunk_dir / "rtl_sim.log"), rtl_trace="", cosim_log=str(chunk_dir / "cosim.log"), fsdb_wave=fsdb_wave, coverage_ucds=[str(p) for p in ucds], status="fail_with_coverage" if ucds else "fail", elapsed_s=0.0, static_instr_count=0, static_main_instr_count=0)
             print(f"chunk {result.index:04d}: {result.status}")
             results.append(result)
     results.sort(key=lambda r: r.index)
-    write_csv(run_dir / "runs.csv", [asdict(r) for r in results], ["index", "test_name", "seed", "status", "asm", "chunk_dir", "binary", "rtl_sim_log", "rtl_trace", "cosim_log", "elapsed_s", "static_instr_count", "static_main_instr_count", "coverage_ucds"])
+    write_csv(run_dir / "runs.csv", [asdict(r) for r in results], ["index", "test_name", "seed", "status", "asm", "chunk_dir", "binary", "rtl_sim_log", "rtl_trace", "cosim_log", "fsdb_wave", "elapsed_s", "static_instr_count", "static_main_instr_count", "coverage_ucds"])
     io_merged_rows: list[dict[str, Any]] = []
     io_source_rows: list[dict[str, Any]] = []
     if not args.dry_run:
@@ -719,6 +762,8 @@ def main() -> int:
     print(f"Runs CSV     : {run_dir / 'runs.csv'}")
     print(f"Samples CSV  : {run_dir / 'coverage' / 'samples.csv'}")
     print(f"Coverage SVG : {run_dir / 'coverage' / 'coverage.svg'}")
+    if fsdb_dir is not None:
+        print(f"FSDB dir     : {fsdb_dir}")
     if io_merged_rows:
         print(f"IO Samples   : {run_dir / 'io_samples' / 'manifest.csv'}")
     return 0

@@ -8,11 +8,16 @@ cd "$BSDCOV_DIR"
 ./scripts/prep.sh
 ./scripts/extract.sh
 ./scripts/rand_instr.sh --seed 1 --num 300 --chunk-size 100 --force
-./scripts/launch_sim.sh \
-  --instr-seq riscvdv/assembly/seq.1.300.chunks.f \
-  --bind-flist bsdcovproj/db/io_dump.f \
-  --cov-update 100 \
+launch_sim_args=(
+  --instr-seq riscvdv/assembly/seq.1.300.chunks.f
+  --bind-flist bsdcovproj/db/io_dump.f
+  --cov-update 100
   --jobs 3
+)
+if [[ "${BSDCOV_FSDB:-0}" == "1" ]]; then
+  launch_sim_args+=(--fsdb)
+fi
+./scripts/launch_sim.sh "${launch_sim_args[@]}"
 
 RUN=""
 if [[ -L sim/latest || -e sim/latest ]]; then
