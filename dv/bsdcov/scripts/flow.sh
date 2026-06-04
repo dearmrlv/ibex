@@ -10,7 +10,7 @@ cd "$BSDCOV_DIR"
 ./scripts/rand_instr.sh --seed 1 --num 300 --chunk-size 100 --force
 ./scripts/launch_sim.sh \
   --instr-seq riscvdv/assembly/seq.1.300.chunks.f \
-  --bind-flist bsdcovproj/sim_bind.f \
+  --bind-flist bsdcovproj/db/io_dump.f \
   --cov-update 100 \
   --jobs 3
 
