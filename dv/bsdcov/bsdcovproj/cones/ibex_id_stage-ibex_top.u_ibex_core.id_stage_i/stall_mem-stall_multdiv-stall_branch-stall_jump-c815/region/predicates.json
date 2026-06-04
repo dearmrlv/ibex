@@ -1,0 +1,117 @@
+{
+  "schema_version": "bsd_cov_predicates_v0.1",
+  "predicates": [
+    {
+      "type": "eq",
+      "field": "lsu_resp_valid_i",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "lsu_req_done_i",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "rf_raddr_b_o_1",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "rf_raddr_a_o_4",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "priv_mode_i_0",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "rf_ren_a_dec",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "outstanding_load_wb_i",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "data_ind_timing_i",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "rf_raddr_b_o_0",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "rf_ren_b_dec",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "branch_in_dec",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "ex_valid_i",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "mult_en_dec",
+      "value": 0,
+      "width": 1,
+      "bits": "0"
+    },
+    {
+      "type": "eq",
+      "field": "instr_valid_i",
+      "value": 1,
+      "width": 1,
+      "bits": "1"
+    },
+    {
+      "type": "eq",
+      "field": "lsu_req_dec",
+      "value": 1,
+      "width": 1,
+      "bits": "1"
+    },
+    {
+      "type": "eq",
+      "field": "branch_not_set",
+      "value": 1,
+      "width": 1,
+      "bits": "1"
+    }
+  ]
+}

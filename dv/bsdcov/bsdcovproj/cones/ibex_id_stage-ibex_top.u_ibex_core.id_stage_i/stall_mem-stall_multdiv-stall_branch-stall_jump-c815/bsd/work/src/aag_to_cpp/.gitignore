@@ -1,0 +1,8 @@
+__pycache__/
+output_cpp/
+work/aag_bits/
+work/cpp_bits/
+work/netlist/
+work/vec_bits/
+work/verilog_bits/
+work/yosys_bits/

@@ -1,0 +1,422 @@
+{
+  "schema_version": "bsd_cov_regions_v0.1",
+  "cone_name": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+  "target_module": "ibex_id_stage",
+  "source": {
+    "cex": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex",
+    "near_region": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/near_region"
+  },
+  "regions": [
+    {
+      "region_id": "R_stall_mem_000",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_resp_valid_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 0.978261,
+      "train_support": 135,
+      "positive_covered": 135,
+      "negative_covered": 3,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_001",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "rf_raddr_b_o_1",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 13,
+      "positive_covered": 13,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_002",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "rf_raddr_a_o_4",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 11,
+      "positive_covered": 11,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_003",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "priv_mode_i_0",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 10,
+      "positive_covered": 10,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_004",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "rf_ren_a_dec",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 10,
+      "positive_covered": 10,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_005",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "outstanding_load_wb_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 9,
+      "positive_covered": 9,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_006",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "data_ind_timing_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 7,
+      "positive_covered": 7,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_007",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "rf_raddr_b_o_0",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 6,
+      "positive_covered": 6,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_008",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "rf_ren_b_dec",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 6,
+      "positive_covered": 6,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_009",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "branch_in_dec",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 6,
+      "positive_covered": 6,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_010",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "ex_valid_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 5,
+      "positive_covered": 5,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_011",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "mult_en_dec",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 5,
+      "positive_covered": 5,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_mem_012",
+      "focus_outputs": [
+        "stall_mem"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "lsu_req_done_i",
+          "value": 0,
+          "width": 1,
+          "bits": "0"
+        },
+        {
+          "type": "eq",
+          "field": "instr_valid_i",
+          "value": 1,
+          "width": 1,
+          "bits": "1"
+        },
+        {
+          "type": "eq",
+          "field": "lsu_req_dec",
+          "value": 1,
+          "width": 1,
+          "bits": "1"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 54,
+      "positive_covered": 54,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_multdiv_000",
+      "focus_outputs": [
+        "stall_multdiv"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "branch_not_set",
+          "value": 1,
+          "width": 1,
+          "bits": "1"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 1918,
+      "positive_covered": 1918,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_branch_000",
+      "focus_outputs": [
+        "stall_branch"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "branch_not_set",
+          "value": 1,
+          "width": 1,
+          "bits": "1"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 1918,
+      "positive_covered": 1918,
+      "negative_covered": 0,
+      "status": "accepted"
+    },
+    {
+      "region_id": "R_stall_jump_000",
+      "focus_outputs": [
+        "stall_jump"
+      ],
+      "predicates": [
+        {
+          "type": "eq",
+          "field": "branch_not_set",
+          "value": 1,
+          "width": 1,
+          "bits": "1"
+        }
+      ],
+      "train_precision": 1.0,
+      "train_support": 1918,
+      "positive_covered": 1918,
+      "negative_covered": 0,
+      "status": "accepted"
+    }
+  ]
+}

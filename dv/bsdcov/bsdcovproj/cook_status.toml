@@ -1,0 +1,15 @@
+updated_at = "2026-06-04T06:33:43.247513+00:00"
+cones_seen = 1
+cones_cooked = 1
+cones_failed = 0
+bsd_root = "/home/lvzhengyang/workspace/BSD-Cov/thirdparty/BSD"
+bsd_threads = 8
+bsd_replay_samples = 16
+dut_bind = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/dut_bind.f"
+summary_csv = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cook_summary.csv"
+cook_steps_log = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cook_steps.log"
+cook_steps_csv = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cook_steps.csv"
+cook_steps_json = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cook_steps.json"
+full_dut_fpv_status = "generated"
+status = "cooked_full"
+errors = []

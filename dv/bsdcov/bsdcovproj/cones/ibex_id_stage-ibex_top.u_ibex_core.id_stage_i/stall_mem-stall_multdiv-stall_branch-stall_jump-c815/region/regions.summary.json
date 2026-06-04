@@ -1,0 +1,17 @@
+{
+  "schema_version": "bsd_cov_regions_summary_v0.1",
+  "regions_total": 16,
+  "regions_by_output": {
+    "stall_mem": 13,
+    "stall_multdiv": 1,
+    "stall_branch": 1,
+    "stall_jump": 1
+  },
+  "positive_counts_by_output": {
+    "stall_mem": 277,
+    "stall_multdiv": 1918,
+    "stall_branch": 1918,
+    "stall_jump": 1918
+  },
+  "near_region_summary": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/near_region/near_region_summary.json"
+}

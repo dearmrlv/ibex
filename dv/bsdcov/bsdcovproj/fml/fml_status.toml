@@ -1,0 +1,7 @@
+updated_at = "2026-06-04T06:33:43.247177+00:00"
+status = "generated"
+fpv_tcl = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/fml/fpv.tcl"
+fml_sh = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/fml/fml.sh"
+asserts_f = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/results/bsdcov.f"
+dut_top = "ibex_top"
+parameter_file = "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/parameters.txt"

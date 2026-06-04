@@ -1,0 +1,17 @@
+{
+  "updated_at": "2026-06-04T06:33:41.813875+00:00",
+  "schema_version": "bsd_cov_near_region_v0.1",
+  "seed_count": 1,
+  "total_samples": 2048,
+  "unresolved_samples": 0,
+  "total_positive": 1932,
+  "global_density": 0.943359375,
+  "diff_output_histogram": {
+    "stall_mem": 277,
+    "stall_multdiv": 1918,
+    "stall_branch": 1918,
+    "stall_jump": 1918
+  },
+  "xcelium_status": "done",
+  "sample_filelist": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.region_sample.f"
+}

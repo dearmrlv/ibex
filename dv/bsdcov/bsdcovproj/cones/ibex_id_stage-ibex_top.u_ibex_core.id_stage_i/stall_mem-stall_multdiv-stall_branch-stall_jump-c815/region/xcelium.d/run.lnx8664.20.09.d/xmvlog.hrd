@@ -1,0 +1,11 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
+-sv
+-INCDIR
+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd
+-INCDIR
+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex
+-INCDIR
+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region

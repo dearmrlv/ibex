@@ -1,0 +1,24 @@
+//
+// File created by:  xrun
+// Do not modify this file
+//
++incdir+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd
++incdir+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex
++incdir+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region
+-MESSAGES
++EMGRLOG
+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/log/xrun.log
+-XLSTIME
+1780554821
+-XLKEEP
+-XLMODE
+./xcelium.d/run.lnx8664.20.09.d
+-RUNMODE
+-CDSLIB
+./xcelium.d/run.lnx8664.20.09.d/cds.lib
+-HDLVAR
+./xcelium.d/run.lnx8664.20.09.d/hdl.var
+-XLNAME
+xrun
+-XLVERSION
+"TOOL:	xrun(64)	20.09-s009"

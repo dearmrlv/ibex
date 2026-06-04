@@ -1,0 +1,228 @@
+
+def verilog_top(filename,  num_lines=10):
+
+    integers = []
+    
+    try:
+        with open("work/netlist/"+filename+".v", 'r') as file:
+            for i in range(num_lines):
+                line = file.readline()
+                if not line:  # 如果文件行数不足，提前结束
+                    break
+                
+                # 提取行中的数字
+                for word in line.split():
+                    # 尝试将每个单词转换为整数
+                    try:
+                        num = int(word)
+                        integers.append(num)
+                        break  # 找到第一个数字后就可以跳出当前行的处理
+                    except ValueError:
+                        continue  # 如果不能转换为整数，继续检查下一个单词
+                        
+    except FileNotFoundError:
+        print(f"错误: 找不到文件 '{filename}'")
+        return []
+    except Exception as e:
+        print(f"读取文件时发生错误: {e}")
+        return []
+   
+    input_bit_width = integers[0] 
+    output_bit_width = integers[1] 
+    print("Input bit width	= ",input_bit_width)
+    print("Output bit width	= ",output_bit_width)
+
+    for bit_index in range (output_bit_width):
+        try:
+            with open("work/verilog_bits/"+filename+"_o%d.v"%bit_index, 'w') as file:
+                file.write("module %s_o%d(in,out);\n" %(filename,bit_index))
+                file.write("\n")
+                file.write("input	[%d:0] in;\n" % (input_bit_width-1))
+                file.write("output	       out;\n")
+                file.write("\n")
+                file.write("wire	[%d:0] module_out;\n" % (output_bit_width-1))
+                file.write("assign	out = module_out[%d];\n"%bit_index)
+                file.write("\n")
+                file.write("%s m0(\n" % filename)
+                for i in range (input_bit_width):
+                    file.write("	in[%d	],\n" %(i))
+                    # file.write("	in[%d	],\n" %(input_bit_width-1-i))
+                for i in range (output_bit_width-1):
+                    file.write("	module_out[%d	],\n"%(i))
+                    # file.write("	module_out[%d	],\n"%(output_bit_width-1-i))
+                file.write("	module_out[%d	]\n" % (output_bit_width-1))
+                # file.write("	module_out[0	]\n" )
+                file.write(");\n")
+                file.write("endmodule\n")
+            print(f"成功写入verilog top文件%d"%bit_index)
+            
+        except Exception as e:
+            print(f"写入文件时发生错误: {e}")
+
+
+    try:
+        with open("work/yosys_bits/yosys.ys", 'w') as file:
+            for bit_index in range (output_bit_width):
+                file.write("read_verilog work/netlist/%s.v;\n"%filename)
+                file.write("read_verilog work/verilog_bits/%s_o%d.v;\n"%(filename,bit_index))
+                file.write("hierarchy -top %s_o%d;\n"%(filename,bit_index))
+                file.write("flatten;\n")
+                file.write("synth;\n")
+                ##file.write("abc -g AND,OR,XOR;\n")
+                ##file.write("write_verilog -noattr -noexpr aag_bits/%s_o%d.v\n"%(filename,bit_index))
+                file.write("aigmap;\n")
+                file.write("write_aiger -symbols -ascii work/aag_bits/%s_o%d.aag\n"%(filename,bit_index))
+                file.write("\n")
+
+        print(f"成功写入yosys文件")
+        
+    except Exception as e:
+        print(f"写入文件时发生错误: {e}")
+
+    try:
+        with open("aag_to_cpp_bits.py", 'w') as file:
+            file.write("from aag_to_cpp import *\n")
+            for bit_index in range (output_bit_width):
+                file.write("aag_to_cpp(\n")
+                file.write("    \"work/aag_bits/%s_o%d.aag\",\n"%(filename,bit_index))
+                file.write("    \"work/cpp_bits/%s_o%d.h\",\n"%(filename,bit_index))
+                file.write("    \"work/cpp_bits/%s_o%d.cpp\",\n"%(filename,bit_index))
+                file.write("    \"io_generator_outer_o%d\",\n"%bit_index)
+                file.write("    ignore=True,\n")
+                file.write("    quiet=True\n")
+                file.write(")\n")
+
+        print(f"成功写入py top文件")
+        
+    except Exception as e:
+        print(f"写入文件时发生错误: {e}")
+
+    try:
+        with open("work/vec_bits/write_vec.sh", 'w') as file:
+            file.write("module_name=\"%s\"\n"%filename)
+            for bit_index in range (output_bit_width):
+                file.write("cp work/cpp_bits/${module_name}_o%d.cpp  work/cpp_bits/${module_name}_o%d_vec.cpp\n"%(bit_index,bit_index))
+                file.write("vim 	-c \"open work/cpp_bits/${module_name}_o%d_vec.cpp\" \\n"%bit_index)
+                file.write("	-c \"1,$ s/io_generator_outer/io_generator_outer_vec\" \\\n")
+                file.write("	-c \":wq!\" \n")
+                file.write("vim 	-c \"open work/cpp_bits/${module_name}_o%d_vec.cpp\" \\\n"%bit_index)
+                file.write("	-c \"1,$ s/vec_vec/vec\" \\\n")
+                file.write("	-c \"1,$ s/bool/uint64_t/g\" \\\n")
+                file.write("	-c \"1,$ s/!/\~/g\" \\\n")
+                file.write("	-c \"1,$ s/&&/and/g\" \\\n")
+                file.write("	-c \"1,$ s/and/\&/g\" \\\n")
+                file.write("	-c \"1,$ s/false/uint64_t(0)/g\" \\\n")
+                file.write("	-c \"1,$ s/true/64'hffffffffffffffff/g\" \\\n")
+                file.write("	-c \":wq!\" \n")
+
+        print(f"成功写入write vec文件")
+        
+    except Exception as e:
+        print(f"写入文件时发生错误: {e}")
+
+
+
+
+    output_file = "output_cpp/"+filename+".h"
+    try:
+        with open(output_file, 'w') as out_file:
+            out_file.write("#ifndef IO_GENERATOR_OUTER_H\n")
+            out_file.write("#define IO_GENERATOR_OUTER_H\n")
+            out_file.write("extern const int PI_WIDTH = %d;\n"%input_bit_width)
+            out_file.write("extern const int PO_WIDTH = %d;\n"%output_bit_width)
+            out_file.write("#endif\n")
+            for i in range(output_bit_width):  
+                filename_bits = "work/cpp_bits/"+filename+"_o"+str(i)+".cpp"
+                
+                try:
+                    # 读取每个源文件并写入目标文件
+                    with open(filename_bits, 'r') as in_file:
+                        content = in_file.read()
+                        out_file.write(content)
+                        
+                        # 如果不是最后一个文件，可以添加换行符分隔
+                        if i < output_bit_width:
+                            out_file.write('\n')
+                            
+                    print(f"已合并: {filename}")
+                    
+                except FileNotFoundError:
+                    print(f"警告: 文件 {filename} 不存在，已跳过")
+                except Exception as e:
+                    print(f"读取文件 {filename} 时出错: {e}")
+            out_file.write("bool io_generator_outer_single(bool* pi,  int bit_index) {\n")
+            out_file.write("\n")
+            out_file.write("bool* po_tmp = new bool [%d];\n"%output_bit_width)
+            out_file.write("if (bit_index == 0)\n")
+            out_file.write("	io_generator_outer_o0(pi, po_tmp);\n")
+            for i in range(1,output_bit_width):  
+                out_file.write("else if (bit_index ==%d)\n"%i)
+                out_file.write("	io_generator_outer_o%d(pi, po_tmp);\n"%i)
+            out_file.write("bool po = po_tmp[0];\n")
+            out_file.write("delete [] po_tmp;\n")
+            out_file.write("return po;\n")
+            out_file.write("}\n\n")
+            out_file.write("void io_generator_outer(bool* pi, bool* po) {\n")
+            out_file.write("bool po_tmp;\n")
+            for i in range(output_bit_width):  
+                out_file.write("po_tmp = io_generator_outer_single(pi,%d);\n"%(i))
+                out_file.write("po[%d] = po_tmp;\n"%(i))
+            out_file.write("}\n\n")
+
+        
+        print(f"\n所有文件已成功合并到 {output_file}")
+        
+    except Exception as e:
+        print(f"写入文件 {output_file} 时出错: {e}")
+
+    output_file = "output_cpp/"+filename+"_vec.h"
+    try:
+        with open(output_file, 'w') as out_file:
+            for i in range(output_bit_width):  
+                filename_bits = "work/cpp_bits/"+filename+"_o"+str(i)+"_vec.cpp"
+                
+                try:
+                    # 读取每个源文件并写入目标文件
+                    with open(filename_bits, 'r') as in_file:
+                        content = in_file.read()
+                        out_file.write(content)
+                        
+                        # 如果不是最后一个文件，可以添加换行符分隔
+                        if i < output_bit_width:
+                            out_file.write('\n')
+                            
+                    print(f"已合并: {filename}")
+                    
+                except FileNotFoundError:
+                    print(f"警告: 文件 {filename} 不存在，已跳过")
+                except Exception as e:
+                    print(f"读取文件 {filename} 时出错: {e}")
+            out_file.write("uint64_t io_generator_outer_vec_single(uint64_t* pi,  int bit_index) {\n")
+            out_file.write("\n")
+            out_file.write("uint64_t* po_tmp = new uint64_t [%d];\n"%output_bit_width)
+            out_file.write("if (bit_index == 0)\n")
+            out_file.write("	io_generator_outer_vec_o0(pi, po_tmp);\n")
+            for i in range(1,output_bit_width):  
+                out_file.write("else if (bit_index ==%d)\n"%i)
+                out_file.write("	io_generator_outer_vec_o%d(pi, po_tmp);\n"%i)
+            out_file.write("uint64_t po = po_tmp[0];\n")
+            out_file.write("delete [] po_tmp;\n")
+            out_file.write("return po;\n")
+            out_file.write("}\n\n")
+            out_file.write("void io_generator_outer_vec(uint64_t* pi, uint64_t* po) {\n")
+            out_file.write("uint64_t po_tmp;\n")
+            for i in range(output_bit_width):  
+                out_file.write("po_tmp = io_generator_outer_vec_single(pi,%d);\n"%(i))
+                out_file.write("po[%d] = po_tmp;\n"%(i))
+            out_file.write("}\n\n")
+
+        
+        print(f"\n所有文件已成功合并到 {output_file}")
+        
+    except Exception as e:
+        print(f"写入文件 {output_file} 时出错: {e}")
+
+    
+
+    return integers	
+

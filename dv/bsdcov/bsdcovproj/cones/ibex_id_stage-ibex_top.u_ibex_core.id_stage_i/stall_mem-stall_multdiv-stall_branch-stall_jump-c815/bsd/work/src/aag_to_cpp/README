@@ -1,0 +1,26 @@
+This program translate Verilog code to cpp for BSD. 
+
+Requirement:
+
+	Only ONE Verilog file. If not, synthesis first.
+	The top module name is the same as the file name.
+	
+	For example, filename "c432.v"; and top module "c432"
+
+
+
+Modify: The first line in zstart.sh (the filename, for example "c432")
+
+	Put the verilog file (c432.v)  in ./input_verilog
+
+Execute:
+
+	bash zstart.sh
+
+Output:
+
+	get the io_generator files in ./output_cpp (for example c432.h, c432_vec.h). Can be use in BSD directly.
+
+Attention:
+
+	bash clean.sh 		remove all results other than the input_verilog

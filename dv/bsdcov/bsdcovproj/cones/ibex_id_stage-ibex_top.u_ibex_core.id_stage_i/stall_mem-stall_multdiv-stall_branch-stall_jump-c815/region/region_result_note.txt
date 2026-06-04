@@ -1,0 +1,7 @@
+NearRegion total_samples: 2048
+NearRegion unresolved_samples: 0
+NearRegion total_positive: 1932
+NearRegion global_density: 0.943359
+NearRegion diff_output_histogram: {'stall_mem': 277, 'stall_multdiv': 1918, 'stall_branch': 1918, 'stall_jump': 1918}
+Regions total: 16
+Regions by output: {'stall_mem': 13, 'stall_multdiv': 1, 'stall_branch': 1, 'stall_jump': 1}

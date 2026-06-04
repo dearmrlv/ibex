@@ -1,0 +1,8 @@
+{
+  "target_id": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+  "raw_rows": 393764,
+  "unique_inputs": 460,
+  "conflicting_inputs": 0,
+  "input_width": 43,
+  "output_width": 4
+}

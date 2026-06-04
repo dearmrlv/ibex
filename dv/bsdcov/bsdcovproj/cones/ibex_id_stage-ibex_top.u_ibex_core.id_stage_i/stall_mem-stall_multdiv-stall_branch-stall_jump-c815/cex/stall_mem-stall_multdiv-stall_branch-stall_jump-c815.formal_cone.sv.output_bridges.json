@@ -1,0 +1,8 @@
+{
+  "bridges": [
+    {"output": "stall_mem", "driver": "n_ibex_id_stage_stall_mem"},
+    {"output": "stall_multdiv", "driver": "n_ibex_id_stage_stall_multdiv"},
+    {"output": "stall_branch", "driver": "n_ibex_id_stage_stall_branch"},
+    {"output": "stall_jump", "driver": "n_ibex_id_stage_stall_jump"}
+  ]
+}

@@ -1,0 +1,109 @@
+[
+  {
+    "time": "2026-06-04T06:33:33.736881+00:00",
+    "step": 1,
+    "name": "bsd",
+    "status": "begin",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "train real thirdparty BSD and generate Verilog",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd/train.log",
+    "artifacts": {}
+  },
+  {
+    "time": "2026-06-04T06:33:37.002373+00:00",
+    "step": 1,
+    "name": "bsd",
+    "status": "pass",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "raw_rows=393764, unique_inputs=460, conflicts=0",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd/train.log",
+    "artifacts": {
+      "bsd_f": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.bsd.f",
+      "train_json": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/bsd/train.json"
+    }
+  },
+  {
+    "time": "2026-06-04T06:33:37.003189+00:00",
+    "step": 2,
+    "name": "cex",
+    "status": "begin",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "generate cone miter and run JasperGold",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex/log/jg.log",
+    "artifacts": {}
+  },
+  {
+    "time": "2026-06-04T06:33:40.860502+00:00",
+    "step": 2,
+    "name": "cex",
+    "status": "pass",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "JasperGold status: done",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex/log/jg.log",
+    "artifacts": {
+      "miter": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.miter.sv",
+      "filelist": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.cex.f",
+      "tcl": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/cex/fpv.tcl"
+    }
+  },
+  {
+    "time": "2026-06-04T06:33:40.860713+00:00",
+    "step": 3,
+    "name": "region",
+    "status": "begin",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "extract CEX seeds, run NearRegion sampling, and learn regions",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/log/xrun_region_sample.log",
+    "artifacts": {}
+  },
+  {
+    "time": "2026-06-04T06:33:43.245889+00:00",
+    "step": 3,
+    "name": "region",
+    "status": "pass",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "NearRegion sampling and region learning completed",
+    "log": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/log/xrun_region_sample.log",
+    "artifacts": {
+      "near_region_summary": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/near_region/near_region_summary.json",
+      "regions_summary": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/regions.summary.json"
+    }
+  },
+  {
+    "time": "2026-06-04T06:33:43.246009+00:00",
+    "step": 4,
+    "name": "properties",
+    "status": "pass",
+    "cone": "stall_mem-stall_multdiv-stall_branch-stall_jump-c815",
+    "detail": "generated learned-region assertion and cover bind",
+    "log": "",
+    "artifacts": {
+      "regions_bind": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/sv/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.regions.bind.sv",
+      "region_f": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/cones/ibex_id_stage-ibex_top.u_ibex_core.id_stage_i/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/sv/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.regions.f"
+    }
+  },
+  {
+    "time": "2026-06-04T06:33:43.246366+00:00",
+    "step": 4,
+    "name": "dut_bind",
+    "status": "begin",
+    "cone": "project",
+    "detail": "generate project dut_bind.f and full-DUT FPV collateral",
+    "log": "",
+    "artifacts": {}
+  },
+  {
+    "time": "2026-06-04T06:33:43.247216+00:00",
+    "step": 4,
+    "name": "dut_bind",
+    "status": "pass",
+    "cone": "project",
+    "detail": "generated dut_bind.f and full-DUT FPV collateral status=generated",
+    "log": "",
+    "artifacts": {
+      "dut_bind": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/dut_bind.f",
+      "fml_tcl": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/fml/fpv.tcl",
+      "fml_sh": "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/bsdcovproj/fml/fml.sh"
+    }
+  }
+]
