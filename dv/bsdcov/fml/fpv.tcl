@@ -19,7 +19,7 @@ puts "INFO: target set   = AST_BSDCOV_* region assertions"
 
 analyze -sv12 \
   -f dut.f \
-  -f ../bsdcovproj/cones/module_bind/stall_mem-stall_multdiv-stall_branch-stall_jump-c815/cmp/region/sv/stall_mem-stall_multdiv-stall_branch-stall_jump-c815.regions.f \
+  -f ../bsdcovproj/results/bsdcov.f \
   -f env.f
 
 elaborate -top ibex_top \
@@ -59,14 +59,14 @@ set_prove_dump_trace_type assert
 set per_prop_time 300s
 
 set target_props {}
-foreach p [get_property_list -include {type cover}] {
-  if {[string match "*COV_BSDCOV_*" $p]} {
+foreach p [get_property_list -include {type assert}] {
+  if {[string match "*AST_BSDCOV_*" $p]} {
     lappend target_props $p
   }
 }
 
 if {[llength $target_props] == 0} {
-  puts "ERROR: no generated BSD-Cov region coverage matched COV_BSDCOV_*"
+  puts "ERROR: no generated BSD-Cov region coverage matched AST_BSDCOV_*"
   exit 1
 }
 
