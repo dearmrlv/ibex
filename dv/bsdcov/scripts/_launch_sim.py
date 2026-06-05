@@ -80,6 +80,7 @@ class ChunkResult:
     rtl_trace: str
     cosim_log: str
     fsdb_wave: str
+    xrun_input: str
     coverage_ucds: list[str]
     status: str
     elapsed_s: float
@@ -314,7 +315,7 @@ def _xrun_binary(repo_root: Path) -> str:
 
 def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir: Path,
                    binary: Path, simulator: str, rtl_test: str, fsdb_dir: Path | None,
-                   dry_run: bool) -> str:
+                   continue_on_assert: bool, dry_run: bool) -> tuple[str, str]:
     if simulator != "xlm":
         raise RuntimeError("launch_sim.sh currently implements direct RTL launch for --simulator xlm only")
     env = _base_env(repo_root, [], Path(sys.executable))
@@ -322,22 +323,33 @@ def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir
     trace_base = chunk_dir / "trace_core"
     cov_dir = chunk_dir / "coverage"
     fsdb_wave = ""
-    fsdb_ucli = ""
+    xrun_input = ""
     if fsdb_dir is not None:
         fsdb_dir.mkdir(parents=True, exist_ok=True)
         fsdb_path = fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb"
         fsdb_ucli_path = fsdb_dir / f"{chunk.test_name}.{chunk.seed}.ucli.fsdb.cmd"
         fsdb_wave = str(fsdb_path)
-        fsdb_ucli = str(fsdb_ucli_path)
-        if not dry_run:
-            fsdb_ucli_path.write_text("\n".join([
-                f'call fsdbDumpfile {{"{fsdb_path}"}}',
+        xrun_input = str(fsdb_ucli_path)
+
+    if continue_on_assert and not xrun_input:
+        xrun_input_path = chunk_dir / f"{chunk.test_name}.{chunk.seed}.ucli.cmd"
+        xrun_input = str(xrun_input_path)
+
+    if xrun_input and not dry_run:
+        ucli_lines: list[str] = []
+        if fsdb_wave:
+            ucli_lines.extend([
+                f'call fsdbDumpfile {{"{fsdb_wave}"}}',
                 'call fsdbDumpvars {0} {core_ibex_tb_top} {"+mda"} {"+struct"} {"+parameter"}',
                 "call fsdbDumpSVA",
-                "run",
-                "quit",
-                "",
-            ]), encoding="utf-8")
+            ])
+        if continue_on_assert:
+            ucli_lines.extend([
+                "set assert_output_stop_level none",
+                "set assert_stop_level never",
+            ])
+        ucli_lines.extend(["run", "exit", ""])
+        Path(xrun_input).write_text("\n".join(ucli_lines), encoding="utf-8")
     cmd = [
         xrun, "-64bit", "-R", "-xmlibdirpath", str(tb_dir), "-licqueue",
         "-svseed", str(chunk.seed), "-svrnc", "rand_struct", "-nokey", "-l",
@@ -348,11 +360,13 @@ def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir
         f"{chunk.test_name}.{chunk.seed}", "-covoverwrite", "+enable_ibex_fcov=1",
         "+bsdcov_io_dump", f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
     ]
-    if fsdb_ucli:
-        cmd.extend(["-input", fsdb_ucli])
+    if xrun_input:
+        cmd.extend(["-input", xrun_input])
+    if continue_on_assert:
+        cmd.extend(["+max_quit_count=0", "+UVM_MAX_QUIT_COUNT=0,NO"])
     _run(cmd, cwd=repo_root / "dv" / "uvm" / "core_ibex", env=env,
          log=chunk_dir / "launch_rtl.log", dry_run=dry_run)
-    return fsdb_wave
+    return fsdb_wave, xrun_input
 
 
 def is_asm_instruction(line: str) -> bool:
@@ -392,7 +406,7 @@ def _collect_chunk_ucds(chunk_dir: Path) -> list[Path]:
 def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec,
                    chunks_root: Path, simulator: str, rtl_test: str, isa: str,
                    mabi: str, iss: str, fsdb_dir: Path | None,
-                   dry_run: bool) -> ChunkResult:
+                   continue_on_assert: bool, dry_run: bool) -> ChunkResult:
     started = time.perf_counter()
     chunk_dir = chunks_root / f"chunk_{chunk.index:04d}"
     chunk_dir.mkdir(parents=True, exist_ok=True)
@@ -403,16 +417,22 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
                           iss=iss, dry_run=dry_run)
     rtl_error: Exception | None = None
     fsdb_wave = ""
+    xrun_input = ""
     try:
-        fsdb_wave = _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir, chunk=chunk,
-                                   chunk_dir=chunk_dir, binary=binary,
-                                   simulator=simulator, rtl_test=rtl_test,
-                                   fsdb_dir=fsdb_dir, dry_run=dry_run)
+        fsdb_wave, xrun_input = _run_rtl_chunk(repo_root=repo_root, tb_dir=tb_dir,
+                                               chunk=chunk, chunk_dir=chunk_dir,
+                                               binary=binary, simulator=simulator,
+                                               rtl_test=rtl_test, fsdb_dir=fsdb_dir,
+                                               continue_on_assert=continue_on_assert,
+                                               dry_run=dry_run)
     except Exception as err:
         rtl_error = err
         (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
         if fsdb_dir is not None:
             fsdb_wave = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb")
+            xrun_input = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.ucli.fsdb.cmd")
+        elif continue_on_assert and not xrun_input:
+            xrun_input = str(chunk_dir / f"{chunk.test_name}.{chunk.seed}.ucli.cmd")
     ucds = _collect_chunk_ucds(chunk_dir)
     status = "pass" if rtl_error is None and (dry_run or ucds) else "missing_coverage"
     if rtl_error is not None:
@@ -423,6 +443,7 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
         chunk_dir=str(chunk_dir), binary=str(binary), rtl_sim_log=str(chunk_dir / "rtl_sim.log"),
         rtl_trace=str(trace_candidates[0]) if trace_candidates else "",
         cosim_log=str(chunk_dir / "cosim.log"), fsdb_wave=fsdb_wave,
+        xrun_input=xrun_input,
         coverage_ucds=[str(p) for p in ucds],
         status=status, elapsed_s=time.perf_counter() - started,
         static_instr_count=static_total, static_main_instr_count=static_main,
@@ -674,6 +695,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cov-module", default="ibex_top")
     parser.add_argument("--force-compile", action="store_true")
     parser.add_argument("--fsdb", action="store_true", help="Dump one FSDB waveform per chunk under the run-level fsdb/ directory.")
+    parser.add_argument("--continue-on-assert", action="store_true",
+                        help="Do not stop Xcelium at the first assertion failure; continue until test end or timeout.")
     parser.add_argument("--skip-cov-merge", action="store_true")
     parser.add_argument("--exclude-fail", action="store_true", help="Exclude failing chunks from cumulative coverage merge. By default, fail_with_coverage chunks are included.")
     parser.add_argument("--no-update-cone-samples", action="store_true", help="Do not overwrite bsdcovproj/cones/.../*.io_samples.csv with merged samples.")
@@ -699,12 +722,12 @@ def main() -> int:
     if fsdb_dir is not None:
         fsdb_dir.mkdir(parents=True, exist_ok=True)
     chunks = [ChunkSpec(index=idx, asm=asm, seed=args.seed + idx, sample_instruction_count=(idx + 1) * args.cov_update, test_name=f"bsdcov_chunk_{idx:04d}") for idx, asm in enumerate(instr_seqs)]
-    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "fsdb": args.fsdb, "fsdb_dir": str(fsdb_dir) if fsdb_dir else "", "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
+    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "fsdb": args.fsdb, "fsdb_dir": str(fsdb_dir) if fsdb_dir else "", "continue_on_assert": args.continue_on_assert, "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
     tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, fsdb=args.fsdb, dry_run=args.dry_run)
     results: list[ChunkResult] = []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
-        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, fsdb_dir, args.dry_run): chunk for chunk in chunks}
+        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, fsdb_dir, args.continue_on_assert, args.dry_run): chunk for chunk in chunks}
         for fut in as_completed(future_map):
             chunk = future_map[fut]
             try:
@@ -715,11 +738,16 @@ def main() -> int:
                 (chunk_dir / "error.txt").write_text(str(err) + "\n", encoding="utf-8")
                 ucds = _collect_chunk_ucds(chunk_dir)
                 fsdb_wave = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.fsdb") if fsdb_dir is not None else ""
-                result = ChunkResult(index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm), chunk_dir=str(chunk_dir), binary="", rtl_sim_log=str(chunk_dir / "rtl_sim.log"), rtl_trace="", cosim_log=str(chunk_dir / "cosim.log"), fsdb_wave=fsdb_wave, coverage_ucds=[str(p) for p in ucds], status="fail_with_coverage" if ucds else "fail", elapsed_s=0.0, static_instr_count=0, static_main_instr_count=0)
+                xrun_input = ""
+                if fsdb_dir is not None:
+                    xrun_input = str(fsdb_dir / f"{chunk.test_name}.{chunk.seed}.ucli.fsdb.cmd")
+                elif args.continue_on_assert:
+                    xrun_input = str(chunk_dir / f"{chunk.test_name}.{chunk.seed}.ucli.cmd")
+                result = ChunkResult(index=chunk.index, test_name=chunk.test_name, seed=chunk.seed, asm=str(chunk.asm), chunk_dir=str(chunk_dir), binary="", rtl_sim_log=str(chunk_dir / "rtl_sim.log"), rtl_trace="", cosim_log=str(chunk_dir / "cosim.log"), fsdb_wave=fsdb_wave, xrun_input=xrun_input, coverage_ucds=[str(p) for p in ucds], status="fail_with_coverage" if ucds else "fail", elapsed_s=0.0, static_instr_count=0, static_main_instr_count=0)
             print(f"chunk {result.index:04d}: {result.status}")
             results.append(result)
     results.sort(key=lambda r: r.index)
-    write_csv(run_dir / "runs.csv", [asdict(r) for r in results], ["index", "test_name", "seed", "status", "asm", "chunk_dir", "binary", "rtl_sim_log", "rtl_trace", "cosim_log", "fsdb_wave", "elapsed_s", "static_instr_count", "static_main_instr_count", "coverage_ucds"])
+    write_csv(run_dir / "runs.csv", [asdict(r) for r in results], ["index", "test_name", "seed", "status", "asm", "chunk_dir", "binary", "rtl_sim_log", "rtl_trace", "cosim_log", "fsdb_wave", "xrun_input", "elapsed_s", "static_instr_count", "static_main_instr_count", "coverage_ucds"])
     io_merged_rows: list[dict[str, Any]] = []
     io_source_rows: list[dict[str, Any]] = []
     if not args.dry_run:
