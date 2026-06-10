@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wavelist version="3">
-  <insertion-point-position>23</insertion-point-position>
+  <insertion-point-position>13</insertion-point-position>
   <wave>
     <expr>clk_i</expr>
     <label/>
@@ -31,6 +31,11 @@
     <label/>
     <radix/>
   </wave>
+  <wave collapsed="true">
+    <expr>instr_addr_o</expr>
+    <label/>
+    <radix/>
+  </wave>
   <wave>
     <expr>instr_gnt_i</expr>
     <label/>
@@ -46,8 +51,43 @@
     <label/>
     <radix/>
   </wave>
+  <wave>
+    <expr>imem_if_inst.imem_rvalid_o</expr>
+    <label/>
+    <radix/>
+  </wave>
   <wave collapsed="true">
-    <expr>instr_addr_o</expr>
+    <expr>imem_if_inst.imem_rdata_o</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave>
+    <expr>imem_if_inst.u_fml_imem.clk_i</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave>
+    <expr>imem_if_inst.u_fml_imem.rvalid_o</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave collapsed="true">
+    <expr>imem_if_inst.u_fml_imem.addr_in_proc</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave>
+    <expr>imem_if_inst.u_fml_imem.err_o</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave collapsed="true">
+    <expr>imem_if_inst.u_fml_imem.data_o</expr>
+    <label/>
+    <radix/>
+  </wave>
+  <wave collapsed="true">
+    <expr>instr_rdata_intg_i</expr>
     <label/>
     <radix/>
   </wave>

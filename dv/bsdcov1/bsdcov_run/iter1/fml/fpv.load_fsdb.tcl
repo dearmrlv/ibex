@@ -50,20 +50,25 @@ elaborate -top ibex_top \
   -parameter DmExceptionAddr       {32'h80000008}
 
 clock clk_i
-reset ~rst_ni
-# set sim_fsdb [file normalize "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov1/cpu_init/runs/latest/fsdb/init_only.fsdb"]
-# set sim_dut_hier "core_ibex_tb_top.dut.u_ibex_top"
+# reset ~rst_ni
+set sim_fsdb [file normalize "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov1/bsdcov_run/common_init/runs/latest/fsdb/common_init.fsdb"]
+set sim_dut_hier "core_ibex_tb_top.dut.u_ibex_top"
 
-# set_trace_show_reset false
+set_trace_show_reset false
 
-# # Just a reminder
-# set snapshot_time 2011950
+# Just a reminder
+set snapshot_time 7231950
 
-# reset -clear
-# reset -sequence -fsdb $sim_fsdb \
-#   -hier_path $sim_dut_hier \
-#   -non_resettable_regs 0 \
-#   -time $snapshot_time
+reset -clear
+# reset -sequence -fsdb $sim_fsdb
+reset -fsdb $sim_fsdb \
+  -hier_path $sim_dut_hier \
+  -non_resettable_regs 0 \
+  -time $snapshot_time \
+  -time_scale ps
+
+set_trace_show_reset true
+get_reset_info -save_reset_fsdb [file join $trace_dir "reset_snapshot_debug.fsdb"] -force -visible_only
 
 report -summary -file [file join $report_dir "fpv_setup_summary.$trace_name.txt"] -force
 
@@ -76,6 +81,7 @@ set target_props {}
 foreach p [get_property_list -include {type assert}] {
   # "*AST_BSDCOV_*"
   # Very hard to proof u_ibex_core.wb_stage_i.u_bsdcov_regions_ibex_wb_stage_9ea2ab83df.AST_BSDCOV_ibex_wb_stage_9ea2ab83df_R_unique_005
+  # u_ibex_core.id_stage_i.u_bsdcov_regions_ibex_id_stage_02cf625a91.AST_BSDCOV_ibex_id_stage_02cf625a91_R_unique_006
   if {[string match "*u_ibex_core.id_stage_i.u_bsdcov_regions_ibex_id_stage_02cf625a91.AST_BSDCOV_ibex_id_stage_02cf625a91_R_unique_006*" $p]} {
     lappend target_props $p
   }

@@ -138,18 +138,22 @@ module imem (
         32'h8000_0114: rom_lookup = 32'h0000_0e93;
         32'h8000_0118: rom_lookup = 32'h0000_0f13;
         32'h8000_011c: rom_lookup = 32'h0000_0f93;
-        32'h8000_0120: rom_lookup = 32'h9000_02b7;
-        32'h8000_0124: rom_lookup = 32'hff82_8293;
-        32'h8000_0128: rom_lookup = 32'h0010_0313;
-        32'h8000_012c: rom_lookup = 32'h0062_a023;
-        32'h8000_0130: rom_lookup = 32'h1050_0073;
-        32'h8000_0134: rom_lookup = 32'hffdf_f06f;
-        32'h8000_0138: rom_lookup = 32'h9000_02b7;
-        32'h8000_013c: rom_lookup = 32'hff82_8293;
-        32'h8000_0140: rom_lookup = 32'h1010_0313;
-        32'h8000_0144: rom_lookup = 32'h0062_a023;
-        32'h8000_0148: rom_lookup = 32'h1050_0073;
-        32'h8000_014c: rom_lookup = 32'hffdf_f06f;
+        // Above: common prefix, addr fixed
+        // Middle: Generated Instructions
+        // ...
+        // Below: common suffix, addr undetermined
+        // 32'h8000_0120: rom_lookup = 32'h9000_02b7;
+        // 32'h8000_0124: rom_lookup = 32'hff82_8293;
+        // 32'h8000_0128: rom_lookup = 32'h0010_0313;
+        // 32'h8000_012c: rom_lookup = 32'h0062_a023;
+        // 32'h8000_0130: rom_lookup = 32'h1050_0073;
+        // 32'h8000_0134: rom_lookup = 32'hffdf_f06f;
+        // 32'h8000_0138: rom_lookup = 32'h9000_02b7;
+        // 32'h8000_013c: rom_lookup = 32'hff82_8293;
+        // 32'h8000_0140: rom_lookup = 32'h1010_0313;
+        // 32'h8000_0144: rom_lookup = 32'h0062_a023;
+        // 32'h8000_0148: rom_lookup = 32'h1050_0073;
+        // 32'h8000_014c: rom_lookup = 32'hffdf_f06f;
         default:      rom_lookup = 32'h0000_0000;
       endcase
     end
@@ -200,18 +204,18 @@ module imem (
         32'h8000_0114: rom_hit = 1'b1;
         32'h8000_0118: rom_hit = 1'b1;
         32'h8000_011c: rom_hit = 1'b1;
-        32'h8000_0120: rom_hit = 1'b1;
-        32'h8000_0124: rom_hit = 1'b1;
-        32'h8000_0128: rom_hit = 1'b1;
-        32'h8000_012c: rom_hit = 1'b1;
-        32'h8000_0130: rom_hit = 1'b1;
-        32'h8000_0134: rom_hit = 1'b1;
-        32'h8000_0138: rom_hit = 1'b1;
-        32'h8000_013c: rom_hit = 1'b1;
-        32'h8000_0140: rom_hit = 1'b1;
-        32'h8000_0144: rom_hit = 1'b1;
-        32'h8000_0148: rom_hit = 1'b1;
-        32'h8000_014c: rom_hit = 1'b1;
+        // 32'h8000_0120: rom_hit = 1'b1;
+        // 32'h8000_0124: rom_hit = 1'b1;
+        // 32'h8000_0128: rom_hit = 1'b1;
+        // 32'h8000_012c: rom_hit = 1'b1;
+        // 32'h8000_0130: rom_hit = 1'b1;
+        // 32'h8000_0134: rom_hit = 1'b1;
+        // 32'h8000_0138: rom_hit = 1'b1;
+        // 32'h8000_013c: rom_hit = 1'b1;
+        // 32'h8000_0140: rom_hit = 1'b1;
+        // 32'h8000_0144: rom_hit = 1'b1;
+        // 32'h8000_0148: rom_hit = 1'b1;
+        // 32'h8000_014c: rom_hit = 1'b1;
         default:      rom_hit = 1'b0;
       endcase
     end
