@@ -1,0 +1,2 @@
+#e1(10Jun2026:23:37:00): source /tmp/bsdcov_traversal_xcelium.d/env.d/env.history.10Jun2026_23_37_00
+s1(10Jun2026:23:37:00):  xrun -64bit -sv -timescale 1ns/1ps /tmp/bsdcov_traversal_stub.sv bsdproj/results/traversal/ibex_wb_stage-0bb5b39547/ibex_wb_stage-0bb5b39547.traversal.assertions.sv -top core_ibex_tb_top -xmlibdirname /tmp/bsdcov_traversal_xcelium.d 

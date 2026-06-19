@@ -51,21 +51,22 @@ elaborate -top ibex_top \
 
 clock clk_i
 # reset ~rst_ni
-set sim_fsdb [file normalize "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov1/bsdcov_run/common_init/runs/latest/fsdb/common_init.fsdb"]
+# set sim_fsdb [file normalize "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov1/bsdcov_run/common_init/runs/latest/fsdb/common_init.fsdb"]
+set sim_fsdb [file normalize "/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov2/eval/runs/run.20260610T111712Z.seed1/fsdb/eval.fsdb"]
 set sim_dut_hier "core_ibex_tb_top.dut.u_ibex_top"
 
 set_trace_show_reset false
 
 # Just a reminder
-set snapshot_time 7231950
+# set snapshot_time 7231950
 
 reset -clear
 # reset -sequence -fsdb $sim_fsdb
 reset -fsdb $sim_fsdb \
   -hier_path $sim_dut_hier \
-  -non_resettable_regs 0 \
-  -time $snapshot_time \
-  -time_scale ps
+  -non_resettable_regs 0
+# -time $snapshot_time \
+# -time_scale ps
 
 set_trace_show_reset true
 get_reset_info -save_reset_fsdb [file join $trace_dir "reset_snapshot_debug.fsdb"] -force -visible_only

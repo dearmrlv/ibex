@@ -135,6 +135,9 @@ def _main() -> int:
         xlm_cov_cfg_file = f"{md.ot_xcelium_cov_scripts}/cover.ccf"
         if md.simulator == 'xlm' and _using_xcelium_2009():
             xlm_cov_cfg_file = f"{md.ibex_dv_root}/xcelium_2009_cover.ccf"
+        xlm_cov_cfg_file_override = os.environ.get('BSD_COV_XRUN_COVFILE', '').strip()
+        if xlm_cov_cfg_file_override:
+            xlm_cov_cfg_file = xlm_cov_cfg_file_override
 
         extra_xrun_filelists = os.environ.get('BSD_COV_EXTRA_XRUN_FILELISTS', '').strip()
         extra_xrun_filelist_opts = ''
@@ -189,6 +192,13 @@ def _main() -> int:
                 'cosim_opts': True  # Always enable now post_compare is deprecated
             },
             user_subst_options=subst_vars_dict)
+        base_filelist_override = os.environ.get('BSD_COV_XRUN_BASE_FILELIST', '').strip()
+        if base_filelist_override:
+            default_filelist = str(md.ibex_dv_root / 'ibex_dv.f')
+            md.tb_build_cmds = [
+                [base_filelist_override if token == default_filelist else token for token in cmd]
+                for cmd in md.tb_build_cmds
+            ]
         md.tb_build_cmds = [_apply_cadence_xrun_wrapper(cmd) for cmd in md.tb_build_cmds]
 
     # Write all compile-tb output into a single logfile

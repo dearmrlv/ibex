@@ -1,0 +1,12 @@
+runs/
+.work/
+__pycache__/
+*.pyc
+fsdbdebugLog/
+fsdbreportLog/
+scripts/targets/fsdbdebugLog/
+scripts/targets/fsdbreportLog/
+scripts/targets/extract/__pycache__/
+scripts/targets/extract/cpp/build/
+scripts.old/__pycache__/
+tests/__pycache__/

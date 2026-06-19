@@ -1,0 +1,133 @@
+// AUTO-GENERATED for one BSD-Cov instruction-generation epoch.
+module imem(
+  input logic clk_i, input logic rst_ni, input logic req_i,
+  input logic [31:0] addr_i, output logic gnt_o, output logic rvalid_o,
+  output logic err_o, output logic [31:0] data_o
+);
+  localparam logic [31:0] SYMBOLIC_START = {{ symbolic_start }};
+  (* anyseq *) logic [31:0] symbolic_data;
+  logic symbolic_response;
+  logic symbolic_legal;
+  logic [31:0] addr_in_proc;
+  logic [31:0] next_symbolic_addr_q;
+  logic fixed_in_proc;
+  logic symbolic_in_proc;
+  logic accepted, address_allowed;
+
+  function automatic logic symbolic_request_hit(input logic [31:0] addr);
+    symbolic_request_hit =
+      (addr[1:0] == 2'b00) &&
+      (addr == next_symbolic_addr_q);
+  endfunction
+  
+  always_comb begin
+    address_allowed = fixed_hit(addr_i) || symbolic_request_hit(addr_i);
+  end
+
+  assign accepted = req_i && !gnt_o && !rvalid_o && address_allowed;
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      gnt_o <= 1'b0;
+      rvalid_o <= 1'b0;
+      addr_in_proc <= '0;
+      next_symbolic_addr_q <= SYMBOLIC_START;
+      fixed_in_proc <= 1'b0;
+      symbolic_in_proc <= 1'b0;
+      err_o <= 1'b0;
+    end else begin
+      gnt_o <= accepted;
+      rvalid_o <= gnt_o;
+      err_o <= 1'b0;
+      if (accepted) begin
+        addr_in_proc <= addr_i;
+        fixed_in_proc <= fixed_hit(addr_i);
+        symbolic_in_proc <= symbolic_request_hit(addr_i);
+      end
+      if (rvalid_o && symbolic_in_proc) begin
+        next_symbolic_addr_q <= next_symbolic_addr_q + 32'd4;
+      end
+    end
+  end
+  always_comb begin
+    data_o = '0;
+
+    if (rvalid_o) begin
+      if (fixed_in_proc) begin
+        data_o = fixed_lookup(addr_in_proc);
+      end else if (symbolic_in_proc) begin
+        data_o = symbolic_data;
+      end else begin
+        data_o = '0;
+      end
+    end
+  end
+
+  ASM_BSDCOV_imem_req_addr_allowed: assume property (
+    @(posedge clk_i) disable iff (!rst_ni)
+      req_i |-> address_allowed
+  );
+
+  assign symbolic_response = rvalid_o && symbolic_in_proc;
+
+  instr_vld u_symbolic_instr_vld(
+    .instr_i(symbolic_data),
+    .instr_vld(symbolic_legal)
+  );
+
+  ASM_BSDCOV_legal_symbolic: assume property (
+    @(posedge clk_i) disable iff (!rst_ni)
+      symbolic_response |-> (symbolic_legal && symbolic_data[1:0] == 2'b11)
+  );
+
+  function automatic logic [31:0] fixed_lookup(input logic [31:0] addr);
+    unique case ({addr[31:2], 2'b00})
+{% for word in fixed_words %}
+      {{ word.address }}: fixed_lookup = {{ word.instruction }};
+{% endfor %}
+      default: fixed_lookup = '0;
+    endcase
+  endfunction
+  function automatic logic fixed_hit(input logic [31:0] addr);
+    unique case ({addr[31:2], 2'b00})
+{% for word in fixed_words %}
+      {{ word.address }}: fixed_hit = 1'b1;
+{% endfor %}
+      default: fixed_hit = 1'b0;
+    endcase
+  endfunction
+endmodule
+
+module imem_if(
+  input logic clk_i, input logic rst_ni, input logic instr_req_o,
+  input logic instr_gnt_i, input logic instr_rvalid_i,
+  input logic [31:0] instr_addr_o, input logic [31:0] instr_rdata_i,
+  input logic instr_err_i, input logic [6:0] instr_rdata_intg_i
+);
+  logic gnt, rvalid, err;
+  logic [31:0] data;
+  imem u_fml_imem(.clk_i(clk_i), .rst_ni(rst_ni), .req_i(instr_req_o),
+    .addr_i(instr_addr_o), .gnt_o(gnt), .rvalid_o(rvalid), .err_o(err), .data_o(data));
+  function automatic logic [38:0] ecc(input logic [31:0] d);
+    logic [38:0] c;
+    begin
+      c = 39'(d);
+      c[32]=^(c&39'h002606BD25); c[33]=^(c&39'h00DEBA8050);
+      c[34]=^(c&39'h00413D89AA); c[35]=^(c&39'h0031234ED1);
+      c[36]=^(c&39'h00C2C1323B); c[37]=^(c&39'h002DCC624C);
+      c[38]=^(c&39'h0098505586); ecc=c^39'h2A00000000;
+    end
+  endfunction
+  logic [38:0] instr_ecc;
+  assign instr_ecc = ecc(instr_rdata_i);
+  always_comb if (rst_ni) begin
+    assume(instr_gnt_i == gnt); assume(instr_rvalid_i == rvalid);
+    if (instr_rvalid_i) begin assume(instr_rdata_i == data); assume(instr_err_i == err); end
+    else assume(instr_err_i == 1'b0);
+    assume(instr_rdata_intg_i == instr_ecc[38:32]);
+  end
+endmodule
+bind ibex_top : ibex_top imem_if imem_if_inst(
+  .clk_i(clk_i), .rst_ni(rst_ni), .instr_req_o(instr_req_o),
+  .instr_gnt_i(instr_gnt_i), .instr_rvalid_i(instr_rvalid_i),
+  .instr_addr_o(instr_addr_o), .instr_rdata_i(instr_rdata_i),
+  .instr_err_i(instr_err_i), .instr_rdata_intg_i(instr_rdata_intg_i));

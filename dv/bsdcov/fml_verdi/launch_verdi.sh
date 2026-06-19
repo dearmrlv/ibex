@@ -31,9 +31,10 @@ IBEX_PARAMS="\
 /home/lvzhengyang/workspace/synopsys/verdi/verdi-raw \
   -2012 \
   -f dut.f \
-  -f ../bsdcovproj/results/bsdcov.f \
   -f env.f \
+  -f /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov_whole_mc/runs/smoke_baseline_500_seed1688_mc_fix/big_proj/results/bsdcov.f \
   -top ibex_top \
   $IBEX_PARAMS \
   -ssf \
-/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/fml/jgproject/traces_fsdb.bsd_cov_region_asserts/4.gions_stall_mem_stall_multdiv_stall_branch_stall_jump_c815.AST_BSDCOV_stall_mem_stall_multdiv_stall_branch_stall_jump_c815_R_unique_010.Ht.6.fsdb
+/home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov_whole_mc/runs/smoke_baseline_500_seed1688_mc_fix/fml/traces_fsdb.bsd_cov_region_asserts/multi_cex/round_03_hunt/532._wb_stage_9ea2ab83df.AST_BSDCOV_ibex_wb_stage_9ea2ab83df_R_unique_004.Ht.10.fsdb
+# /home/lvzhengyang/workspace/BSD-Cov/designs/ibex/dv/bsdcov/fml/jgproject/traces_fsdb.bsd_cov_region_asserts/4.gions_stall_mem_stall_multdiv_stall_branch_stall_jump_c815.AST_BSDCOV_stall_mem_stall_multdiv_stall_branch_stall_jump_c815_R_unique_010.Ht.6.fsdb

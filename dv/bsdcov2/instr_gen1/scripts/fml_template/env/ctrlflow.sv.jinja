@@ -1,0 +1,146 @@
+module bsdcov_ctrlflow_assume import ibex_pkg::*; #(
+  parameter logic [31:0] SYMBOLIC_START = 32'h8000_0120,
+
+  // 先设成1，flow稳定后可以改成0。
+  // 1: control-flow target必须严格向前。
+  // 0: control-flow target可以跳到任意symbolic地址。
+  parameter bit FORWARD_ONLY = 1'b1,
+
+  // 防止WFI/self-loop/长时间stall造成“没有新PC”的死循环。
+  parameter int unsigned MAX_NO_NEW_PC_CYCLES = 64
+) (
+  input logic        clk_i,
+  input logic        rst_ni,
+
+  // From ibex_if_stage.
+  input logic        instr_valid_id_o,
+  input logic [31:0] pc_id_o,
+
+  input logic        pc_set_i,
+  input pc_sel_e     pc_mux_i,
+  input logic [31:0] branch_target_ex_i
+);
+
+  function automatic logic aligned4(input logic [31:0] addr);
+    aligned4 = (addr[1:0] == 2'b00);
+  endfunction
+
+  function automatic logic in_symbolic(input logic [31:0] addr);
+    in_symbolic =
+      aligned4(addr) &&
+      (addr >= SYMBOLIC_START);
+  endfunction
+
+  function automatic logic [31:0] next_word(input logic [31:0] addr);
+    next_word = addr + 32'd4;
+  endfunction
+
+  function automatic logic target_allowed(input logic [31:0] current_pc,
+                                          input logic [31:0] target);
+    target_allowed = aligned4(target) &&
+                     (target == next_word(current_pc));
+  endfunction
+
+  logic sym_started_q;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      sym_started_q <= 1'b0;
+    end else if (instr_valid_id_o && in_symbolic(pc_id_o)) begin
+      sym_started_q <= 1'b1;
+    end
+  end
+
+  logic sym_active;
+  assign sym_active = sym_started_q ||
+                      (instr_valid_id_o && in_symbolic(pc_id_o));
+
+  // Once symbolic generation starts, do not let exceptions/debug/eret/dret redirect PC.
+  // If this fires, the environment still has some unmodeled interrupt/error/CSR effect.
+  ASM_BSDCOV_no_exception_redirect_after_symbolic: assume property (
+    @(posedge clk_i) disable iff (!rst_ni)
+      sym_active && pc_set_i |-> pc_mux_i == PC_JUMP
+  );
+
+  // Actual taken jump/branch/JALR target must be the next symbolic word.
+  // The generated image is a linear append-only stream; non-sequential control
+  // flow to not-yet-recorded addresses would create sparse CEX instruction
+  // images that cannot be appended to the current binary.
+  ASM_BSDCOV_jump_target_next_symbolic_word: assume property (
+    @(posedge clk_i) disable iff (!rst_ni)
+      sym_active && pc_set_i && (pc_mux_i == PC_JUMP)
+        |-> target_allowed(pc_id_o, branch_target_ex_i)
+  );
+
+  // Conservative mode: force control-flow to move forward.
+  // This eliminates loops aggressively and is useful for the first stable implementation.
+  generate
+    if (FORWARD_ONLY) begin : g_forward_only
+      ASM_BSDCOV_jump_target_forward: assume property (
+        @(posedge clk_i) disable iff (!rst_ni)
+          sym_started_q && pc_set_i && (pc_mux_i == PC_JUMP)
+            |-> branch_target_ex_i > pc_id_o
+      );
+    end
+  endgenerate
+
+  logic        last_id_valid_q;
+  logic [31:0] last_pc_id_q;
+
+  wire new_id_pc =
+      instr_valid_id_o &&
+      (!last_id_valid_q || (pc_id_o != last_pc_id_q));
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      last_id_valid_q <= 1'b0;
+      last_pc_id_q    <= '0;
+    end else begin
+      last_id_valid_q <= instr_valid_id_o;
+      if (instr_valid_id_o) begin
+        last_pc_id_q <= pc_id_o;
+      end
+    end
+  end
+
+  // Bounded progress:
+  // Once symbolic generation starts, do not allow the design to sit forever without
+  // reaching a new ID PC. This catches WFI/self-loop/stall-style dead traces.
+  localparam int unsigned CNT_W =
+      (MAX_NO_NEW_PC_CYCLES <= 1) ? 1 : $clog2(MAX_NO_NEW_PC_CYCLES + 1);
+
+  logic [CNT_W-1:0] no_new_pc_cnt_q;
+
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      no_new_pc_cnt_q <= '0;
+    end else if (!sym_started_q || new_id_pc) begin
+      no_new_pc_cnt_q <= '0;
+    end else if (no_new_pc_cnt_q < MAX_NO_NEW_PC_CYCLES[CNT_W-1:0]) begin
+      no_new_pc_cnt_q <= no_new_pc_cnt_q + 1'b1;
+    end
+  end
+
+  ASM_BSDCOV_symbolic_progress: assume property (
+    @(posedge clk_i) disable iff (!rst_ni)
+      sym_started_q |-> no_new_pc_cnt_q < MAX_NO_NEW_PC_CYCLES[CNT_W-1:0]
+  );
+
+endmodule
+
+bind ibex_if_stage
+bsdcov_ctrlflow_assume #(
+  .SYMBOLIC_START       ({{ symbolic_start }}),
+  .FORWARD_ONLY         (1'b1),
+  .MAX_NO_NEW_PC_CYCLES (64)
+) u_bsd_cov_ctrlflow_assume (
+  .clk_i              (clk_i),
+  .rst_ni             (rst_ni),
+
+  .instr_valid_id_o   (instr_valid_id_o),
+  .pc_id_o            (pc_id_o),
+
+  .pc_set_i           (pc_set_i),
+  .pc_mux_i           (pc_mux_i),
+  .branch_target_ex_i (branch_target_ex_i)
+);

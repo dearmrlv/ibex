@@ -267,14 +267,15 @@ def _source_setup_prefix(core_ibex: Path) -> str:
 
 def _compile_tb(*, repo_root: Path, run_dir: Path, bind_flists: list[Path], python: Path,
                 simulator: str, iss: str, seed: int, force_compile: bool,
-                fsdb: bool, dry_run: bool) -> Path:
+                fsdb: bool, coverage: bool, dry_run: bool) -> Path:
     core_ibex = repo_root / "dv" / "uvm" / "core_ibex"
     out_dir = run_dir / "ibex_dv_out"
     env = _base_env(repo_root, bind_flists, python, fsdb=fsdb)
     make_args = [
         "make", "--keep-going", "GOAL=rtl_tb_compile", f"OUT={out_dir}",
         "IBEX_CONFIG=opentitan", f"SIMULATOR={simulator}", f"ISS={iss}",
-        "TEST=empty", "ITERATIONS=1", f"SEED={seed}", "WAVES=0", "COV=1", "VERBOSE=0",
+        "TEST=empty", "ITERATIONS=1", f"SEED={seed}", "WAVES=0",
+        f"COV={1 if coverage else 0}", "VERBOSE=0",
     ]
     if force_compile or fsdb:
         make_args.insert(2, "-B")
@@ -315,6 +316,7 @@ def _xrun_binary(repo_root: Path) -> str:
 
 def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir: Path,
                    binary: Path, simulator: str, rtl_test: str, fsdb_dir: Path | None,
+                   coverage: bool, bsdcov_io_dump: bool,
                    continue_on_assert: bool, dry_run: bool) -> tuple[str, str]:
     if simulator != "xlm":
         raise RuntimeError("launch_sim.sh currently implements direct RTL launch for --simulator xlm only")
@@ -355,11 +357,18 @@ def _run_rtl_chunk(*, repo_root: Path, tb_dir: Path, chunk: ChunkSpec, chunk_dir
         "-svseed", str(chunk.seed), "-svrnc", "rand_struct", "-nokey", "-l",
         str(chunk_dir / "rtl_sim.log"), f"+UVM_TESTNAME={rtl_test}", "+UVM_VERBOSITY=UVM_LOW",
         f"+bin={binary}", f"+ibex_tracer_file_base={trace_base}",
-        f"+cosim_log_file={chunk_dir / 'cosim.log'}", "-covmodeldir", str(cov_dir),
-        "-covworkdir", str(chunk_dir), "-covscope", "coverage", "-covtest",
-        f"{chunk.test_name}.{chunk.seed}", "-covoverwrite", "+enable_ibex_fcov=1",
-        "+bsdcov_io_dump", f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
+        f"+cosim_log_file={chunk_dir / 'cosim.log'}", "-covoverwrite",
     ]
+    if coverage:
+        cmd.extend([
+            "-covmodeldir", str(cov_dir), "-covworkdir", str(chunk_dir),
+            "-covscope", "coverage", "-covtest", f"{chunk.test_name}.{chunk.seed}",
+            "+enable_ibex_fcov=1",
+        ])
+    if bsdcov_io_dump:
+        cmd.extend([
+            "+bsdcov_io_dump", f"+bsdcov_trace_base={chunk_dir / 'bsdcov_trace'}",
+        ])
     if xrun_input:
         cmd.extend(["-input", xrun_input])
     if continue_on_assert:
@@ -406,6 +415,7 @@ def _collect_chunk_ucds(chunk_dir: Path) -> list[Path]:
 def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec,
                    chunks_root: Path, simulator: str, rtl_test: str, isa: str,
                    mabi: str, iss: str, fsdb_dir: Path | None,
+                   coverage: bool, bsdcov_io_dump: bool,
                    continue_on_assert: bool, dry_run: bool) -> ChunkResult:
     started = time.perf_counter()
     chunk_dir = chunks_root / f"chunk_{chunk.index:04d}"
@@ -423,6 +433,8 @@ def _run_one_chunk(repo_root: Path, python: Path, tb_dir: Path, chunk: ChunkSpec
                                                chunk=chunk, chunk_dir=chunk_dir,
                                                binary=binary, simulator=simulator,
                                                rtl_test=rtl_test, fsdb_dir=fsdb_dir,
+                                               coverage=coverage,
+                                               bsdcov_io_dump=bsdcov_io_dump,
                                                continue_on_assert=continue_on_assert,
                                                dry_run=dry_run)
     except Exception as err:
@@ -694,6 +706,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rtl-test", default="core_ibex_base_test")
     parser.add_argument("--cov-module", default="ibex_top")
     parser.add_argument("--force-compile", action="store_true")
+    parser.add_argument("--no-coverage", action="store_true", help="Run RTL without Xcelium coverage options.")
+    parser.add_argument("--no-bsdcov-io-dump", action="store_true", help="Do not pass BSD-Cov IO dump plusargs to xrun.")
     parser.add_argument("--fsdb", action="store_true", help="Dump one FSDB waveform per chunk under the run-level fsdb/ directory.")
     parser.add_argument("--continue-on-assert", action="store_true",
                         help="Do not stop Xcelium at the first assertion failure; continue until test end or timeout.")
@@ -722,12 +736,20 @@ def main() -> int:
     if fsdb_dir is not None:
         fsdb_dir.mkdir(parents=True, exist_ok=True)
     chunks = [ChunkSpec(index=idx, asm=asm, seed=args.seed + idx, sample_instruction_count=(idx + 1) * args.cov_update, test_name=f"bsdcov_chunk_{idx:04d}") for idx, asm in enumerate(instr_seqs)]
-    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "fsdb": args.fsdb, "fsdb_dir": str(fsdb_dir) if fsdb_dir else "", "continue_on_assert": args.continue_on_assert, "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
+    coverage_enabled = not args.no_coverage
+    bsdcov_io_dump_enabled = not args.no_bsdcov_io_dump
+    config = {"created_at": datetime.now(timezone.utc).isoformat(), "semantics": "independent_standalone_chunks_prefix_coverage", "repo_root": str(repo_root), "python": str(python), "run_tag": run_tag, "cov_update": args.cov_update, "jobs": args.jobs, "simulator": args.simulator, "iss": args.iss, "isa": args.isa, "mabi": args.mabi, "rtl_test": args.rtl_test, "coverage": coverage_enabled, "bsdcov_io_dump": bsdcov_io_dump_enabled, "fsdb": args.fsdb, "fsdb_dir": str(fsdb_dir) if fsdb_dir else "", "continue_on_assert": args.continue_on_assert, "exclude_fail": args.exclude_fail, "update_cone_samples": not args.no_update_cone_samples, "instr_seq": [str(p) for p in instr_seqs], "bind_flist": [str(p) for p in bind_flists]}
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-    tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, fsdb=args.fsdb, dry_run=args.dry_run)
+    reuse_tb_dir = os.environ.get("BSDCOV_REUSE_TB_DIR", "").strip()
+    if reuse_tb_dir:
+        tb_dir = Path(reuse_tb_dir).expanduser().resolve()
+        if not tb_dir.exists():
+            raise RuntimeError(f"BSDCOV_REUSE_TB_DIR does not exist: {tb_dir}")
+    else:
+        tb_dir = _compile_tb(repo_root=repo_root, run_dir=run_dir, bind_flists=bind_flists, python=python, simulator=args.simulator, iss=args.iss, seed=args.seed, force_compile=args.force_compile, fsdb=args.fsdb, coverage=coverage_enabled, dry_run=args.dry_run)
     results: list[ChunkResult] = []
     with ThreadPoolExecutor(max_workers=args.jobs) as ex:
-        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, fsdb_dir, args.continue_on_assert, args.dry_run): chunk for chunk in chunks}
+        future_map = {ex.submit(_run_one_chunk, repo_root, python, tb_dir, chunk, run_dir / "chunks", args.simulator, args.rtl_test, args.isa, args.mabi, args.iss, fsdb_dir, coverage_enabled, bsdcov_io_dump_enabled, args.continue_on_assert, args.dry_run): chunk for chunk in chunks}
         for fut in as_completed(future_map):
             chunk = future_map[fut]
             try:

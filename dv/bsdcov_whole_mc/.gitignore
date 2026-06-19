@@ -1,0 +1,13 @@
+jgproject/
+**/jgproject/
+verdiLog/
+novas.*
+*.fsdb
+*.rc
+*.swp
+*.vf
+.tmp/
+sim/
+runs/
+riscvdv/
+fsdbdebugLog/

@@ -1,0 +1,4 @@
+common_init/build/
+common_init/runs/
+eval/runs/
+bsdcov_run/bsdproj/
